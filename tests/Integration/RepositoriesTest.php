@@ -119,10 +119,14 @@ return [
     },
     'publishing a hike puts it at the top of the feed (AC7.4)' => function () use (&$db) {
         $acts = new ActivityRepository($db);
-        $id = $acts->create(1, ['trail_id' => 6, 'hiked_on' => date('Y-m-d'), 'distance_km' => 5.6, 'duration_min' => 150, 'notes' => 'Great'], null, 'abc123.jpg', 'Waterfall');
+        $png = (string) base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
+        $id = $acts->create(1, ['trail_id' => 6, 'hiked_on' => date('Y-m-d'), 'distance_km' => 5.6, 'duration_min' => 150, 'notes' => 'Great'], null,
+            ['name' => str_repeat('a', 32) . '.png', 'mime' => 'image/png', 'bytes' => $png], 'Waterfall');
         $feed = $acts->feed();
         assertSame($id, (int) $feed[0]['id']);
-        assertSame('abc123.jpg', $feed[0]['photo']);
+        assertSame(str_repeat('a', 32) . '.png', $feed[0]['photo']);
+        $stored = $acts->photo(str_repeat('a', 32) . '.png');
+        assertSame($png, $stored['bytes'], 'binary photo round-trips through BYTEA');
     },
     'deleting a plan keeps the published hike but unlinks it (ON DELETE SET NULL)' => function () use (&$db) {
         (new PlanRepository($db))->deleteOwned(5, 1);

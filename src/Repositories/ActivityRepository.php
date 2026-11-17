@@ -19,7 +19,8 @@ final class ActivityRepository
     {
     }
 
-    public function create(int $userId, array $data, ?int $planId, ?string $photoFile, string $photoAlt = ''): int
+    /** @param array{name:string,mime:string,bytes:string}|null $photo */
+    public function create(int $userId, array $data, ?int $planId, ?array $photo, string $photoAlt = ''): int
     {
         $this->db->beginTransaction();
         try {
@@ -30,9 +31,16 @@ final class ActivityRepository
             $stmt->execute([$userId, $data['trail_id'], $planId, $data['hiked_on'], $data['distance_km'],
                 $data['duration_min'], $data['notes']]);
             $id = (int) $stmt->fetchColumn();
-            if ($photoFile !== null) {
-                $this->db->prepare('INSERT INTO activity_photo (activity_id, file_name, alt_text) VALUES (?, ?, ?)')
-                    ->execute([$id, $photoFile, $photoAlt]);
+            if ($photo !== null) {
+                $stmt = $this->db->prepare(
+                    'INSERT INTO activity_photo (activity_id, file_name, mime_type, content, alt_text) VALUES (?, ?, ?, ?, ?)'
+                );
+                $stmt->bindValue(1, $id, \PDO::PARAM_INT);
+                $stmt->bindValue(2, $photo['name']);
+                $stmt->bindValue(3, $photo['mime']);
+                $stmt->bindValue(4, $photo['bytes'], \PDO::PARAM_LOB);
+                $stmt->bindValue(5, $photoAlt);
+                $stmt->execute();
             }
             $this->db->commit();
             return $id;
@@ -57,6 +65,19 @@ final class ActivityRepository
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         return $row ? $this->decode($row) : null;
+    }
+
+    /** @return array{mime:string,bytes:string}|null */
+    public function photo(string $fileName): ?array
+    {
+        $stmt = $this->db->prepare('SELECT mime_type, content FROM activity_photo WHERE file_name = ?');
+        $stmt->execute([$fileName]);
+        $row = $stmt->fetch();
+        if (!$row) {
+            return null;
+        }
+        $bytes = is_resource($row['content']) ? stream_get_contents($row['content']) : (string) $row['content'];
+        return ['mime' => $row['mime_type'], 'bytes' => $bytes];
     }
 
     private function decode(array $row): array

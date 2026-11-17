@@ -2,7 +2,7 @@
 <article class="post-card">
     <a class="post-media" href="<?= e(url('activity', ['id' => $post['id']])) ?>" tabindex="-1" aria-hidden="true">
         <?php if ($post['photo']): ?>
-            <img src="<?= e(upload_url($post['photo'])) ?>" alt="" loading="lazy">
+            <img src="<?= e(photo_url($post['photo'])) ?>" alt="" loading="lazy">
         <?php else: ?>
             <?= Html::route($post['route_points'], 'Route of ' . $post['trail_name']) ?>
         <?php endif; ?>

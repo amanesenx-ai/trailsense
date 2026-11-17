@@ -6,7 +6,7 @@
 <h1><?= e($p['trail_name']) ?></h1>
 <p class="muted"><?= e($p['region']) ?> · <?= Html::difficulty($p['difficulty']) ?></p>
 <?php if ($p['photo']): ?>
-    <figure class="photo"><img src="<?= e(upload_url($p['photo'])) ?>" alt="<?= e($p['photo_alt'] ?: 'Photo from the hike on ' . $p['trail_name']) ?>"></figure>
+    <figure class="photo"><img src="<?= e(photo_url($p['photo'])) ?>" alt="<?= e($p['photo_alt'] ?: 'Photo from the hike on ' . $p['trail_name']) ?>"></figure>
 <?php endif; ?>
 <div class="card share-route">
     <?= Html::route($p['route_points'], 'Route of ' . $p['trail_name'], 'route route-large') ?>

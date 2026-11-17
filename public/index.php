@@ -10,7 +10,9 @@ use TrailSense\Core\View;
 session_set_cookie_params([
     'httponly' => true,
     'samesite' => 'Lax',
-    'secure' => (($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off'),
+    // behind a hosting proxy (Render) HTTPS is reported in X-Forwarded-Proto
+    'secure' => (($_SERVER['HTTPS'] ?? '') !== '' && $_SERVER['HTTPS'] !== 'off')
+        || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https',
 ]);
 session_name('trailsense');
 session_start();

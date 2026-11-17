@@ -20,17 +20,50 @@ function config(?string $key = null): mixed
     static $config = null;
     if ($config === null) {
         $file = TS_ROOT . '/config/config.php';
-        if (!is_file($file)) {
+        if (is_file($file)) {
+            $config = require $file;
+        } elseif (getenv('DATABASE_URL')) {
+            $config = config_from_env();          // cloud hosting: secrets come from environment variables
+        } else {
             http_response_code(500);
-            exit('Missing config/config.php — copy config/config.example.php.');
+            exit('Missing config: copy config/config.example.php to config/config.php or set DATABASE_URL.');
         }
-        $config = require $file;
         // Test runs point the app at the test database (never the real one).
         if (getenv('TS_ENV') === 'test' && !empty($config['db_test'])) {
             $config['db'] = $config['db_test'];
         }
     }
     return $key === null ? $config : ($config[$key] ?? null);
+}
+
+/**
+ * Build config from environment variables (ADR-009). DATABASE_URL format:
+ * postgresql://user:password@host[:port]/dbname?sslmode=require
+ */
+function config_from_env(): array
+{
+    $url = parse_url((string) getenv('DATABASE_URL'));
+    parse_str($url['query'] ?? '', $query);
+    $dsn = sprintf(
+        'pgsql:host=%s;port=%d;dbname=%s;sslmode=%s',
+        $url['host'] ?? 'localhost',
+        $url['port'] ?? 5432,
+        ltrim($url['path'] ?? '', '/'),
+        $query['sslmode'] ?? 'require'
+    );
+    return [
+        'db' => [
+            'dsn' => $dsn,
+            'user' => rawurldecode($url['user'] ?? ''),
+            'password' => rawurldecode($url['pass'] ?? ''),
+            'schema' => 'public',
+        ],
+        'db_test' => null,
+        'base_url' => getenv('BASE_URL') ?: '/',
+        'weather_provider' => getenv('WEATHER_PROVIDER') ?: 'open-meteo',
+        'debug' => getenv('APP_DEBUG') === '1',
+        'timezone' => 'Europe/Lisbon',
+    ];
 }
 
 /** Escape any value for HTML output (NFR3). */
@@ -53,9 +86,10 @@ function asset(string $path): string
     return rtrim((string) config('base_url'), '/') . '/assets/' . $path . '?v=' . $v;
 }
 
-function upload_url(string $fileName): string
+/** Photos are stored in the database (ADR-009) and served by the `photo` route. */
+function photo_url(string $fileName): string
 {
-    return rtrim((string) config('base_url'), '/') . '/uploads/' . rawurlencode($fileName);
+    return url('photo', ['f' => $fileName]);
 }
 
 date_default_timezone_set((string) (config('timezone') ?? 'Europe/Lisbon'));

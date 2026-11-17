@@ -123,6 +123,8 @@ CREATE INDEX idx_activity_created ON activity (created_at DESC);
 CREATE TABLE activity_photo (
     id          SERIAL PRIMARY KEY,
     activity_id INTEGER      NOT NULL REFERENCES activity(id) ON DELETE CASCADE,
-    file_name   VARCHAR(80)  NOT NULL UNIQUE,
+    file_name   VARCHAR(80)  NOT NULL UNIQUE,                -- random public name, never the user's
+    mime_type   VARCHAR(20)  NOT NULL CHECK (mime_type IN ('image/jpeg', 'image/png', 'image/webp')),
+    content     BYTEA        NOT NULL CHECK (octet_length(content) <= 3145728),   -- stored in DB (ADR-009)
     alt_text    VARCHAR(150) NOT NULL DEFAULT ''
 );
