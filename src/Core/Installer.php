@@ -14,9 +14,12 @@ use PDO;
  */
 final class Installer
 {
+    /** Release 1 wrote an ISO date here; it is ignored (never read as a version). */
+    public const LEGACY_MARKER = TS_ROOT . '/var/installed';
+
     public static function markerFile(): string
     {
-        return TS_ROOT . '/var/installed';
+        return TS_ROOT . '/var/schema-version';
     }
 
     /** @return array<int,string> version => file, sorted */
@@ -42,21 +45,27 @@ final class Installer
     public static function ensureInstalled(PDO $pdo): string
     {
         $latest = self::latestVersion();
-        if (is_file(self::markerFile()) && (int) trim((string) file_get_contents(self::markerFile())) >= $latest) {
-            return 'up-to-date';
+        $marker = is_file(self::markerFile()) ? trim((string) file_get_contents(self::markerFile())) : '';
+        if (ctype_digit($marker) && (int) $marker >= $latest) {
+            return 'up-to-date';                                  // fast path: no database query
         }
 
         $result = 'up-to-date';
-        $hasTables = (bool) $pdo->query("SELECT to_regclass('app_user') IS NOT NULL")->fetchColumn();
-        if (!$hasTables) {
-            $pdo->exec((string) file_get_contents(TS_ROOT . '/database/schema.sql'));
-            $pdo->exec((string) file_get_contents(TS_ROOT . '/database/seed.sql'));
-            $result = 'installed';
-        } else {
-            $applied = self::migrate($pdo);
-            if ($applied !== []) {
-                $result = 'migrated:' . implode(',', $applied);
+        $pdo->query('SELECT pg_advisory_lock(7342101)');      // one installer at a time (concurrent first requests)
+        try {
+            $hasTables = (bool) $pdo->query("SELECT to_regclass('app_user') IS NOT NULL")->fetchColumn();
+            if (!$hasTables) {
+                $pdo->exec((string) file_get_contents(TS_ROOT . '/database/schema.sql'));
+                $pdo->exec((string) file_get_contents(TS_ROOT . '/database/seed.sql'));
+                $result = 'installed';
+            } else {
+                $applied = self::migrate($pdo);
+                if ($applied !== []) {
+                    $result = 'migrated:' . implode(',', $applied);
+                }
             }
+        } finally {
+            $pdo->query('SELECT pg_advisory_unlock(7342101)');
         }
 
         @mkdir(dirname(self::markerFile()), 0775, true);

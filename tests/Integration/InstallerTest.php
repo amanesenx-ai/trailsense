@@ -28,6 +28,9 @@ return [
         $pdo->exec((string) file_get_contents(__DIR__ . '/../fixtures/release1-schema.sql'));
         $pdo->exec((string) file_get_contents(__DIR__ . '/../fixtures/release1-seed.sql'));
         $pdo->exec("INSERT INTO hike_plan (user_id, trail_id, planned_date, start_time, duration_min) VALUES (1, 6, CURRENT_DATE + 3, '10:00', 90)");
+        // release 1 left its own marker file (an ISO date, not a version): it must not block the upgrade
+        @mkdir(dirname(Installer::LEGACY_MARKER), 0775, true);
+        file_put_contents(Installer::LEGACY_MARKER, "2026-11-17T23:05:54+00:00\n");
         @unlink(Installer::markerFile());
         assertSame('migrated:2', Installer::ensureInstalled($pdo));
         assertSame(11, (int) $pdo->query('SELECT COUNT(*) FROM trail')->fetchColumn());
