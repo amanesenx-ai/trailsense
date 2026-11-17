@@ -55,7 +55,8 @@ function config_from_env(): array
         'db' => [
             'dsn' => $dsn,
             'user' => rawurldecode($url['user'] ?? ''),
-            'password' => rawurldecode($url['pass'] ?? ''),
+            // DB_PASSWORD (if set) wins, so the password can live in its own variable
+            'password' => getenv('DB_PASSWORD') !== false ? (string) getenv('DB_PASSWORD') : rawurldecode($url['pass'] ?? ''),
             'schema' => 'public',
         ],
         'db_test' => null,

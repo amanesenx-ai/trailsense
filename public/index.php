@@ -25,6 +25,7 @@ $routes = require __DIR__ . '/../src/routes.php';
 $name = is_string($_GET['r'] ?? null) ? $_GET['r'] : 'home';
 
 try {
+    \TrailSense\Core\Installer::ensureInstalled(\TrailSense\Core\Database::connection());   // first run only
     if (!isset($routes[$name])) {
         throw HttpException::notFound();
     }
