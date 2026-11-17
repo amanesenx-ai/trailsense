@@ -1,0 +1,32 @@
+# Runs the whole test suite (unit, integration on PostgreSQL, HTTP flows, API) on every push and pull request.
+name: tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: trailsense_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_pgsql, gd, curl, mbstring, fileinfo
+      - name: Test configuration (no secrets: throwaway CI database)
+        run: |
+          cat > config/config.php <<'PHP'
+          <?php
+          $db = ['dsn' => 'pgsql:host=127.0.0.1;port=5432;dbname=trailsense_test', 'user' => 'postgres', 'password' => 'postgres', 'schema' => 'public'];
+          return ['db' => $db, 'db_test' => $db, 'base_url' => '/', 'weather_provider' => 'demo', 'debug' => true, 'timezone' => 'Europe/Lisbon'];
+          PHP
+      - name: Lint
+        run: find src public bin tests -name '*.php' -print0 | xargs -0 -n1 php -l > /dev/null
+      - name: Tests
+        run: php tests/run.php

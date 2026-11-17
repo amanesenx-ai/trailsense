@@ -1,0 +1,50 @@
+[
+ {
+  "text": "Precipitação por vezes forte.",
+  "awarenessTypeName": "Precipitação",
+  "idAreaAviso": "PTO",
+  "startTime": "2026-11-19T06:00:00",
+  "awarenessLevelID": "yellow",
+  "endTime": "2026-11-19T15:00:00"
+ },
+ {
+  "text": "Rajadas até 90 km/h.",
+  "awarenessTypeName": "Vento",
+  "idAreaAviso": "PTO",
+  "startTime": "2026-11-19T12:00:00",
+  "awarenessLevelID": "orange",
+  "endTime": "2026-11-19T23:59:00"
+ },
+ {
+  "text": "Ondas de noroeste com 5 metros.",
+  "awarenessTypeName": "Agitação Marítima",
+  "idAreaAviso": "PTO",
+  "startTime": "2026-11-19T00:00:00",
+  "awarenessLevelID": "yellow",
+  "endTime": "2026-11-19T23:59:00"
+ },
+ {
+  "text": "",
+  "awarenessTypeName": "Nevoeiro",
+  "idAreaAviso": "PTO",
+  "startTime": "2026-11-19T00:00:00",
+  "awarenessLevelID": "green",
+  "endTime": "2026-11-19T23:59:00"
+ },
+ {
+  "text": "Neve acima de 1000 m.",
+  "awarenessTypeName": "Neve",
+  "idAreaAviso": "BRG",
+  "startTime": "2026-11-19T06:00:00",
+  "awarenessLevelID": "red",
+  "endTime": "2026-11-19T20:00:00"
+ },
+ {
+  "text": "",
+  "awarenessTypeName": "Trovoada",
+  "idAreaAviso": "PTO",
+  "startTime": "2026-11-20T09:00:00",
+  "awarenessLevelID": "yellow",
+  "endTime": "2026-11-20T18:00:00"
+ }
+]

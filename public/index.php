@@ -7,6 +7,22 @@ require __DIR__ . '/../src/bootstrap.php';
 use TrailSense\Core\HttpException;
 use TrailSense\Core\View;
 
+// Public JSON API (F12): /api/v1/... — handled before any session or HTML.
+$apiPath = \TrailSense\Api\Router::pathFrom(
+    (string) ($_SERVER['REQUEST_URI'] ?? '/'),
+    (string) config('base_url'),
+    (($_GET['r'] ?? '') === 'api') ? (string) ($_GET['path'] ?? '/') : null
+);
+if ($apiPath !== null) {
+    try {
+        \TrailSense\Core\Installer::ensureInstalled(\TrailSense\Core\Database::connection());
+    } catch (Throwable $e) {
+        error_log('[TrailSense] install: ' . $e);
+    }
+    \TrailSense\Api\Router::handle($apiPath, (string) ($_SERVER['REQUEST_METHOD'] ?? 'GET'));
+    return;
+}
+
 session_set_cookie_params([
     'httponly' => true,
     'samesite' => 'Lax',

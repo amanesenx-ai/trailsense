@@ -5,7 +5,8 @@ use TrailSense\Core\Html;
 $isOrg = ($user['role'] ?? '') === 'organizer';
 $nav = $user ? [
     'trails' => ['Trails', url('trails'), 'search'],
-    'plans'  => [$isOrg ? 'Groups' : 'Plans', url('plans'), $isOrg ? 'group' : 'flag'],
+    'plans'  => [$isOrg ? 'My hikes' : 'Plans', url('plans'), 'flag'],
+    'groups' => ['Groups', url('groups'), 'group'],
     'feed'   => ['Feed', url('feed'), 'feed'],
 ] : [];
 $icons = [
@@ -22,6 +23,10 @@ $icons = [
     <meta name="theme-color" content="#123326">
     <title><?= e($title) ?> · TrailSense</title>
     <link rel="stylesheet" href="<?= e(asset('app.css')) ?>">
+    <?php if (!empty($withMap)): ?>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+    <?php endif; ?>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 20 9 7l4 7 3-4 6 10z' fill='%23f4c430'/></svg>">
 </head>
 <body class="<?= $user ? 'signed-in' : 'signed-out' ?>">

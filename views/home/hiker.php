@@ -22,6 +22,13 @@
 </section>
 <?php endif; ?>
 
+<?php if ($groupHikes): ?>
+<section aria-labelledby="gh-h">
+    <div class="section-head"><h2 id="gh-h" class="section-title">Group hikes you can join</h2><a href="<?= e(url('groups')) ?>">See all</a></div>
+    <div class="grid-2"><?php foreach ($groupHikes as $h): ?><?= View::partial('partials/group-card', ['h' => $h]) ?><?php endforeach; ?></div>
+</section>
+<?php endif; ?>
+
 <section aria-labelledby="feed-h">
     <div class="section-head"><h2 id="feed-h" class="section-title">Latest from the community</h2><a href="<?= e(url('feed')) ?>">See all</a></div>
     <ul class="mini-feed">

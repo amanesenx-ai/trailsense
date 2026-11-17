@@ -1,15 +1,21 @@
 # DATA_MODEL.md — data tables
 
-Authoritative SQL: `database/schema.sql`. Diagram: `er-diagram.svg`. 10 tables, PostgreSQL 16.
+Authoritative SQL: `database/schema.sql` (+ `database/migrations/`). Diagram: `er-diagram.svg`. 16 tables, PostgreSQL 16/17.
 
 | Table | Primary key | Foreign keys (on delete) | Main constraints | Why it exists |
 |---|---|---|---|---|
 | app_user | id | — | email UNIQUE; role ∈ {hiker, organizer} | F8 sign-in and roles |
-| trail | id | — | distance > 0; difficulty ∈ {easy, moderate, hard}; lat/lon ranges; (name, region) UNIQUE | F1 curated trails |
+| trail_photo | id | trail_id → trail (CASCADE) | (trail_id, position) UNIQUE; URLs only from upload.wikimedia.org | F1.3 licensed photos with author/licence |
+| hike_participant | (plan_id, user_id) | plan_id → hike_plan (CASCADE); user_id → app_user (CASCADE) | composite PK = one join per user | F9.2 **many-to-many** users × group hikes |
+| trail_report | id | trail_id → trail (CASCADE); user_id → app_user (CASCADE) | condition ∈ {good, muddy, obstacle, overgrown, closed} | F10 community reports |
+| activity_like | (activity_id, user_id) | → activity, → app_user (CASCADE) | composite PK = one like per user | F6.2 likes (many-to-many) |
+| activity_comment | id | → activity, → app_user (CASCADE) | body 1–500 chars | F6.2 comments |
+| schema_migration | version | — | — | ADR-014 applied migrations |
+| trail | id | — | distance > 0; difficulty ∈ {easy, moderate, hard}; lat/lon ranges; (name, region) UNIQUE; osm_relation_id UNIQUE; ipma_area 3 letters | F1 real OSM trails (ADR-011) |
 | hike_plan | id | user_id → app_user (CASCADE); trail_id → trail (RESTRICT) | duration 30–720 | F2 plans |
 | group_plan | plan_id | plan_id → hike_plan (CASCADE) | size 2–40; meeting point ≥ 3 chars | F9; **one-to-zero-or-one** (ADR-008) |
-| risk_rule | code | — | metric, comparator, level from fixed lists | F4 rules as data (ADR-003) |
-| weather_snapshot | id | plan_id → hike_plan (CASCADE) | if available, all four values NOT NULL | F3 forecast used (ADR-005) |
+| risk_rule | code | — | metric, comparator, level from fixed lists; `required` (advisory rules) | F4 rules as data (ADR-003, ADR-012) |
+| weather_snapshot | id | plan_id → hike_plan (CASCADE) | if available, all four values NOT NULL; warning_level 0–3, fire_risk 1–5 | F3/F4.2 forecast + IPMA values used (ADR-005) |
 | risk_assessment | id | plan_id → hike_plan (CASCADE); snapshot_id → weather_snapshot UNIQUE (CASCADE) | level ∈ {ok, caution, warning} | F4 one evaluation |
 | assessment_result | (assessment_id, rule_code) | assessment_id → risk_assessment (CASCADE); rule_code → risk_rule (RESTRICT, ON UPDATE CASCADE) | `evaluated OR NOT triggered` | F4/F5 **many-to-many association class** with attributes |
 | activity | id | user_id → app_user (CASCADE); trail_id → trail (RESTRICT); plan_id → hike_plan (**SET NULL**) | distance 0–200; duration 10–1440 | F6/F7 published hikes |
@@ -31,3 +37,9 @@ Authoritative SQL: `database/schema.sql`. Diagram: `er-diagram.svg`. 10 tables, 
 - No derived values stored except the forecast snapshot, which is stored on purpose (the forecast changes; we must explain past advice).
 - Route points are JSONB (a single, always-read-together value, not queried by point) — ADR-006.
 - Time values are DATE/TIME/TIMESTAMPTZ, never text.
+
+## Trail data pipeline (ADR-011)
+`database/source/routes.json` (OSM geometry, encoded and decoded once) + `database/source/photos.json` (Wikimedia selection)
+→ `bin/gen-trail-data.py` → `database/seed.sql` (fresh installs) and `database/migrations/002_release2.sql` (upgrade).
+Geometry: OpenStreetMap API `relation/{id}/full`, ways joined (ordered or nearest-endpoint), Douglas–Peucker 5 m.
+Elevation gain: 100 samples from the Open-Meteo Elevation API. Duration: Naismith (4 km/h + 10 min per 100 m up).

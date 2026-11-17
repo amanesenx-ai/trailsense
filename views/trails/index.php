@@ -4,7 +4,7 @@
     <input type="hidden" name="r" value="trails">
     <div class="field-grow">
         <label for="q">Name or region</label>
-        <input id="q" name="q" type="search" placeholder="e.g. Valongo" value="<?= e($f['q']) ?>">
+        <input id="q" name="q" type="search" placeholder="e.g. Gerês or PR2" value="<?= e($f['q']) ?>">
     </div>
     <div>
         <label for="difficulty">Difficulty</label>
@@ -37,11 +37,15 @@
     <ul class="trail-list">
         <?php foreach ($trails as $t): ?>
             <li><a class="trail-card" href="<?= e(url('trail', ['id' => $t['id']])) ?>">
-                <?= Html::route($t['route_points'], 'Route of ' . $t['name'], 'route route-thumb') ?>
+                <?php if (!empty($t['thumb_url'])): ?>
+                    <img class="trail-photo" src="<?= e($t['thumb_url']) ?>" alt="<?= e($t['thumb_alt']) ?>" loading="lazy">
+                <?php else: ?>
+                    <?= Html::route($t['route_points'], 'Route of ' . $t['name'], 'route route-thumb') ?>
+                <?php endif; ?>
                 <div>
-                    <p class="title"><?= e($t['name']) ?></p>
+                    <p class="title"><?= e($t['name']) ?><?php if ($t['ref'] !== ''): ?> <span class="ref small"><?= e($t['ref']) ?></span><?php endif; ?></p>
                     <p class="muted"><?= e($t['region']) ?></p>
-                    <p class="stats"><span><?= e(Html::km($t['distance_km'])) ?></span><span><?= e(Html::duration((int) $t['est_duration_min'])) ?></span><span>↑ <?= e($t['elevation_gain_m']) ?> m</span></p>
+                    <p class="stats"><span><?= e(Html::km($t['distance_km'])) ?></span><span><?= e(Html::duration((int) $t['est_duration_min'])) ?></span><span>↑ <?= e($t['elevation_gain_m']) ?> m</span><span><?= Html::isTrue($t['is_loop']) ? 'Loop' : 'One way' ?></span></p>
                     <?= Html::difficulty($t['difficulty']) ?>
                 </div>
             </a></li>

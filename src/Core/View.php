@@ -12,6 +12,7 @@ final class View
         $content = self::partial($template, $data);
         $title = $data['title'] ?? 'TrailSense';
         $active = $data['active'] ?? '';
+        $withMap = !empty($data['withMap']);
         $flash = Flash::take();
         $user = Auth::user();
         require TS_ROOT . '/views/layout.php';

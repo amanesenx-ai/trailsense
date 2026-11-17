@@ -6,9 +6,11 @@ namespace TrailSense\Core;
 use PDO;
 
 /**
- * First-run installation (ADR-009): creates the tables and demo data ONLY when the database is empty.
- * Never drops or changes existing data. Used by bin/db-init.php and, once, by public/index.php
- * on hosts where we cannot run a command (alwaysdata). A marker file avoids checking on every request.
+ * Installs and upgrades the database (ADR-009, ADR-014).
+ * - Empty database: runs database/schema.sql + database/seed.sql (already at the latest version).
+ * - Existing database: applies database/migrations/NNN_*.sql that are not yet recorded in schema_migration,
+ *   each one in its own transaction. Never drops existing data.
+ * A marker file holding the latest version avoids any check on normal requests.
  */
 final class Installer
 {
@@ -17,19 +19,78 @@ final class Installer
         return TS_ROOT . '/var/installed';
     }
 
-    /** @return bool true if tables were created now */
-    public static function ensureInstalled(PDO $pdo): bool
+    /** @return array<int,string> version => file, sorted */
+    public static function migrations(): array
     {
-        if (is_file(self::markerFile())) {
-            return false;
+        $out = [];
+        foreach (glob(TS_ROOT . '/database/migrations/*.sql') ?: [] as $file) {
+            if (preg_match('/^(\d{3})_/', basename($file), $m)) {
+                $out[(int) $m[1]] = $file;
+            }
         }
-        $exists = (bool) $pdo->query("SELECT to_regclass('app_user') IS NOT NULL")->fetchColumn();
-        if (!$exists) {
+        ksort($out);
+        return $out;
+    }
+
+    public static function latestVersion(): int
+    {
+        $versions = array_keys(self::migrations());
+        return $versions === [] ? 1 : max(1, max($versions));
+    }
+
+    /** @return string what happened: 'installed', 'migrated:N,M', or 'up-to-date' */
+    public static function ensureInstalled(PDO $pdo): string
+    {
+        $latest = self::latestVersion();
+        if (is_file(self::markerFile()) && (int) trim((string) file_get_contents(self::markerFile())) >= $latest) {
+            return 'up-to-date';
+        }
+
+        $result = 'up-to-date';
+        $hasTables = (bool) $pdo->query("SELECT to_regclass('app_user') IS NOT NULL")->fetchColumn();
+        if (!$hasTables) {
             $pdo->exec((string) file_get_contents(TS_ROOT . '/database/schema.sql'));
             $pdo->exec((string) file_get_contents(TS_ROOT . '/database/seed.sql'));
+            $result = 'installed';
+        } else {
+            $applied = self::migrate($pdo);
+            if ($applied !== []) {
+                $result = 'migrated:' . implode(',', $applied);
+            }
         }
+
         @mkdir(dirname(self::markerFile()), 0775, true);
-        @file_put_contents(self::markerFile(), date('c') . "\n");
-        return !$exists;
+        @file_put_contents(self::markerFile(), $latest . "\n");
+        return $result;
+    }
+
+    /** @return list<int> versions applied now */
+    public static function migrate(PDO $pdo): array
+    {
+        $hadTable = (bool) $pdo->query("SELECT to_regclass('schema_migration') IS NOT NULL")->fetchColumn();
+        if (!$hadTable) {
+            // database created by release 1 (before migrations existed) = version 1
+            $pdo->exec('CREATE TABLE schema_migration (version INTEGER PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())');
+            $pdo->exec('INSERT INTO schema_migration (version) VALUES (1)');
+        }
+        $done = array_map('intval', $pdo->query('SELECT version FROM schema_migration')->fetchAll(PDO::FETCH_COLUMN));
+
+        $applied = [];
+        foreach (self::migrations() as $version => $file) {
+            if (in_array($version, $done, true)) {
+                continue;
+            }
+            $pdo->beginTransaction();
+            try {
+                $pdo->exec((string) file_get_contents($file));
+                $pdo->prepare('INSERT INTO schema_migration (version) VALUES (?)')->execute([$version]);
+                $pdo->commit();
+                $applied[] = $version;
+            } catch (\Throwable $e) {
+                $pdo->rollBack();
+                throw new \RuntimeException("Migration $version failed: " . $e->getMessage(), 0, $e);
+            }
+        }
+        return $applied;
     }
 }

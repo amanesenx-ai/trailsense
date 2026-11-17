@@ -14,6 +14,8 @@ use TrailSense\Core\View;
 use TrailSense\Domain\Briefing;
 use TrailSense\Domain\PlanValidator;
 use TrailSense\Repositories\AssessmentRepository;
+use TrailSense\Repositories\ParticipantRepository;
+use TrailSense\Repositories\TrailReportRepository;
 use TrailSense\Repositories\PlanRepository;
 use TrailSense\Repositories\RuleRepository;
 use TrailSense\Repositories\TrailRepository;
@@ -38,9 +40,10 @@ final class PlanController
     {
         $user = Auth::requireLogin();
         View::render('plans/index', [
-            'title' => $user['role'] === 'organizer' ? 'Group hikes' : 'My plans',
+            'title' => $user['role'] === 'organizer' ? 'My group hikes' : 'My plans',
             'active' => 'plans',
             'plans' => $this->plans->forUser($user['id']),
+            'joined' => (new ParticipantRepository(Database::connection()))->joinedBy($user['id']),
         ]);
     }
 
@@ -90,7 +93,9 @@ final class PlanController
 
     public function show(): void
     {
-        $plan = $this->ownedPlan();
+        $plan = $this->visiblePlan();
+        $user = Auth::user();
+        $isOwner = (int) $plan['user_id'] === $user['id'];
         $assessment = $this->assessments->latestForPlan((int) $plan['id']);
         if ($assessment === null) {
             $this->service()->assess($plan);
@@ -103,13 +108,19 @@ final class PlanController
             $group = ['group_size' => $plan['group_size'], 'meeting_point' => $plan['meeting_point'], 'meeting_time' => $plan['meeting_time']];
             $briefing = Briefing::build($plan, $group, $vm['factors'], $vm['complete'], $vm['latest_start']);
         }
+        $participants = new ParticipantRepository(Database::connection());
         View::render('plans/show', [
             'title' => $plan['trail_name'],
-            'active' => 'plans',
+            'active' => $isOwner ? 'plans' : 'groups',
             'plan' => $plan,
             'vm' => $vm,
             'briefing' => $briefing,
             'isPast' => $plan['planned_date'] < date('Y-m-d'),
+            'isOwner' => $isOwner,
+            'participants' => $isOwner && $plan['group_size'] !== null ? $participants->participants((int) $plan['id']) : [],
+            'isParticipant' => !$isOwner && $participants->isParticipant((int) $plan['id'], $user['id']),
+            'report' => (new TrailReportRepository(Database::connection()))->latestWithin((int) $plan['trail_id']),
+            'withMap' => true,
         ]);
     }
 
@@ -134,7 +145,26 @@ final class PlanController
         View::redirect('plans');
     }
 
-    /** Loads a plan and checks ownership (plans are private). */
+    /**
+     * Owner, or participant of a group hike, or anyone for an upcoming group hike (read-only, AC9.6).
+     * Personal plans stay private to their owner (AC9.7).
+     */
+    private function visiblePlan(): array
+    {
+        $user = Auth::requireLogin();
+        $plan = ($id = Request::id()) ? $this->plans->find($id) : null;
+        if ($plan === null) {
+            throw HttpException::notFound();
+        }
+        $isOwner = (int) $plan['user_id'] === $user['id'];
+        $isGroup = $plan['group_size'] !== null;
+        if (!$isOwner && !$isGroup) {
+            throw HttpException::forbidden();
+        }
+        return $plan;
+    }
+
+    /** Loads a plan and checks ownership (writes). */
     private function ownedPlan(): array
     {
         $user = Auth::requireLogin();
@@ -151,7 +181,6 @@ final class PlanController
 
     private function service(): AssessmentService
     {
-        $db = Database::connection();
-        return new AssessmentService(AssessmentService::providerFromConfig(), new RuleRepository($db), $this->assessments);
+        return AssessmentService::forApp(Database::connection());
     }
 }

@@ -22,9 +22,10 @@ get **weather warnings explained by explicit rules with a concrete precaution**,
 | K1 | Planning-completeness indicator (A1 organizational KPI made measurable) | Organizer |
 
 ## 3. Out of scope (do not build)
-Automatic GPS tracking (hikes are entered manually), follow/like/comment, profiles and statistics pages,
-notifications, challenges and achievements, password reset by e-mail, interactive tile maps, trail CRUD by users
-(trails are curated seed data), native mobile app, multiple languages.
+Automatic GPS tracking (hikes are entered manually), following users, notifications, challenges and achievements,
+password reset by e-mail, trail CRUD by users (trails are curated data), native mobile app, multiple languages,
+write access through the public API.
+(Release 2 moved these into scope: likes and comments, profiles and statistics, interactive map — see §8.)
 
 ## 4. Entities (see database/schema.sql — the schema is authoritative)
 - **app_user** — a person with one role: `hiker` or `organizer`.
@@ -126,3 +127,55 @@ notifications, challenges and achievements, password reset by e-mail, interactiv
 | COLD_C | cold | min temperature ≤ 3 °C | CAUTION | Wear layers, a hat and gloves; check for ice on shaded paths. |
 | DAY_C | daylight | minutes between planned end and sunset < 60 | CAUTION | Bring a head torch and keep a steady pace. |
 | DAY_W | daylight | minutes between planned end and sunset < 30 | WARNING | Start by HH:MM or choose a shorter trail. |
+
+## 8. Release 2 — improvements on the Assignment 1 proposals (owner request, 2026-11-17)
+Owner feedback on release 1: the map link only showed the start point; trails need real pictures; plans were invisible
+to others; only one weather source; the app felt basic. Each item below comes from the A1 deck (problem, opportunity,
+journeys or Priority 1 list).
+
+### F1.2 Real trail map (A1: "Plan with map", "Share route")
+*As a hiker, I want to see the real route on a map with its start and end.*
+- AC1.6 The trail page shows an interactive OpenStreetMap map (zoom, pan) with the real route line from OpenStreetMap data,
+  a **start** marker and an **end** marker (loop trails: one combined start/finish marker), each with a text label.
+- AC1.7 Buttons: "Directions to the start" (OSM routing to the start point) and "View on OpenStreetMap" (the route itself).
+- AC1.8 Without JavaScript or if map tiles fail, the SVG route drawing is shown instead (progressive enhancement).
+- AC1.9 Map data attribution "© OpenStreetMap contributors" is always visible.
+
+### F1.3 Trail photos (A1 used Wikipedia photos)
+- AC1.10 Each trail shows real photos with author, licence and a link to the source (Wikimedia Commons); trail cards use the first photo.
+- AC1.11 A photo that fails to load falls back to the route drawing; every photo has alt text.
+
+### F4.2 Official warnings and fire risk — second external API (IPMA)
+*As a hiker, I want official warnings and the rural fire risk included in the check.*
+- AC4.7 For the trail's district, active IPMA warnings (yellow/orange/red) that overlap the hike window are evaluated by rules
+  (yellow → CAUTION, orange/red → WARNING) and listed with their type (rain, wind, thunderstorm, heat, coastal swell for coastal trails…).
+- AC4.8 The IPMA rural fire risk (1 Reduced … 5 Maximum) of the nearest municipality is evaluated (≥ 3 Elevated → CAUTION, ≥ 4 → WARNING).
+- AC4.9 IPMA publishes warnings ~3 days and fire risk 2 days ahead; outside that window these rules show "not published yet"
+  and are **advisory**: they do not make the assessment incomplete (`risk_rule.required = false`).
+- AC4.10 IPMA failure never breaks the page; the rest of the check still works.
+
+### F9.2 Group hikes open to hikers (A1 Bruno's journey "brief participants")
+*As a hiker, I want to find and join a club group hike; as an organizer, I want to know who is coming.*
+- AC9.4 Upcoming group hikes are listed for every signed-in user (date, trail, organizer, places left).
+- AC9.5 A hiker can join while places are left (group_size) and leave before the date; joining twice is impossible.
+- AC9.6 Participants see the plan page read-only (assessment + briefing); the organizer sees the participant list.
+- AC9.7 Personal (non-group) plans stay private to their owner.
+
+### F10 Community trail reports (A1 opportunity: "community trail reports")
+- AC10.1 On a trail page any user can report the current condition (good, muddy, obstacle, overgrown, closed) with an optional note.
+- AC10.2 The 5 most recent reports are shown; reports older than 30 days are marked as old.
+- AC10.3 A plan's assessment shows the latest report of the last 14 days for that trail; a "closed" report adds a WARNING (rule TRAIL_CL).
+
+### F6.2 Likes and comments (A1 Priority 1)
+- AC6.4 A user can like/unlike a post once; the count is shown. Comments: 1–500 chars, newest last, author can delete own comment.
+
+### F11 Profile and statistics (A1 Priority 1)
+- AC11.1 Each user has a profile page: role, number of hikes, total km, total elevation gain, total time, hikes per month (last 6 months), published hikes.
+- AC11.2 Authors in the feed link to their profile. E-mail addresses are never shown on profiles.
+
+### F12 Public REST API (Assignment 2 §3: "reachable by other applications")
+- AC12.1 Read-only JSON API under `/api/v1`: `GET /trails` (filters q, difficulty, max_km), `GET /trails/{id}`,
+  `GET /trails/{id}/conditions?date=YYYY-MM-DD&start=HH:MM&duration=MIN` (forecast + IPMA + daylight + rule results, nothing stored),
+  `GET /group-hikes`, `GET /feed`.
+- AC12.2 JSON with correct status codes (200, 400 with an error message, 404); CORS enabled; no personal data (no e-mails).
+- AC12.3 Documented in docs/API.md and docs/openapi.yaml; covered by HTTP tests.

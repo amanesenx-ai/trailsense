@@ -6,7 +6,8 @@ namespace TrailSense\Core;
 /** Small presentation helpers used by views. Every value is escaped here. */
 final class Html
 {
-    public const LEVEL_TEXT = ['ok' => 'OK', 'caution' => 'Caution', 'warning' => 'Warning', 'unknown' => 'Not checked'];
+    public const LEVEL_TEXT = ['ok' => 'OK', 'caution' => 'Caution', 'warning' => 'Warning', 'unknown' => 'Not checked',
+        'pending' => 'Not yet published'];
 
     /** Level badge: always text + colour, never colour alone (NFR2). */
     public static function badge(?string $level, bool $incomplete = false): string
@@ -93,6 +94,33 @@ final class Html
             . '<circle class="route-end" cx="' . $ex . '" cy="' . $ey . '" r="5"/>'
             . '<circle class="route-start" cx="' . $sx . '" cy="' . $sy . '" r="6"/>'
             . '</svg>';
+    }
+
+    /**
+     * Interactive map (F1.2, ADR-010): Leaflet enhances this element; the SVG drawing inside is the
+     * no-JS / no-tiles fallback (AC1.8).
+     */
+    public static function map(array $points, bool $isLoop, string $name, string $class = 'map'): string
+    {
+        if (count($points) < 2) {
+            return '';
+        }
+        $data = json_encode(['route' => $points, 'loop' => $isLoop, 'name' => $name], JSON_UNESCAPED_UNICODE);
+        return '<div class="' . e($class) . '" data-map="' . e((string) $data) . '" role="region" aria-label="Map of ' . e($name) . '">'
+            . self::route($points, 'Route drawing of ' . $name, 'route route-large')
+            . '</div>';
+    }
+
+    public static function isTrue(mixed $v): bool
+    {
+        return $v === true || $v === 't' || $v === 1 || $v === '1';
+    }
+
+    /** OSM directions to the start point (the user's own position is chosen on OSM). */
+    public static function directionsUrl(array $point): string
+    {
+        return 'https://www.openstreetmap.org/directions?route=%3B' . rawurlencode($point[0] . ',' . $point[1])
+            . '#map=15/' . $point[0] . '/' . $point[1];
     }
 
     public static function initial(string $name): string

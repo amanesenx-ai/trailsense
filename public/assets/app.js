@@ -28,6 +28,42 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // F1.2 interactive map (Leaflet + OSM). Without Leaflet the SVG fallback inside stays visible (AC1.8).
+    document.querySelectorAll('[data-map]').forEach((box) => {
+        if (!window.L) return;
+        let data;
+        try { data = JSON.parse(box.dataset.map); } catch (e) { return; }
+        const fallback = box.innerHTML;
+        box.innerHTML = '';
+        box.classList.add('map-live');
+        const map = L.map(box, { scrollWheelZoom: false, tap: true });
+        const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        }).addTo(map);
+        let tileErrors = 0;
+        tiles.on('tileerror', () => {           // tiles blocked/offline → show the drawing again
+            if (++tileErrors === 4) { map.remove(); box.classList.remove('map-live'); box.innerHTML = fallback; }
+        });
+        const route = data.route;
+        L.polyline(route, { color: '#0b2219', weight: 8, opacity: 0.45 }).addTo(map);
+        const line = L.polyline(route, { color: '#ff6a00', weight: 4.5 }).addTo(map);
+        const start = route[0], end = route[route.length - 1];
+        const pin = (cls, label) => L.divIcon({ className: 'pin ' + cls, html: '<span>' + label + '</span>', iconSize: null });
+        if (data.loop) {
+            L.marker(start, { icon: pin('pin-start', 'Start / finish'), title: 'Start and finish', keyboard: true }).addTo(map);
+        } else {
+            L.marker(end, { icon: pin('pin-end', 'End'), title: 'End', keyboard: true }).addTo(map);
+            L.marker(start, { icon: pin('pin-start', 'Start'), title: 'Start', keyboard: true }).addTo(map);
+        }
+        map.fitBounds(line.getBounds(), { padding: [24, 24] });
+    });
+
+    // Photos that fail to load are hidden (AC1.11)
+    document.querySelectorAll('img[data-fallback]').forEach((img) => {
+        img.addEventListener('error', () => { const fig = img.closest('figure'); if (fig) fig.hidden = true; });
+    });
+
     // Confirm destructive actions
     document.querySelectorAll('form[data-confirm]').forEach((form) => {
         form.addEventListener('submit', (ev) => {

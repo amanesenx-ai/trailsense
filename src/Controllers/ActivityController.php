@@ -15,6 +15,7 @@ use TrailSense\Domain\ActivityValidator;
 use TrailSense\Domain\PhotoValidator;
 use TrailSense\Repositories\ActivityRepository;
 use TrailSense\Repositories\PlanRepository;
+use TrailSense\Repositories\SocialRepository;
 use TrailSense\Repositories\TrailRepository;
 use TrailSense\Services\PhotoResizer;
 
@@ -37,15 +38,61 @@ final class ActivityController
         View::render('feed/index', ['title' => 'Community', 'active' => 'feed', 'posts' => $this->activities->feed()]);
     }
 
-    public function show(): void
+    public function show(array $errors = [], string $draft = ''): void
     {
-        Auth::requireLogin();
+        $user = Auth::requireLogin();
+        $post = $this->postOr404();
+        $social = new SocialRepository(Database::connection());
+        View::render('feed/show', [
+            'title' => $post['trail_name'], 'active' => 'feed', 'post' => $post,
+            'liked' => $social->likedBy((int) $post['id'], $user['id']),
+            'comments' => $social->comments((int) $post['id']),
+            'errors' => $errors, 'draft' => $draft,
+        ], $errors ? 422 : 200);
+    }
+
+    /** AC6.4: like/unlike (one like per user, enforced by the primary key). */
+    public function like(): void
+    {
+        Csrf::check();
+        $user = Auth::requireLogin();
+        $post = $this->postOr404();
+        (new SocialRepository(Database::connection()))->toggleLike((int) $post['id'], $user['id']);
+        $back = Request::post('back') === 'feed' ? 'feed' : 'activity';
+        $back === 'feed' ? View::redirect('feed') : View::redirect('activity', ['id' => $post['id']]);
+    }
+
+    public function comment(): void
+    {
+        Csrf::check();
+        $user = Auth::requireLogin();
+        $post = $this->postOr404();
+        $body = Request::post('body');
+        if (mb_strlen($body) < 1 || mb_strlen($body) > 500) {
+            $this->show(['body' => 'Write a comment of 1–500 characters.'], $body);
+            return;
+        }
+        (new SocialRepository(Database::connection()))->addComment((int) $post['id'], $user['id'], $body);
+        View::redirect('activity', ['id' => $post['id']]);
+    }
+
+    public function deleteComment(): void
+    {
+        Csrf::check();
+        $user = Auth::requireLogin();
+        $activityId = (new SocialRepository(Database::connection()))->deleteOwnComment(Request::id() ?? 0, $user['id']);
+        if ($activityId === null) {
+            throw HttpException::forbidden();       // not your comment (or it does not exist)
+        }
+        Flash::set('info', 'Comment deleted.');
+        View::redirect('activity', ['id' => $activityId]);
+    }
+
+    private function postOr404(): array
+    {
         $id = Request::id();
         $post = $id ? $this->activities->find($id) : null;
-        if ($post === null) {
-            throw HttpException::notFound();
-        }
-        View::render('feed/show', ['title' => $post['trail_name'], 'active' => 'feed', 'post' => $post]);
+        return $post ?? throw HttpException::notFound();
     }
 
     /** Serves a stored photo. Only signed-in users (the feed is for members). */

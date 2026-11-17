@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 use TrailSense\Controllers\ActivityController;
 use TrailSense\Controllers\AuthController;
+use TrailSense\Controllers\GroupController;
 use TrailSense\Controllers\HomeController;
 use TrailSense\Controllers\PlanController;
+use TrailSense\Controllers\ProfileController;
 use TrailSense\Controllers\TrailController;
 
 // route name => [HTTP method, controller, action]
@@ -19,6 +21,13 @@ return [
 
     'trails'          => ['GET',  TrailController::class, 'index'],
     'trail'           => ['GET',  TrailController::class, 'show'],
+    'trail.report'    => ['POST', TrailController::class, 'report'],
+
+    'groups'          => ['GET',  GroupController::class, 'index'],
+    'group.join'      => ['POST', GroupController::class, 'join'],
+    'group.leave'     => ['POST', GroupController::class, 'leave'],
+
+    'profile'         => ['GET',  ProfileController::class, 'show'],
 
     'plans'           => ['GET',  PlanController::class, 'index'],
     'plan.new'        => ['GET',  PlanController::class, 'create'],
@@ -32,4 +41,7 @@ return [
     'photo'           => ['GET',  ActivityController::class, 'photo'],
     'publish'         => ['GET',  ActivityController::class, 'create'],
     'publish.store'   => ['POST', ActivityController::class, 'store'],
+    'activity.like'   => ['POST', ActivityController::class, 'like'],
+    'comment.store'   => ['POST', ActivityController::class, 'comment'],
+    'comment.delete'  => ['POST', ActivityController::class, 'deleteComment'],
 ];

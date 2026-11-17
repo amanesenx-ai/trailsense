@@ -59,6 +59,38 @@ return [
         assertSame('ends 15 min after sunset', RiskEngine::formatObserved(-15.0, 'daylight_margin_min'));
         assertSame('no data', RiskEngine::formatObserved(null, 'gust_max_kmh'));
     },
+    'advisory rules without data do not make the check incomplete (AC4.9)' => function () use ($calm) {
+        $rules = array_merge(defaultRules(), [
+            rule('IPMA_Y', 'official', 'ipma_warning_level', '>=', 1, 'caution') + ['required' => false],
+            rule('FIRE_C', 'fire', 'fire_risk', '>=', 3, 'caution') + ['required' => false],
+        ]);
+        $r = (new RiskEngine())->evaluate($rules, $calm + ['ipma_warning_level' => null, 'fire_risk' => null]);
+        assertSame(true, $r['complete']);
+        $f = RiskEngine::byFactor($r['results']);
+        assertSame('pending', $f['official']['status']);
+        assertSame('not published yet', RiskEngine::formatObserved(null, 'fire_risk'));
+    },
+    'orange IPMA warning and fire risk 4 trigger as data says (AC4.7/4.8)' => function () use ($calm) {
+        $rules = array_merge(defaultRules(), [
+            rule('IPMA_Y', 'official', 'ipma_warning_level', '>=', 1, 'caution') + ['required' => false],
+            rule('IPMA_O', 'official', 'ipma_warning_level', '>=', 2, 'warning') + ['required' => false],
+            rule('FIRE_C', 'fire', 'fire_risk', '>=', 3, 'caution') + ['required' => false],
+            rule('FIRE_W', 'fire', 'fire_risk', '>=', 4, 'warning') + ['required' => false],
+        ]);
+        $r = (new RiskEngine())->evaluate($rules, $calm + ['ipma_warning_level' => 2.0, 'fire_risk' => 3.0]);
+        $f = RiskEngine::byFactor($r['results']);
+        assertSame('warning', $f['official']['status']);
+        assertSame('IPMA_O', $f['official']['rule']['code']);
+        assertSame('caution', $f['fire']['status']);
+        assertSame('3/5 Elevated', RiskEngine::formatObserved(3.0, 'fire_risk'));
+        assertSame('orange warning', RiskEngine::formatObserved(2.0, 'ipma_warning_level'));
+        assertSame('IPMA warning orange or higher for this district', RiskEngine::describeCondition($rules[9]));
+    },
+    'a closed-trail report is a WARNING (AC10.3)' => function () use ($calm) {
+        $rules = array_merge(defaultRules(), [rule('TRAIL_CL', 'trail', 'trail_closed', '>=', 1, 'warning')]);
+        $r = (new RiskEngine())->evaluate($rules, $calm + ['trail_closed' => 1.0]);
+        assertSame('warning', $r['overall']);
+    },
     'unknown comparator is rejected' => function () {
         assertThrows(fn () => RiskEngine::compare(1, '!=', 2), InvalidArgumentException::class);
     },

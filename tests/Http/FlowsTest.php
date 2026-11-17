@@ -6,64 +6,6 @@ declare(strict_types=1);
  * with the offline demo weather provider (critical user flows from SPEC.md).
  */
 
-final class Browser
-{
-    private array $cookies = [];
-    public int $status = 0;
-    public string $body = '';
-    public string $location = '';
-
-    public function __construct(private readonly string $base)
-    {
-    }
-
-    public function get(string $query): self
-    {
-        return $this->request('GET', $query);
-    }
-
-    /** POST with the CSRF token taken from the last page (like a real form). */
-    public function post(string $query, array $fields, array $files = [], bool $withToken = true): self
-    {
-        if ($withToken && preg_match('/name="_csrf" value="([^"]+)"/', $this->body, $m)) {
-            $fields['_csrf'] = html_entity_decode($m[1]);
-        }
-        foreach ($files as $k => $path) {
-            $fields[$k] = new CURLFile($path);
-        }
-        return $this->request('POST', $query, $fields, $files !== []);
-    }
-
-    public function follow(): self
-    {
-        $url = parse_url($this->location);
-        return $this->get($url['query'] ?? '');
-    }
-
-    private function request(string $method, string $query, array $fields = [], bool $multipart = false): self
-    {
-        $ch = curl_init($this->base . '/index.php?' . $query);
-        $cookie = implode('; ', array_map(fn ($k, $v) => "$k=$v", array_keys($this->cookies), $this->cookies));
-        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_COOKIE => $cookie, CURLOPT_TIMEOUT => 10]);
-        if ($method === 'POST') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $multipart ? $fields : http_build_query($fields));
-        }
-        $raw = (string) curl_exec($ch);
-        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $this->status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        $headers = substr($raw, 0, $headerSize);
-        $this->body = substr($raw, $headerSize);
-        $this->location = preg_match('/^Location: (.+)$/mi', $headers, $m) ? trim($m[1]) : '';
-        preg_match_all('/^Set-Cookie: ([^=]+)=([^;]*)/mi', $headers, $mm, PREG_SET_ORDER);
-        foreach ($mm as $c) {
-            $this->cookies[$c[1]] = $c[2];
-        }
-        return $this;
-    }
-}
-
 $port = 8099;
 $server = null;
 $base = "http://127.0.0.1:$port";
@@ -107,7 +49,8 @@ return [
         $b->follow();
         assertContains('Hi, Carla!', $b->body);
         assertContains('>Plans<', $b->body);
-        assertNotContains('>Groups<', $b->body);
+        assertContains('>Groups<', $b->body);
+        assertNotContains('>My hikes<', $b->body);
     },
     'duplicate e-mail keeps typed values and explains (AC8.2)' => function () use ($base) {
         $b = (new Browser($base))->get('r=register');
@@ -125,11 +68,11 @@ return [
     'trail filters work and bad values are ignored (AC1.2/1.3/1.5)' => function () use ($login) {
         $b = $login('joana@trailsense.pt');
         $b->get('r=trails&difficulty=hard');
-        assertContains('Frecha da Mizarela', $b->body);
-        assertNotContains('Parque da Cidade loop', $b->body);
+        assertContains('Caminho do Carteiro', $b->body);
+        assertNotContains('Trilho do Rio Febros', $b->body);
         $b->get('r=trails&max_km=abc&difficulty=extreme');
         assertSame(200, $b->status);
-        assertContains('10 trails', $b->body);
+        assertContains('11 trails', $b->body);
         $b->get('r=trails&q=zzzz');
         assertContains('No trails match these filters', $b->body);
     },
@@ -139,7 +82,7 @@ return [
         $b->post('r=plan.store', ['trail_id' => '6', 'planned_date' => $future, 'start_time' => '15:30', 'duration_min' => '150', 'notes' => '']);
         assertSame(303, $b->status);
         $b->follow();
-        assertContains('Frecha da Mizarela', $b->body);
+        assertContains('Caminho do Carteiro', $b->body);
         assertContains('Risk assessment', $b->body);
         assertContains('Demo forecast', $b->body, 'demo data must be labelled');
         // 15:30 + 150 min = 18:00 in November → after sunset → DAY_W with concrete action (AC5.2)
@@ -164,10 +107,11 @@ return [
         assertContains('Meet: 09:00 at Valongo station', $b->body);
         assertContains('data-copy="#briefing-text"', $b->body);
     },
-    'a hiker cannot open or delete another user\'s plan (AC2.4)' => function () use ($login) {
-        $b = $login('joana@trailsense.pt');
-        $b->get('r=plan&id=3');
+    'a hiker cannot open another user\'s personal plan or delete any foreign plan (AC2.4, AC9.7)' => function () use ($login) {
+        $b = $login('rita@trailsense.pt');
+        $b->get('r=plan&id=1');                       // Joana's personal plan
         assertSame(403, $b->status);
+        $b = $login('joana@trailsense.pt');
         $b->get('r=plan&id=1')->post('r=plan.delete&id=3', []);   // valid token from her own plan page
         assertSame(403, $b->status);
     },
@@ -181,7 +125,7 @@ return [
         assertSame(303, $b->status);
         $b->get('r=feed');
         $first = strpos($b->body, 'post-card');
-        assertTrue($first !== false && strpos($b->body, 'Passadiços do Paiva', $first) < strpos($b->body, 'post-card', $first + 10), 'new post first');
+        assertTrue($first !== false && strpos($b->body, 'Stairs!', $first) < strpos($b->body, 'post-card', $first + 10), 'new post first');
         assertTrue((bool) preg_match('/r=photo&amp;f=([a-f0-9]{32}\.png)/', $b->body, $m), 'photo link in feed');
         $b->get('r=photo&f=' . $m[1]);
         assertSame(200, $b->status);

@@ -82,3 +82,63 @@ function defaultRules(): array
         rule('DAY_W', 'daylight', 'daylight_margin_min', '<', 30, 'warning', 'Start by {latest_start} or choose a shorter trail.'),
     ];
 }
+
+/** Minimal HTTP client with cookies, used by the HTTP flow tests. */
+final class Browser
+{
+    private array $cookies = [];
+    public int $status = 0;
+    public string $body = '';
+    public string $location = '';
+
+    public function __construct(private readonly string $base)
+    {
+    }
+
+    public function get(string $query): self
+    {
+        return $this->request('GET', $query);
+    }
+
+    /** POST with the CSRF token taken from the last page (like a real form). */
+    public function post(string $query, array $fields, array $files = [], bool $withToken = true): self
+    {
+        if ($withToken && preg_match('/name="_csrf" value="([^"]+)"/', $this->body, $m)) {
+            $fields['_csrf'] = html_entity_decode($m[1]);
+        }
+        foreach ($files as $k => $path) {
+            $fields[$k] = new CURLFile($path);
+        }
+        return $this->request('POST', $query, $fields, $files !== []);
+    }
+
+    public function follow(): self
+    {
+        $url = parse_url($this->location);
+        return $this->get($url['query'] ?? '');
+    }
+
+    private function request(string $method, string $query, array $fields = [], bool $multipart = false): self
+    {
+        $ch = curl_init($this->base . '/index.php?' . $query);
+        $cookie = implode('; ', array_map(fn ($k, $v) => "$k=$v", array_keys($this->cookies), $this->cookies));
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_COOKIE => $cookie, CURLOPT_TIMEOUT => 10]);
+        if ($method === 'POST') {
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $multipart ? $fields : http_build_query($fields));
+        }
+        $raw = (string) curl_exec($ch);
+        $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $this->status = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        $headers = substr($raw, 0, $headerSize);
+        $this->body = substr($raw, $headerSize);
+        $this->location = preg_match('/^Location: (.+)$/mi', $headers, $m) ? trim($m[1]) : '';
+        preg_match_all('/^Set-Cookie: ([^=]+)=([^;]*)/mi', $headers, $mm, PREG_SET_ORDER);
+        foreach ($mm as $c) {
+            $this->cookies[$c[1]] = $c[2];
+        }
+        return $this;
+    }
+}
+
