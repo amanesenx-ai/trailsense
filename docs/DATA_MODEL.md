@@ -13,7 +13,7 @@ Authoritative SQL: `database/schema.sql`. Diagram: `er-diagram.svg`. 10 tables, 
 | risk_assessment | id | plan_id → hike_plan (CASCADE); snapshot_id → weather_snapshot UNIQUE (CASCADE) | level ∈ {ok, caution, warning} | F4 one evaluation |
 | assessment_result | (assessment_id, rule_code) | assessment_id → risk_assessment (CASCADE); rule_code → risk_rule (RESTRICT, ON UPDATE CASCADE) | `evaluated OR NOT triggered` | F4/F5 **many-to-many association class** with attributes |
 | activity | id | user_id → app_user (CASCADE); trail_id → trail (RESTRICT); plan_id → hike_plan (**SET NULL**) | distance 0–200; duration 10–1440 | F6/F7 published hikes |
-| activity_photo | id | activity_id → activity (CASCADE) | file_name UNIQUE | F7 photos (1:N) |
+| activity_photo | id | activity_id → activity (CASCADE) | file_name UNIQUE; mime_type ∈ {jpeg, png, webp}; content BYTEA ≤ 3 MB | F7 photos (1:N), bytes stored in the DB (ADR-009) |
 
 ## Relationship patterns used (Class 4)
 - Many-to-one total: hike_plan → app_user, hike_plan → trail (NOT NULL FK).

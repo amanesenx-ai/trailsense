@@ -47,6 +47,22 @@ final class ActivityController
         View::render('feed/show', ['title' => $post['trail_name'], 'active' => 'feed', 'post' => $post]);
     }
 
+    /** Serves a stored photo. Only signed-in users (the feed is for members). */
+    public function photo(): void
+    {
+        Auth::requireLogin();
+        $name = Request::get('f');
+        $photo = preg_match('/^[a-f0-9]{32}\.(jpg|png|webp)$/', $name) ? $this->activities->photo($name) : null;
+        if ($photo === null) {
+            throw HttpException::notFound();
+        }
+        header('Content-Type: ' . $photo['mime']);
+        header('Content-Length: ' . strlen($photo['bytes']));
+        header('Cache-Control: private, max-age=604800, immutable');
+        header('Content-Security-Policy: default-src \'none\'');
+        echo $photo['bytes'];
+    }
+
     public function create(array $errors = [], array $old = []): void
     {
         $user = Auth::requireLogin();
@@ -77,7 +93,7 @@ final class ActivityController
             $input[$f] = Request::post($f);
         }
         [$data, $errors] = ActivityValidator::validate($input, fn (int $id) => $this->trails->find($id), new DateTimeImmutable('today'));
-        [$ext, $photoError] = PhotoValidator::check($_FILES['photo'] ?? null);
+        [$mime, $photoError] = PhotoValidator::check($_FILES['photo'] ?? null);
         if ($photoError !== null) {
             $errors['photo'] = $photoError;
         }
@@ -93,17 +109,18 @@ final class ActivityController
             $planId = ($plan !== null && (int) $plan['user_id'] === $user['id']) ? (int) $plan['id'] : null;
         }
 
-        $fileName = null;
-        if ($ext !== null) {
-            $fileName = bin2hex(random_bytes(16)) . '.' . $ext;     // AC7.2: random name, never the user's
-            $target = TS_ROOT . '/public/uploads/' . $fileName;
-            if (!move_uploaded_file($_FILES['photo']['tmp_name'], $target)) {
+        $photo = null;
+        if ($mime !== null) {
+            $bytes = file_get_contents($_FILES['photo']['tmp_name']);
+            if ($bytes === false || !is_uploaded_file($_FILES['photo']['tmp_name'])) {
                 $this->create(['photo' => 'The photo could not be saved. Please try again.'], $input);
                 return;
             }
+            // AC7.2: random public name, never the user's file name; bytes stored in the DB (ADR-009)
+            $photo = ['name' => bin2hex(random_bytes(16)) . '.' . PhotoValidator::TYPES[$mime], 'mime' => $mime, 'bytes' => $bytes];
         }
         $alt = mb_substr($input['photo_alt'], 0, 150);
-        $id = $this->activities->create($user['id'], $data, $planId, $fileName, $alt);
+        $id = $this->activities->create($user['id'], $data, $planId, $photo, $alt);
         Flash::set('success', 'Your hike is published in the community feed.');
         View::redirect('activity', ['id' => $id]);
     }

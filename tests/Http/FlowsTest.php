@@ -182,7 +182,10 @@ return [
         $b->get('r=feed');
         $first = strpos($b->body, 'post-card');
         assertTrue($first !== false && strpos($b->body, 'Passadiços do Paiva', $first) < strpos($b->body, 'post-card', $first + 10), 'new post first');
-        assertContains('/uploads/', $b->body);
+        assertTrue((bool) preg_match('/r=photo&amp;f=([a-f0-9]{32}\.png)/', $b->body, $m), 'photo link in feed');
+        $b->get('r=photo&f=' . $m[1]);
+        assertSame(200, $b->status);
+        assertSame(file_get_contents($img), $b->body, 'served photo = uploaded bytes');
     },
     'a fake image (text renamed .jpg) is rejected (AC7.2)' => function () use ($login) {
         $fake = tempnam(sys_get_temp_dir(), 'ts') . '.jpg';

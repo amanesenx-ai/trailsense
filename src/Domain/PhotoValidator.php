@@ -11,7 +11,7 @@ final class PhotoValidator
 
     /**
      * @param array<string,mixed>|null $file one entry of $_FILES
-     * @return array{0: ?string, 1: ?string} [extension or null if no file, error or null]
+     * @return array{0: ?string, 1: ?string} [mime type or null if no file, error or null]
      */
     public static function check(?array $file): array
     {
@@ -28,6 +28,6 @@ final class PhotoValidator
         if (!isset(self::TYPES[$mime])) {
             return [null, 'Only JPEG, PNG or WebP photos are accepted.'];
         }
-        return [self::TYPES[$mime], null];
+        return [$mime, null];
     }
 }

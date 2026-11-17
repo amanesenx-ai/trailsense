@@ -1,15 +1,19 @@
-# DEPLOY.md — putting TrailSense online (FEUP)
+# DEPLOY.md — putting TrailSense online (Render + Neon, free)
 
-1. **Database (PostgreSQL at FEUP).** Use the account the teachers gave you (host `db.fe.up.pt`, port 5432).
-   Load the tables: `psql -h db.fe.up.pt -U <user> -d <db> -f database/schema.sql -f database/seed.sql`
-   (if you were given a schema instead of a database, run `SET search_path TO <schema>;` first and put the schema name in config).
-2. **Files.** Copy the whole `trailsense/` folder into `public_html/` of your FEUP account (SFTP to `gnomo.fe.up.pt` or the FEUP file share).
-3. **Config.** On the server: `cp config/config.example.php config/config.php`, then set
-   - `db.dsn` = `pgsql:host=db.fe.up.pt;port=5432;dbname=<db>`, `db.user`, `db.password`, `db.schema`
-   - `base_url` = `/~<your-up-number>/trailsense/public/`
-   - `weather_provider` = `open-meteo`, `debug` = `false`
-4. **Permissions.** `chmod 755 public/uploads` (Apache must write photos there). `.htaccess` files already block `src/ config/ database/ tests/ docs/ views/ bin/` and stop PHP running in `uploads/`.
-5. **Check.** Open `https://paginas.fe.up.pt/~<up>/trailsense/` → login page. Sign in as Joana, open a plan in the next 16 days and confirm the source line says *Forecast: Open-Meteo*. Try `.../trailsense/config/config.php` → must be 403/404.
-6. If the server cannot reach `api.open-meteo.com`, the app shows "The weather service did not answer" and marks checks incomplete (by design, ADR-004). Ask the teachers about outbound HTTPS; for a rehearsal only you may set `weather_provider` to `demo` (screens then say *Demo forecast*).
+Architecture: Docker web service on **Render** (free) + PostgreSQL on **Neon** (free, permanent). See ADR-009.
 
-Alternative hosting (own responsibility): any Apache/Nginx + PHP 8.1+ with `pdo_pgsql` and `curl`, document root `public/`.
+1. **GitHub** — push this repository (it contains `Dockerfile` and `render.yaml`; `config/config.php` is git-ignored).
+2. **Neon** — sign up at neon.com → New project `trailsense`, region *Europe (Frankfurt)*, Postgres 16+ → copy the connection string
+   (`postgresql://USER:PASSWORD@ep-…eu-central-1.aws.neon.tech/neondb?sslmode=require`). No need to create tables.
+3. **Render** — sign up at render.com with GitHub → New → Blueprint → choose the repository (it reads `render.yaml`)
+   → paste the Neon string as `DATABASE_URL` → Apply. First build takes ~5 min.
+   On first boot the container runs `bin/db-init.php`, which creates the tables and demo data (only if the database is empty).
+4. **Check** — open `https://trailsense-XXXX.onrender.com` → login page. Sign in as `joana@trailsense.pt` / `trailsense123`,
+   open a plan in the next 16 days: the source line must say *Forecast: Open-Meteo*.
+   `https://…/config/config.php` must give 404 (only `public/` is served).
+5. **Updates** — every push to `main` redeploys automatically. Data stays in Neon.
+
+Notes
+- Free Render services sleep after 15 min idle; the first request then takes ~1 min. **Open the app a minute before the demo.**
+- To reset demo data: in Neon's SQL editor run `database/schema.sql` then `database/seed.sql`.
+- Local development is unchanged: `config/config.php` + `php -S localhost:8000 -t public`.

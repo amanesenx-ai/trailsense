@@ -1,0 +1,17 @@
+# Render Blueprint: one free Docker web service. The database is Neon (free, permanent);
+# paste its connection string as DATABASE_URL when Render asks.
+services:
+  - type: web
+    name: trailsense
+    runtime: docker
+    plan: free
+    region: frankfurt
+    healthCheckPath: /index.php?r=login
+    autoDeploy: true
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: WEATHER_PROVIDER
+        value: open-meteo
+      - key: APP_DEBUG
+        value: "0"

@@ -3,7 +3,7 @@
 Hikers and club organizers find a trail, plan a hike, get **weather warnings explained by explicit rules with a precaution**, and share the hike with a community.
 Built with an LLM agent following the course workflow: architecture and spec written first, rules in CLAUDE.md, tests before acceptance.
 
-**Live app:** `https://<your-host>/trailsense/` (see docs/DEPLOY.md) · **Demo accounts** (password `trailsense123`): `joana@trailsense.pt` (hiker), `bruno@trailsense.pt` (organizer)
+**Live app:** `https://<render-url>` (Render + Neon, see docs/DEPLOY.md) · **Demo accounts** (password `trailsense123`): `joana@trailsense.pt` (hiker), `bruno@trailsense.pt` (organizer)
 
 ## Stack
 PHP 8 (no framework) · PostgreSQL · HTML/CSS · minimal JS · Open-Meteo forecast API. Layered architecture — see docs/ARCHITECTURE.md.

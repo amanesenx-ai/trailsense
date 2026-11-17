@@ -47,3 +47,9 @@
 - Context: only organizer plans have group size and meeting point.
 - Decision: `group_plan(plan_id PK/FK → hike_plan ON DELETE CASCADE)` instead of nullable columns in hike_plan.
 - Consequences: no NULL-heavy rows; the relationship type (one-to-one partial) is explicit in the schema.
+
+## ADR-009 — Cloud hosting: Docker on Render + Neon PostgreSQL; photos in the database
+- Date: 2026-11-17 · Status: accepted
+- Context: the owner chose not to use the FEUP servers. The app must stay online and reachable for the next assignments, at no cost. Free container hosts have an ephemeral disk (files written at runtime are lost on each deploy/restart).
+- Decision: one Docker image (php:8.3-apache + pdo_pgsql, document root `public/`) on a Render free web service; database on Neon's free plan (permanent, not a trial). Configuration comes from environment variables (`DATABASE_URL`, `WEATHER_PROVIDER`, `APP_DEBUG`) when `config/config.php` is absent. Uploaded photos are stored as BYTEA in `activity_photo` and served by the `photo` route (login required). `bin/db-init.php` creates tables and demo data on first boot only.
+- Consequences: no secrets in the repository; photos survive redeploys. Render's free service sleeps after 15 min idle and needs about a minute to wake — open the app before a demo. Neon free storage (1 GB) is far above our needs (photos ≤ 3 MB each).

@@ -24,7 +24,7 @@ and makes each block an explicit layer:
         │ SQL
  PostgreSQL: app_user, trail, hike_plan, group_plan, risk_rule,
              weather_snapshot, risk_assessment, assessment_result,
-             activity, activity_photo              + public/uploads/ (photos)
+             activity, activity_photo (photo bytes stored in the DB)
 ```
 
 Dependency rule: Controllers → Domain / Weather / Repositories. Domain depends on nothing.
@@ -39,7 +39,8 @@ trailsense/
 ├── config/               config.example.php (committed) · config.php (secrets, git-ignored)
 ├── database/             schema.sql · seed.sql
 ├── docs/                 ARCHITECTURE · DATA_MODEL · DECISIONS · TRACEABILITY · MANUAL_TESTS · UX_REVIEW · LESSONS · DEBT · DEMO_SCRIPT · DEPLOY
-├── public/               index.php (only entry) · assets/app.css · assets/app.js · uploads/
+├── public/               index.php (only entry) · assets/app.css · assets/app.js
+├── docker/               vhost.conf · php.ini · entrypoint.sh   (+ Dockerfile, render.yaml at the root)
 ├── src/
 │   ├── bootstrap.php     autoload, config, session, helpers (e(), url(), csrf)
 │   ├── routes.php        route name → [Controller, method]
@@ -61,6 +62,6 @@ trailsense/
 3. `plans/show` renders each factor with level badge (text + colour), rule condition, observed value and precaution.
 4. Organizer: `Briefing::build()` renders the same data as plain text for "Copy briefing".
 
-## Deployment
-FEUP: `public_html/trailsense/` with `.htaccess` denying `src/ config/ database/ tests/ docs/ bin/ views/`;
-root `index.php` forwards to `public/`. PostgreSQL on db.fe.up.pt. See docs/DEPLOY.md.
+## Deployment (ADR-009)
+Docker image (php:8.3-apache, document root `public/`) on Render's free web service; PostgreSQL on Neon (free).
+Config from environment variables; `bin/db-init.php` creates the tables on first boot. See docs/DEPLOY.md.

@@ -29,6 +29,7 @@ return [
 
     'feed'            => ['GET',  ActivityController::class, 'feed'],
     'activity'        => ['GET',  ActivityController::class, 'show'],
+    'photo'           => ['GET',  ActivityController::class, 'photo'],
     'publish'         => ['GET',  ActivityController::class, 'create'],
     'publish.store'   => ['POST', ActivityController::class, 'store'],
 ];
