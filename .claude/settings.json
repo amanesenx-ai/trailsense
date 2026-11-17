@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": ["Bash(php tests/run.php*)", "Bash(php -l *)", "Bash(php bin/db-reset.php)", "Bash(git status)", "Bash(git diff*)"],
+    "deny": ["Read(config/config.php)", "Bash(rm -rf *)", "Bash(git push*)"]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "bash bin/hooks/after-edit.sh" }]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [{ "type": "command", "command": "bash bin/hooks/check-secrets.sh" }]
+      }
+    ]
+  }
+}

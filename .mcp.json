@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "postgres-readonly": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://readonly@localhost/trailsense"],
+      "description": "Read-only access so the agent can inspect the schema and seed data instead of guessing. Never point at production with write rights."
+    }
+  }
+}
