@@ -16,6 +16,7 @@ use TrailSense\Domain\PhotoValidator;
 use TrailSense\Repositories\ActivityRepository;
 use TrailSense\Repositories\PlanRepository;
 use TrailSense\Repositories\TrailRepository;
+use TrailSense\Services\PhotoResizer;
 
 /** F6 community feed, F7 publish a hike. */
 final class ActivityController
@@ -117,7 +118,8 @@ final class ActivityController
                 return;
             }
             // AC7.2: random public name, never the user's file name; bytes stored in the DB (ADR-009)
-            $photo = ['name' => bin2hex(random_bytes(16)) . '.' . PhotoValidator::TYPES[$mime], 'mime' => $mime, 'bytes' => $bytes];
+            $small = PhotoResizer::shrink($bytes, $mime);      // ≤ 1600 px JPEG, metadata stripped
+            $photo = ['name' => bin2hex(random_bytes(16)) . '.' . $small['ext'], 'mime' => $small['mime'], 'bytes' => $small['bytes']];
         }
         $alt = mb_substr($input['photo_alt'], 0, 150);
         $id = $this->activities->create($user['id'], $data, $planId, $photo, $alt);
