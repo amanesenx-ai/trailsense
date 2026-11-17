@@ -21,6 +21,7 @@ Scripted extra checks at 360 px: no horizontal scroll on any of 15 pages, every 
 | M14 | Feed / post | open a post | photo or route, stats, pace, notes | ✅ |
 | M15 | Delete plan | delete, confirm dialog | plan gone, flash message | ✅ |
 | M16 | Keyboard only | Tab through login and plan form | visible focus ring, logical order, skip link | ✅ |
-| M17 | Live forecast (online server) | create plan within 16 days on the deployed app | source line shows "Open-Meteo" | ⏳ do on the FEUP server (sandbox had no internet) |
+| M17 | Online deployment | open https://amanesenx.alwaysdata.net | login page over HTTPS; http→https; logged-out pages redirect to login; 404 page; src/config/database not reachable | ✅ 2026-11-17 |
+| M18 | Live forecast | sign in, create a plan within 16 days | source line shows "Forecast: Open-Meteo" | ⏳ check in the browser before the demo |
 
 Security checklist (run with the security-reviewer subagent prompt + grep scan): authentication ✓ · authorisation ✓ · input validated ✓ · output encoded ✓ · secrets external ✓ · uploads non-executable ✓.

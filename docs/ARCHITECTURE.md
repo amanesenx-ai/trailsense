@@ -63,5 +63,5 @@ trailsense/
 4. Organizer: `Briefing::build()` renders the same data as plain text for "Copy briefing".
 
 ## Deployment (ADR-009)
-Docker image (php:8.3-apache, document root `public/`) on Render's free web service; PostgreSQL on Neon (free).
-Config from environment variables; `bin/db-init.php` creates the tables on first boot. See docs/DEPLOY.md.
+alwaysdata (free, always on): Apache + PHP 8.3 + PostgreSQL, document root `public/`, auto-deploy from GitHub every 5 min.
+Config from environment variables; `Core/Installer` creates the tables on first run. See docs/DEPLOY.md.
