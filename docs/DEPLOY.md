@@ -1,19 +1,23 @@
-# DEPLOY.md — putting TrailSense online (Render + Neon, free)
+# DEPLOY.md — TrailSense online (alwaysdata, free)
 
-Architecture: Docker web service on **Render** (free) + PostgreSQL on **Neon** (free, permanent). See ADR-009.
+**Live app:** https://amanesenx.alwaysdata.net · **Repository:** https://github.com/amanesenx-ai/trailsense
 
-1. **GitHub** — push this repository (it contains `Dockerfile` and `render.yaml`; `config/config.php` is git-ignored).
-2. **Neon** — sign up at neon.com → New project `trailsense`, region *Europe (Frankfurt)*, Postgres 16+ → copy the connection string
-   (`postgresql://USER:PASSWORD@ep-…eu-central-1.aws.neon.tech/neondb?sslmode=require`). No need to create tables.
-3. **Render** — sign up at render.com with GitHub → New → Blueprint → choose the repository (it reads `render.yaml`)
-   → paste the Neon string as `DATABASE_URL` → Apply. First build takes ~5 min.
-   On first boot the container runs `bin/db-init.php`, which creates the tables and demo data (only if the database is empty).
-4. **Check** — open `https://trailsense-XXXX.onrender.com` → login page. Sign in as `joana@trailsense.pt` / `trailsense123`,
-   open a plan in the next 16 days: the source line must say *Forecast: Open-Meteo*.
-   `https://…/config/config.php` must give 404 (only `public/` is served).
-5. **Updates** — every push to `main` redeploys automatically. Data stays in Neon.
+## How it is set up (ADR-009)
+| Piece | Setting |
+|---|---|
+| Host | alwaysdata free plan (Paris): Apache + PHP 8.3 + PostgreSQL 17, always on, HTTPS |
+| Site | `amanesenx.alwaysdata.net`, type PHP 8.3, root directory `www/trailsense/public/`, *Force HTTPS* on |
+| Code | scheduled task every 5 min: `git clone` the first time, then `git pull --ff-only` → **every push to `main` is live within 5 minutes** |
+| Database | `amanesenx_trailsense` on `postgresql-amanesenx.alwaysdata.net`, user `amanesenx` |
+| Config | site *environment variables*: `DATABASE_URL` (no password), `DB_PASSWORD`, `WEATHER_PROVIDER=open-meteo`, `APP_DEBUG=0`. No secrets in Git. |
+| First run | `Core\Installer` creates tables + demo data on the first request, only if the database is empty; never touches existing data |
 
-Notes
-- Free Render services sleep after 15 min idle; the first request then takes ~1 min. **Open the app a minute before the demo.**
-- To reset demo data: in Neon's SQL editor run `database/schema.sql` then `database/seed.sql`.
-- Local development is unchanged: `config/config.php` + `php -S localhost:8000 -t public`.
+Only `public/` is web-reachable; `src/`, `config/`, `database/`, `tests/`, `docs/` are outside the document root (checked: 404).
+
+## Operations
+- **Deploy a change:** commit + push to `main`; wait ≤ 5 min. Task log: alwaysdata admin → Advanced → Scheduled tasks → Logs.
+- **Reset the demo data:** in phpPgAdmin (alwaysdata → Databases → PostgreSQL) run `database/schema.sql` then `database/seed.sql`.
+- **Debug:** temporarily set `APP_DEBUG=1` in the site environment; PHP errors are in alwaysdata → Advanced → Logs.
+
+## Alternative path (not in use)
+`Dockerfile` + `render.yaml` deploy the same app to Render + Neon. Not used because Render's free service sleeps after 15 minutes.

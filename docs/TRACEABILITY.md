@@ -34,4 +34,4 @@
 | NFR1–2 | Phone, accessibility | app.css | Manual + scripted checks in UX_REVIEW.md |
 | NFR3 | Security | Repositories (prepared), e(), Csrf | Http: *escaped in the feed (XSS)*, CSRF test; security scan in MANUAL_TESTS.md |
 
-Run: `php tests/run.php` → 66 tests (35 unit · 17 integration · 14 HTTP).
+Run: `php tests/run.php` → 73 tests (unit · integration · HTTP).

@@ -10,6 +10,6 @@ Before: `php bin/db-reset.php` on the server (fresh, realistic data; plans are r
 | 2:30–3:00 | Plan 30 days ahead | "No forecast yet: we never invent data — it is marked *incomplete*, daylight is still checked." |
 | 3:00–3:50 | Sign in as **Bruno** → organizer home (KPI card) → New group hike → **Copy briefing** | "Organizers see Groups and the planning-completeness KPI from my A1 business case. The briefing is generated from the same assessment — same checks every time." |
 | 3:50–4:30 | Feed → Publish a hike with a photo → appears first | "Record and connect. Photo type is checked by content." |
-| 4:30–5:00 | Terminal: `php tests/run.php` → `PASSED: 66 FAILED: 0`; show CLAUDE.md, SPEC.md, docs/TRACEABILITY.md | "How I worked with the agent: architecture and spec first, rules in CLAUDE.md, every change accepted only with tests." |
+| 4:30–5:00 | Terminal: `php tests/run.php` → `PASSED: 73 FAILED: 0`; show CLAUDE.md, SPEC.md, docs/TRACEABILITY.md | "How I worked with the agent: architecture and spec first, rules in CLAUDE.md, every change accepted only with tests." |
 
 Backup if Wi-Fi fails: screenshots in docs/screenshots/.
