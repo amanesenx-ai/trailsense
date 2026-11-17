@@ -1,0 +1,6 @@
+# Only public/ and the root forwarder are reachable over HTTP.
+Options -Indexes
+RedirectMatch 404 ^.*/trailsense/(src|config|database|tests|docs|bin|views|\.claude|\.git)(/.*)?$
+<FilesMatch "^(CLAUDE|AGENTS|SPEC|README)\.md$|^\.mcp\.json$|^\.gitignore$">
+    Require all denied
+</FilesMatch>
