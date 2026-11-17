@@ -9,6 +9,11 @@
 <?php else: ?>
     <div class="grid-2"><?php foreach ($plans['upcoming'] as $p): ?><?= View::partial('partials/plan-card', ['p' => $p]) ?><?php endforeach; ?></div>
 <?php endif; ?>
+<?php if (!empty($joined)): ?>
+    <h2 class="section-title">Group hikes I joined</h2>
+    <div class="grid-2"><?php foreach ($joined as $p): ?><?= View::partial('partials/plan-card', ['p' => $p]) ?><?php endforeach; ?></div>
+<?php endif; ?>
+<p class="muted small">Your personal plans are private. Group hikes are visible to all members so they can join. <a href="<?= e(url('groups')) ?>">See group hikes</a></p>
 <?php if ($plans['past'] !== []): ?>
     <h2 class="section-title">Past</h2>
     <div class="grid-2 past"><?php foreach ($plans['past'] as $p): ?><?= View::partial('partials/plan-card', ['p' => $p]) ?><?php endforeach; ?></div>

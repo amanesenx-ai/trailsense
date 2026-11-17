@@ -1,9 +1,11 @@
 # DEBT.md — known technical debt / next steps
-- Interactive tile map (Leaflet + OSM) instead of SVG route (ADR-006).
 - Login rate limiting / lockout after repeated failures.
 - Password reset by e-mail.
 - Cache Open-Meteo answers per trail/day to avoid repeated calls when many users check the same trail.
 - Edit plan (now: delete and create again).
 - Admin screen to edit risk_rule thresholds (now: SQL).
 - Image resizing/thumbnails for uploaded photos.
-- P1 features from SPEC §3: GPS tracking, likes/comments, profiles, notifications.
+- Remaining A1 Priority 1: automatic GPS tracking, following users, notifications, challenges.
+- Elevation profile chart per trail (data is already sampled in the generator).
+- Coastal trail: the Matosinhos–Vila Chã relation is a super-relation; support nested relations in the generator.
+- API keys + rate limiting if the API gets external traffic.

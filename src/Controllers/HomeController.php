@@ -7,8 +7,6 @@ use TrailSense\Core\Auth;
 use TrailSense\Core\Database;
 use TrailSense\Core\View;
 use TrailSense\Repositories\ActivityRepository;
-use TrailSense\Repositories\AssessmentRepository;
-use TrailSense\Repositories\RuleRepository;
 use TrailSense\Services\AssessmentService;
 use TrailSense\Repositories\PlanRepository;
 
@@ -22,13 +20,7 @@ final class HomeController
         $planRepo = new PlanRepository($db);
         $plans = $planRepo->forUser($user['id']);
 
-        // "The same condition checks every time": upcoming plans never checked are assessed automatically.
-        $unchecked = array_filter($plans['upcoming'], static fn (array $p) => $p['overall_level'] === null);
-        if ($unchecked !== []) {
-            $service = new AssessmentService(AssessmentService::providerFromConfig(), new RuleRepository($db), new AssessmentRepository($db));
-            foreach (array_slice($unchecked, 0, 5) as $p) {
-                $service->assess((array) $planRepo->find((int) $p['id']));
-            }
+        if (AssessmentService::checkUnchecked($db, $plans['upcoming'])) {   // same checks every time (A1)
             $plans = $planRepo->forUser($user['id']);
         }
         $feed = (new ActivityRepository($db))->feed(3);
@@ -43,7 +35,12 @@ final class HomeController
             ]);
             return;
         }
+        $open = array_values(array_filter(
+            (new \TrailSense\Repositories\ParticipantRepository($db))->upcomingGroupHikes($user['id'], null, 6),
+            static fn (array $h) => !in_array($h['joined'], [true, 't'], true)
+        ));
         View::render('home/hiker', [
+            'groupHikes' => array_slice($open, 0, 2),
             'title' => 'Home',
             'active' => 'home',
             'next' => $plans['upcoming'][0] ?? null,

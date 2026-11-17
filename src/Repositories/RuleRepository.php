@@ -15,9 +15,9 @@ final class RuleRepository
     public function active(): array
     {
         return $this->db->query(
-            "SELECT code, factor, metric, comparator, threshold, level, name, precaution
+            "SELECT code, factor, metric, comparator, threshold, level, name, precaution, required
              FROM risk_rule WHERE active
-             ORDER BY array_position(ARRAY['rain','wind','heat','cold','daylight']::varchar[], factor), level"
+             ORDER BY array_position(ARRAY['official','rain','wind','heat','cold','daylight','fire','trail']::varchar[], factor), level"
         )->fetchAll();
     }
 }

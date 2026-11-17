@@ -16,24 +16,26 @@ final class TrailRepository
     /** F1: combined filters (AC1.2). Invalid values must already be dropped by the caller (AC1.5). */
     public function search(string $text = '', ?string $difficulty = null, ?float $maxKm = null): array
     {
-        $sql = 'SELECT id, name, region, distance_km, elevation_gain_m, est_duration_min, difficulty, route_points
-                FROM trail WHERE TRUE';
+        $sql = 'SELECT t.id, t.name, t.region, t.distance_km, t.elevation_gain_m, t.est_duration_min, t.difficulty,
+                       t.route_points, t.ref, t.is_loop,
+                       (SELECT thumb_url FROM trail_photo ph WHERE ph.trail_id = t.id ORDER BY position LIMIT 1) AS thumb_url,
+                       (SELECT alt_text FROM trail_photo ph WHERE ph.trail_id = t.id ORDER BY position LIMIT 1) AS thumb_alt
+                FROM trail t WHERE TRUE';
         $params = [];
         if ($text !== '') {
-            $sql .= ' AND (name ILIKE ? OR region ILIKE ?)';
+            $sql .= ' AND (t.name ILIKE ? OR t.region ILIKE ? OR t.ref ILIKE ?)';
             $like = '%' . addcslashes($text, '%_\\') . '%';
-            $params[] = $like;
-            $params[] = $like;
+            array_push($params, $like, $like, $like);
         }
         if ($difficulty !== null) {
-            $sql .= ' AND difficulty = ?';
+            $sql .= ' AND t.difficulty = ?';
             $params[] = $difficulty;
         }
         if ($maxKm !== null) {
-            $sql .= ' AND distance_km <= ?';
+            $sql .= ' AND t.distance_km <= ?';
             $params[] = $maxKm;
         }
-        $sql .= " ORDER BY array_position(ARRAY['easy','moderate','hard']::varchar[], difficulty), distance_km";
+        $sql .= " ORDER BY array_position(ARRAY['easy','moderate','hard']::varchar[], t.difficulty), t.distance_km";
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
         return array_map([$this, 'decode'], $stmt->fetchAll());
@@ -45,6 +47,14 @@ final class TrailRepository
         $stmt->execute([$id]);
         $row = $stmt->fetch();
         return $row ? $this->decode($row) : null;
+    }
+
+    /** F1.3 licensed photos with attribution. */
+    public function photos(int $trailId): array
+    {
+        $stmt = $this->db->prepare('SELECT * FROM trail_photo WHERE trail_id = ? ORDER BY position');
+        $stmt->execute([$trailId]);
+        return $stmt->fetchAll();
     }
 
     public function exists(int $id): bool

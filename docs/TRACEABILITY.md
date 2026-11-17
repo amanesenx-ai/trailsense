@@ -34,4 +34,22 @@
 | NFR1–2 | Phone, accessibility | app.css | Manual + scripted checks in UX_REVIEW.md |
 | NFR3 | Security | Repositories (prepared), e(), Csrf | Http: *escaped in the feed (XSS)*, CSRF test; security scan in MANUAL_TESTS.md |
 
-Run: `php tests/run.php` → 73 tests (unit · integration · HTTP).
+Run: `php tests/run.php` (see totals at the end of this file).
+
+## Release 2
+| Req | Description | Implemented in | Covering automated tests |
+|---|---|---|---|
+| AC1.6–1.9 | Real OSM route on interactive map, start + end markers, directions, attribution, SVG fallback | Html::map, app.js (Leaflet), trails/show, plans/show, database/source + bin/gen-trail-data.py | Release2Flows: *trail page: real map…*, *loop trails show one start/finish marker* |
+| AC1.10–1.11 | Licensed photos with author/licence, fallback | trail_photo, TrailRepository::photos, trails/show, app.js | Release2Flows: *…photos with licence…*; Integration: *every trail has a photo* |
+| AC4.7 | IPMA district warnings overlapping the hike | Alerts/IpmaProvider::matchWarnings, rules IPMA_Y/IPMA_O | Unit IpmaTest (district, overlap, orange>yellow, coastal, green ignored) |
+| AC4.8 | IPMA fire risk of nearest municipality | IpmaProvider::nearestFireRisk, rules FIRE_C/FIRE_W | Unit IpmaTest *fire risk…*; RiskEngine *orange IPMA warning and fire risk 4…* |
+| AC4.9 | Advisory rules don't block completeness | risk_rule.required, RiskEngine::evaluate/byFactor | Unit *advisory rules without data…*; IpmaTest *beyond the horizon* |
+| AC4.10 | IPMA failure degrades gracefully | IpmaProvider (null + message) | Unit *IPMA down…*, *downloaded once per request* |
+| AC9.4–9.7 | Group hikes listed, join/leave, capacity, read-only view, private personal plans | ParticipantRepository, GroupController, PlanController::visiblePlan, groups/index | Release2 integration (join/full/own/not-open/leave); Release2Flows *hiker joins…*, *organizer sees who is coming*; Flows *…personal plan…* |
+| AC10.1–10.3 | Community reports; closed → WARNING | TrailReportRepository, TrailController::report, rule TRAIL_CL | Release2 integration *trail reports…*; Release2Flows *closed turns the plan check into a WARNING*, *report without a condition* |
+| AC6.4 | Likes (unique) and comments (own delete) | SocialRepository, ActivityController::like/comment/deleteComment | Release2 integration *likes toggle…*, *comments: only the author…*; Release2Flows *like, comment…* |
+| AC11.1–11.2 | Profile + stats, no e-mail | ProfileRepository, ProfileController, profile/show | Release2 integration *profile statistics…*; Release2Flows *profile shows statistics…* |
+| AC12.1–12.3 | Public REST API | src/Api/Router + Endpoints, public/.htaccess, docs/API.md, docs/openapi.yaml | Http ApiTest (8 tests: index/CORS, filters, 400/404/405, GeoJSON, conditions not stored, no e-mails) |
+| ADR-014 | Migrations upgrade the live DB once | Core/Installer, database/migrations/002_release2.sql | Integration InstallerTest *a release-1 database is upgraded…* |
+
+Run: `php tests/run.php` → 113 tests. CI: `.github/workflows/tests.yml` runs them on every push.

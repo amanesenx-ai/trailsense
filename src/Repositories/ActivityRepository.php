@@ -10,7 +10,10 @@ final class ActivityRepository
     private const SELECT = 'SELECT a.*, u.name AS author, u.role AS author_role,
             t.name AS trail_name, t.region, t.difficulty, t.route_points,
             (SELECT file_name FROM activity_photo ph WHERE ph.activity_id = a.id ORDER BY ph.id LIMIT 1) AS photo,
-            (SELECT alt_text FROM activity_photo ph WHERE ph.activity_id = a.id ORDER BY ph.id LIMIT 1) AS photo_alt
+            (SELECT alt_text FROM activity_photo ph WHERE ph.activity_id = a.id ORDER BY ph.id LIMIT 1) AS photo_alt,
+            (SELECT COUNT(*) FROM activity_like l WHERE l.activity_id = a.id) AS likes,
+            (SELECT COUNT(*) FROM activity_comment c WHERE c.activity_id = a.id) AS comments,
+            t.elevation_gain_m
         FROM activity a
         JOIN app_user u ON u.id = a.user_id
         JOIN trail t ON t.id = a.trail_id';
@@ -55,6 +58,15 @@ final class ActivityRepository
     {
         $stmt = $this->db->prepare(self::SELECT . ' ORDER BY a.created_at DESC, a.id DESC LIMIT ?');
         $stmt->bindValue(1, $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        return array_map([$this, 'decode'], $stmt->fetchAll());
+    }
+
+    public function byUser(int $userId, int $limit = 20): array
+    {
+        $stmt = $this->db->prepare(self::SELECT . ' WHERE a.user_id = ? ORDER BY a.hiked_on DESC, a.id DESC LIMIT ?');
+        $stmt->bindValue(1, $userId, PDO::PARAM_INT);
+        $stmt->bindValue(2, $limit, PDO::PARAM_INT);
         $stmt->execute();
         return array_map([$this, 'decode'], $stmt->fetchAll());
     }

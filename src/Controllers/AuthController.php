@@ -83,11 +83,7 @@ final class AuthController
 
     public function account(): void
     {
-        $user = Auth::requireLogin();
-        View::render('auth/account', [
-            'title' => 'Account',
-            'active' => 'account',
-            'account' => $this->users->find($user['id']),
-        ]);
+        Auth::requireLogin();
+        (new ProfileController())->show();     // "Me" = my own profile with statistics (F11)
     }
 }

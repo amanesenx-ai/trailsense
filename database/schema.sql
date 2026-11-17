@@ -2,7 +2,8 @@
 SET client_min_messages = warning;
 -- Re-runnable: drops and recreates everything.
 
-DROP TABLE IF EXISTS activity_photo, activity, assessment_result, risk_assessment,
+DROP TABLE IF EXISTS schema_migration, activity_comment, activity_like, trail_report, hike_participant, trail_photo,
+    activity_photo, activity, assessment_result, risk_assessment,
     weather_snapshot, risk_rule, group_plan, hike_plan, trail, app_user CASCADE;
 
 -- Users and roles (F8)
@@ -26,9 +27,28 @@ CREATE TABLE trail (
     difficulty       VARCHAR(10)  NOT NULL CHECK (difficulty IN ('easy', 'moderate', 'hard')),
     start_lat        NUMERIC(8,5) NOT NULL CHECK (start_lat BETWEEN -90 AND 90),
     start_lon        NUMERIC(8,5) NOT NULL CHECK (start_lon BETWEEN -180 AND 180),
-    route_points     JSONB        NOT NULL,           -- [[lat, lon], ...] drawn as SVG (ADR-006)
+    route_points     JSONB        NOT NULL,           -- [[lat, lon], ...] real OSM geometry (ADR-011)
     description      TEXT         NOT NULL DEFAULT '',
+    ref              VARCHAR(20)  NOT NULL DEFAULT '', -- official code, e.g. PR2 VLG
+    osm_relation_id  BIGINT       UNIQUE,              -- OpenStreetMap hiking relation (attribution, map link)
+    is_loop          BOOLEAN      NOT NULL DEFAULT FALSE,
+    ipma_area        CHAR(3)      NOT NULL DEFAULT 'PTO' CHECK (ipma_area ~ '^[A-Z]{3}$'),  -- IPMA warning district
+    coastal          BOOLEAN      NOT NULL DEFAULT FALSE,
     UNIQUE (name, region)
+);
+
+-- Licensed trail photos (F1.3): hot-linked from Wikimedia Commons with attribution
+CREATE TABLE trail_photo (
+    id          SERIAL PRIMARY KEY,
+    trail_id    INTEGER      NOT NULL REFERENCES trail(id) ON DELETE CASCADE,
+    position    SMALLINT     NOT NULL DEFAULT 1 CHECK (position >= 1),
+    image_url   VARCHAR(500) NOT NULL CHECK (image_url LIKE 'https://upload.wikimedia.org/%'),
+    thumb_url   VARCHAR(500) NOT NULL CHECK (thumb_url LIKE 'https://upload.wikimedia.org/%'),
+    source_url  VARCHAR(500) NOT NULL,
+    author      VARCHAR(200) NOT NULL,
+    license     VARCHAR(80)  NOT NULL,
+    alt_text    VARCHAR(200) NOT NULL,
+    UNIQUE (trail_id, position)
 );
 CREATE INDEX idx_trail_difficulty ON trail (difficulty);
 
@@ -53,18 +73,28 @@ CREATE TABLE group_plan (
     meeting_time  TIME         NOT NULL
 );
 
--- Predefined, editable risk rules (F4, ADR-003)
+-- Participants of organizer group hikes: many-to-many hike_plan × app_user (F9.2)
+CREATE TABLE hike_participant (
+    plan_id   INTEGER     NOT NULL REFERENCES hike_plan(id) ON DELETE CASCADE,
+    user_id   INTEGER     NOT NULL REFERENCES app_user(id)  ON DELETE CASCADE,
+    joined_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (plan_id, user_id)
+);
+
+-- Predefined, editable risk rules (F4, ADR-003, ADR-012)
 CREATE TABLE risk_rule (
     code        VARCHAR(10)  PRIMARY KEY,
-    factor      VARCHAR(10)  NOT NULL CHECK (factor IN ('rain', 'wind', 'heat', 'cold', 'daylight')),
+    factor      VARCHAR(10)  NOT NULL CHECK (factor IN ('rain', 'wind', 'heat', 'cold', 'daylight', 'official', 'fire', 'trail')),
     metric      VARCHAR(30)  NOT NULL CHECK (metric IN ('precip_total_mm', 'gust_max_kmh', 'temp_max_c',
-                                                         'temp_min_c', 'daylight_margin_min')),
+                                                         'temp_min_c', 'daylight_margin_min',
+                                                         'ipma_warning_level', 'fire_risk', 'trail_closed')),
     comparator  VARCHAR(2)   NOT NULL CHECK (comparator IN ('>=', '<=', '<')),
     threshold   NUMERIC(6,1) NOT NULL,
     level       VARCHAR(7)   NOT NULL CHECK (level IN ('caution', 'warning')),
     name        VARCHAR(80)  NOT NULL,
     precaution  VARCHAR(200) NOT NULL,
-    active      BOOLEAN      NOT NULL DEFAULT TRUE
+    active      BOOLEAN      NOT NULL DEFAULT TRUE,
+    required    BOOLEAN      NOT NULL DEFAULT TRUE    -- false = advisory: missing data does not make the check incomplete
 );
 
 -- Forecast values actually used by an assessment (F3, ADR-005)
@@ -80,6 +110,11 @@ CREATE TABLE weather_snapshot (
     temp_min_c      NUMERIC(4,1),
     temp_max_c      NUMERIC(4,1),
     sunset          TIME,
+    alerts_source   VARCHAR(10) NOT NULL DEFAULT 'none' CHECK (alerts_source IN ('ipma', 'demo', 'none')),
+    warning_level   SMALLINT    CHECK (warning_level BETWEEN 0 AND 3),     -- IPMA: 0 none … 3 red; NULL not published
+    warnings        JSONB       NOT NULL DEFAULT '[]',
+    fire_risk       SMALLINT    CHECK (fire_risk BETWEEN 1 AND 5),         -- IPMA RCM; NULL not published
+    alerts_message  VARCHAR(300) NOT NULL DEFAULT '',
     CHECK (available = FALSE OR (precip_total_mm IS NOT NULL AND gust_max_kmh IS NOT NULL
                                  AND temp_min_c IS NOT NULL AND temp_max_c IS NOT NULL))
 );
@@ -120,6 +155,33 @@ CREATE TABLE activity (
 );
 CREATE INDEX idx_activity_created ON activity (created_at DESC);
 
+-- Community trail condition reports (F10)
+CREATE TABLE trail_report (
+    id         SERIAL PRIMARY KEY,
+    trail_id   INTEGER     NOT NULL REFERENCES trail(id)    ON DELETE CASCADE,
+    user_id    INTEGER     NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+    condition  VARCHAR(10) NOT NULL CHECK (condition IN ('good', 'muddy', 'obstacle', 'overgrown', 'closed')),
+    note       VARCHAR(300) NOT NULL DEFAULT '',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_report_trail_date ON trail_report (trail_id, created_at DESC);
+
+-- Likes (many-to-many) and comments on published hikes (F6.2)
+CREATE TABLE activity_like (
+    activity_id INTEGER     NOT NULL REFERENCES activity(id) ON DELETE CASCADE,
+    user_id     INTEGER     NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (activity_id, user_id)
+);
+CREATE TABLE activity_comment (
+    id          SERIAL PRIMARY KEY,
+    activity_id INTEGER      NOT NULL REFERENCES activity(id) ON DELETE CASCADE,
+    user_id     INTEGER      NOT NULL REFERENCES app_user(id) ON DELETE CASCADE,
+    body        VARCHAR(500) NOT NULL CHECK (char_length(trim(body)) >= 1),
+    created_at  TIMESTAMPTZ  NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_comment_activity ON activity_comment (activity_id, created_at);
+
 CREATE TABLE activity_photo (
     id          SERIAL PRIMARY KEY,
     activity_id INTEGER      NOT NULL REFERENCES activity(id) ON DELETE CASCADE,
@@ -128,3 +190,10 @@ CREATE TABLE activity_photo (
     content     BYTEA        NOT NULL CHECK (octet_length(content) <= 3145728),   -- stored in DB (ADR-009)
     alt_text    VARCHAR(150) NOT NULL DEFAULT ''
 );
+
+-- Applied migrations (ADR-014). A fresh install from this file is at the latest version.
+CREATE TABLE schema_migration (
+    version    INTEGER PRIMARY KEY,
+    applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+INSERT INTO schema_migration (version) VALUES (1), (2);

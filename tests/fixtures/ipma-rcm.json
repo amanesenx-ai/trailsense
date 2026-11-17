@@ -1,0 +1,31 @@
+{
+ "dataPrev": "2026-11-19",
+ "dataRun": "2026-11-18",
+ "fileDate": "2026-11-18 09:35:02",
+ "local": {
+  "1315": {
+   "data": {
+    "rcm": 2
+   },
+   "dico": "1315",
+   "latitude": 41.19,
+   "longitude": -8.5
+  },
+  "1312": {
+   "data": {
+    "rcm": 1
+   },
+   "dico": "1312",
+   "latitude": 41.15,
+   "longitude": -8.62
+  },
+  "0104": {
+   "data": {
+    "rcm": 4
+   },
+   "dico": "0104",
+   "latitude": 40.93,
+   "longitude": -8.25
+  }
+ }
+}

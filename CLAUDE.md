@@ -4,7 +4,7 @@ Read SPEC.md (what to build) and docs/ARCHITECTURE.md (where code goes) before c
 The owner decides scope and architecture; you implement against them. If a request conflicts with SPEC.md, stop and ask.
 
 ## Stack (fixed — see docs/DECISIONS.md ADR-001)
-PHP 8.x (no framework, no Composer at runtime) · PostgreSQL 16 · HTML + one CSS file + minimal vanilla JS · Apache (FEUP).
+PHP 8.x (no framework, no Composer at runtime) · PostgreSQL 16/17 · HTML + one CSS file + minimal vanilla JS · Apache (alwaysdata) · Leaflet 1.9.4 via CDN with SRI (ADR-010).
 
 ## Commands
 - Start DB (local): `pg_ctl -D /tmp/pgdata -o "-k /tmp" start`
@@ -12,6 +12,8 @@ PHP 8.x (no framework, no Composer at runtime) · PostgreSQL 16 · HTML + one CS
 - Run app: `php -S localhost:8000 -t public`
 - Run all tests: `php tests/run.php`  (must print `FAILED: 0`)  · one suite: `php tests/run.php unit|integration|http`
 - Test DB is `trailsense_test`, set in config/config.php `db_test`; tests reset it themselves.
+- Schema change = edit `database/schema.sql` **and** add `database/migrations/NNN_name.sql` (+ bump the version row at the end of schema.sql). The live DB upgrades itself on the next request (Core/Installer).
+- Public API lives in `src/Api` (read-only JSON, no personal data); document every endpoint in docs/API.md + docs/openapi.yaml.
 
 ## Architecture rules (layered)
 - `public/index.php` is the only entry point. Routes are declared in `src/routes.php` (`?r=name`).

@@ -24,19 +24,21 @@ $future = (new DateTimeImmutable('+5 days'))->format('Y-m-d');
 return [
     '__before' => function () use (&$db) { $db = resetTestDatabase(); },
 
-    'schema has the 10 tables of the data model' => function () use (&$db) {
+    'schema has the 16 tables of the data model' => function () use (&$db) {
         $n = (int) $db->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = current_schema()")->fetchColumn();
-        assertSame(10, $n);
+        assertSame(16, $n);
     },
-    'seed: 10 trails, 8 rules, 4 users' => function () use (&$db) {
-        assertSame(10, (int) $db->query('SELECT COUNT(*) FROM trail')->fetchColumn());
-        assertSame(8, count((new RuleRepository($db))->active()));
+    'seed: 11 real OSM trails with photos, 13 rules, 4 users' => function () use (&$db) {
+        assertSame(11, (int) $db->query('SELECT COUNT(*) FROM trail WHERE osm_relation_id IS NOT NULL')->fetchColumn());
+        assertSame(0, (int) $db->query('SELECT COUNT(*) FROM trail t WHERE NOT EXISTS (SELECT 1 FROM trail_photo p WHERE p.trail_id = t.id)')->fetchColumn(), 'every trail has a photo');
+        assertSame(13, count((new RuleRepository($db))->active()));
         assertSame(4, (int) $db->query('SELECT COUNT(*) FROM app_user')->fetchColumn());
     },
     'trail search combines filters (AC1.2)' => function () use (&$db) {
         $repo = new TrailRepository($db);
         assertSame(2, count($repo->search('valongo')));
-        assertSame(2, count($repo->search('AROUCA')), 'case-insensitive');
+        assertSame(3, count($repo->search('AROUCA')), 'case-insensitive');
+        assertSame('Trilho dos Romanos', $repo->search('PR2 VLG')[0]['name'], 'search by official code');
         foreach ($repo->search('', 'easy', 10.0) as $t) {
             assertTrue($t['difficulty'] === 'easy' && (float) $t['distance_km'] <= 10);
         }
@@ -85,7 +87,7 @@ return [
         $a = (new AssessmentRepository($db))->latestForPlan(1);
         assertSame('warning', $a['overall_level']);      // 12 mm rain → RAIN_W
         assertSame(true, $a['is_complete']);
-        assertSame(8, count($a['results']));
+        assertSame(13, count($a['results']));
         assertSame('12.0', (string) $a['precip_total_mm']);
     },
     'unavailable forecast → incomplete assessment, daylight still evaluated (AC4.4/4.5)' => function () use (&$db, $fixedWeather) {
@@ -95,7 +97,7 @@ return [
         $a = (new AssessmentRepository($db))->latestForPlan(2);
         assertSame(false, $a['is_complete']);
         $evaluated = array_column(array_filter($a['results'], fn ($r) => $r['evaluated']), 'rule');
-        assertSame(['daylight', 'daylight'], array_column($evaluated, 'factor'));
+        assertSame(['daylight', 'daylight', 'trail'], array_column($evaluated, 'factor'), 'daylight + community report still evaluated');
         $fixedWeather->next = null;
     },
     'editing a threshold in risk_rule changes the next assessment (AC4.6)' => function () use (&$db, $fixedWeather) {
@@ -129,8 +131,11 @@ return [
         assertSame($png, $stored['bytes'], 'binary photo round-trips through BYTEA');
     },
     'deleting a plan keeps the published hike but unlinks it (ON DELETE SET NULL)' => function () use (&$db) {
-        (new PlanRepository($db))->deleteOwned(5, 1);
-        $row = $db->query('SELECT plan_id FROM activity WHERE notes LIKE \'Easy and flat%\'')->fetch();
+        $activityId = (int) $db->query('SELECT id FROM activity WHERE plan_id = 5')->fetchColumn();
+        assertTrue($activityId > 0, 'seed: a published hike is linked to plan 5');
+        assertTrue((new PlanRepository($db))->deleteOwned(5, 1));
+        $row = $db->query('SELECT plan_id FROM activity WHERE id = ' . $activityId)->fetch();
+        assertTrue($row !== false, 'the published hike still exists');
         assertSame(null, $row['plan_id']);
     },
 ];

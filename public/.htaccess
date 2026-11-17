@@ -1,0 +1,7 @@
+# Public API: /api/v1/... is served by index.php (F12). Real files (assets) are served directly.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^api/(.*)$ index.php [QSA,L]
+</IfModule>
+Options -Indexes
