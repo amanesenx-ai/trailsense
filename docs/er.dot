@@ -1,0 +1,28 @@
+digraph ER {
+  graph [rankdir=LR, bgcolor="white", pad=0.2, nodesep=0.35, ranksep=0.7, fontname="Helvetica"];
+  node [shape=plain, fontname="Helvetica", fontsize=10];
+  edge [fontname="Helvetica", fontsize=9, color="#3b6b55", arrowhead=crow, arrowtail=tee, dir=both];
+  app_user [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>app_user</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left">name VARCHAR(80)</td></tr><tr><td align="left">email VARCHAR(254) UNIQUE</td></tr><tr><td align="left">password_hash</td></tr><tr><td align="left">role hiker|organizer</td></tr><tr><td align="left">created_at</td></tr></table>>];
+  trail [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>trail</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left">name, region (UNIQUE pair)</td></tr><tr><td align="left">distance_km, elevation_gain_m</td></tr><tr><td align="left">est_duration_min</td></tr><tr><td align="left">difficulty easy|moderate|hard</td></tr><tr><td align="left">start_lat, start_lon</td></tr><tr><td align="left">route_points JSONB</td></tr><tr><td align="left">description</td></tr></table>>];
+  hike_plan [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>hike_plan</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left"><i>user_id</i> FK → app_user</td></tr><tr><td align="left"><i>trail_id</i> FK → trail</td></tr><tr><td align="left">planned_date DATE</td></tr><tr><td align="left">start_time TIME</td></tr><tr><td align="left">duration_min 30–720</td></tr><tr><td align="left">notes, created_at</td></tr></table>>];
+  group_plan [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>group_plan</b></font></td></tr><tr><td align="left"><u><i>plan_id</i></u> PK, FK → hike_plan</td></tr><tr><td align="left">group_size 2–40</td></tr><tr><td align="left">meeting_point</td></tr><tr><td align="left">meeting_time TIME</td></tr></table>>];
+  weather_snapshot [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>weather_snapshot</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left"><i>plan_id</i> FK → hike_plan</td></tr><tr><td align="left">source, fetched_at</td></tr><tr><td align="left">available, message</td></tr><tr><td align="left">precip_total_mm, gust_max_kmh</td></tr><tr><td align="left">temp_min_c, temp_max_c</td></tr><tr><td align="left">sunset TIME</td></tr></table>>];
+  risk_assessment [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>risk_assessment</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left"><i>plan_id</i> FK → hike_plan</td></tr><tr><td align="left"><i>snapshot_id</i> FK UNIQUE</td></tr><tr><td align="left">overall_level ok|caution|warning</td></tr><tr><td align="left">is_complete, created_at</td></tr></table>>];
+  risk_rule [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>risk_rule</b></font></td></tr><tr><td align="left"><u>code</u> VARCHAR PK</td></tr><tr><td align="left">factor, metric</td></tr><tr><td align="left">comparator, threshold</td></tr><tr><td align="left">level caution|warning</td></tr><tr><td align="left">name, precaution, active</td></tr></table>>];
+  assessment_result [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>assessment_result</b></font></td></tr><tr><td align="left"><u><i>assessment_id</i></u> PK, FK</td></tr><tr><td align="left"><u><i>rule_code</i></u> PK, FK</td></tr><tr><td align="left">observed_value</td></tr><tr><td align="left">evaluated, triggered</td></tr></table>>];
+  activity [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>activity</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left"><i>user_id</i> FK → app_user</td></tr><tr><td align="left"><i>trail_id</i> FK → trail</td></tr><tr><td align="left"><i>plan_id</i> FK NULL → hike_plan</td></tr><tr><td align="left">hiked_on, distance_km</td></tr><tr><td align="left">duration_min, notes</td></tr><tr><td align="left">created_at</td></tr></table>>];
+  activity_photo [label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4"><tr><td bgcolor="#163a2b"><font color="white"><b>activity_photo</b></font></td></tr><tr><td align="left"><u>id</u> SERIAL PK</td></tr><tr><td align="left"><i>activity_id</i> FK → activity</td></tr><tr><td align="left">file_name UNIQUE</td></tr><tr><td align="left">alt_text</td></tr></table>>];
+
+  app_user -> hike_plan [label="1 : N"];
+  trail -> hike_plan [label="1 : N"];
+  hike_plan -> group_plan [label="1 : 0..1", arrowhead=teeodot];
+  hike_plan -> weather_snapshot [label="1 : N"];
+  hike_plan -> risk_assessment [label="1 : N"];
+  weather_snapshot -> risk_assessment [label="1 : 1", arrowhead=tee];
+  risk_assessment -> assessment_result [label="1 : N"];
+  risk_rule -> assessment_result [label="1 : N"];
+  app_user -> activity [label="1 : N"];
+  trail -> activity [label="1 : N"];
+  hike_plan -> activity [label="0..1 : N", arrowtail=teeodot];
+  activity -> activity_photo [label="1 : N"];
+}
