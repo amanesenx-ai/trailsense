@@ -35,7 +35,8 @@ session_start();
 
 header('X-Content-Type-Options: nosniff');
 header('X-Frame-Options: DENY');
-header('Referrer-Policy: same-origin');
+// OSM tile servers require a Referer (tile usage policy): send only our origin to other sites, never the full URL
+header('Referrer-Policy: strict-origin-when-cross-origin');
 
 $routes = require __DIR__ . '/../src/routes.php';
 $name = is_string($_GET['r'] ?? null) ? $_GET['r'] : 'home';
