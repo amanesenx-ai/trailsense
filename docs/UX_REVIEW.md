@@ -28,3 +28,15 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | "Start by 13:30 or go shorter." | Yellow callout computed from sunset, duration and 30-min buffer | kept, now calculated |
 | Share route with distance, time, pace | Post page with route, distance, moving time, avg pace, date | likes/comments are P1 |
 | Map tiles | Simplified SVG route + "Open in OpenStreetMap" | ADR-006 |
+
+## Release 2 review (owner feedback: "too basic", map showed only the start)
+| Finding | Change |
+|---|---|
+| OSM link showed only the start point | Interactive map with the real OSM route, labelled **Start** and **End** markers (one "Start / finish" for loops), "Directions to the start", "View route on OpenStreetMap", attribution; SVG fallback without JS |
+| No pictures of the trails | 2–3 real photos per trail (Wikimedia Commons) with author + licence on the photo; first photo used on trail cards |
+| Plans invisible to others; organizers had no way to fill a group | Groups tab for everyone, join/leave with places left; participants see the briefing; organizer sees who is coming; personal plans remain private (stated on the page) |
+| Weather was the only source | IPMA official warnings and fire risk shown next to the forecast, labelled with their source; "not yet published" state explained in words |
+| A1 promised "community trail reports" | Report form with large tap targets (chips), recent reports with age, closed trail → WARNING in plans |
+| A1 Priority 1 social features | Likes (aria-pressed), comments, profiles with statistics and a 6-month chart (text alternative in aria-label) |
+| Group hikes and home showed "NOT CHECKED" until opened | Upcoming unchecked hikes are assessed automatically when listed |
+| Map layers covered sticky button (found live) | CSS isolation |

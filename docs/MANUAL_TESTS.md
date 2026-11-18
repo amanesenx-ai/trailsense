@@ -25,3 +25,13 @@ Scripted extra checks at 360 px: no horizontal scroll on any of 15 pages, every 
 | M18 | Live forecast | sign in, create a plan within 16 days | source line shows "Forecast: Open-Meteo" | ⏳ check in the browser before the demo |
 
 Security checklist (run with the security-reviewer subagent prompt + grep scan): authentication ✓ · authorisation ✓ · input validated ✓ · output encoded ✓ · secrets external ✓ · uploads non-executable ✓.
+
+## Release 2 — checked on the live site (https://amanesenx.alwaysdata.net), 2026-11-18
+| # | Check | Result |
+|---|---|---|
+| L1 | Deploy: push → scheduled `git pull` (≤ 5 min) → migration 002 runs once on the first request | ✅ after fixing the release-1 marker bug (see LESSONS) |
+| L2 | `GET /api/v1/trails?difficulty=hard` → 3 trails; `/trails/4`, `/feed`, `/group-hikes` → 200 JSON | ✅ |
+| L3 | `/trails/7/conditions` for tomorrow: **real Open-Meteo** forecast (gust 56 km/h → WIND_C CAUTION) and **real IPMA** (no warning, fire risk 1) | ✅ |
+| L4 | Same check 10 days ahead: IPMA rules "pending", assessment still complete (AC4.9) | ✅ |
+| L5 | Trail page on a phone: Leaflet loads (SRI accepted), OSM tiles load, Start + End markers, photos with author/licence | ✅ |
+| L6 | Sticky "Plan this hike" button was covered by the map layers | ❌ → fixed (CSS isolation), re-checked ✅ |
