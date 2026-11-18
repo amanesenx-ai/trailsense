@@ -33,6 +33,13 @@ return [
         assertContains('CC BY-SA 2.0', $b->body);
         assertContains('© <a href="https://www.openstreetmap.org/copyright"', $b->body);
     },
+    'map tiles get our origin as Referer (OSM tile policy), never the full URL' => function () use ($base) {
+        $ch = curl_init($base . '/index.php?r=login');
+        curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_HEADER => true, CURLOPT_NOBODY => false]);
+        $raw = (string) curl_exec($ch);
+        curl_close($ch);
+        assertContains('Referrer-Policy: strict-origin-when-cross-origin', $raw);
+    },
     'loop trails show one start/finish marker' => function () use ($login) {
         $b = $login('joana@trailsense.pt')->get('r=trail&id=7');
         assertContains('Start and finish', $b->body);
