@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace TrailSense\Services;
 
+
 use DateTimeImmutable;
 use TrailSense\Alerts\DemoAlertsProvider;
 use TrailSense\Alerts\IpmaProvider;
@@ -10,6 +11,7 @@ use TrailSense\Alerts\OfficialAlerts;
 use TrailSense\Alerts\OfficialAlertsProvider;
 use TrailSense\Domain\Daylight;
 use TrailSense\Domain\RiskEngine;
+use TrailSense\Domain\Verdict;
 use TrailSense\Repositories\AssessmentRepository;
 use TrailSense\Repositories\RuleRepository;
 use TrailSense\Weather\DemoWeatherProvider;
@@ -140,6 +142,10 @@ final class AssessmentService
         if (is_string($warnings)) {
             $warnings = json_decode($warnings, true) ?: [];
         }
+        $hours = $assessment['hourly'] ?? [];
+        if (is_string($hours)) {
+            $hours = json_decode($hours, true) ?: [];
+        }
 
         return [
             'factors' => $factors,
@@ -155,7 +161,25 @@ final class AssessmentService
             'alerts_source' => $assessment['alerts_source'] ?? 'none',
             'alerts_message' => $assessment['alerts_message'] ?? '',
             'warnings' => $warnings,
+            'hours' => $hours,
+            'start_time' => $start->format('H:i'),
+            'verdict' => Verdict::from((string) $assessment['overall_level'], self::bool($assessment['is_complete']), $factors),
+            'checklist' => Verdict::checklist($factors),
+            'links' => self::links($plan, $start, $end),
             'snapshot' => $assessment,
+        ];
+    }
+
+    /** AC4.15 direct links: the exact Open-Meteo request, its page for this place, and IPMA's district warnings. */
+    public static function links(array $plan, DateTimeImmutable $start, DateTimeImmutable $end): array
+    {
+        $lat = isset($plan['start_lat']) ? (float) $plan['start_lat'] : null;
+        $lon = isset($plan['start_lon']) ? (float) $plan['start_lon'] : null;
+        $area = (string) ($plan['ipma_area'] ?? '');
+        return [
+            'api' => $lat !== null && $lon !== null ? OpenMeteoProvider::url($lat, $lon, $start, $end) : null,
+            'page' => $lat !== null && $lon !== null ? OpenMeteoProvider::pageUrl($lat, $lon) : null,
+            'ipma' => preg_match('/^[A-Z]{3}$/', $area) === 1 ? 'https://www.ipma.pt/pt/otempo/prev-sam/?p=' . $area : null,
         ];
     }
 
@@ -169,7 +193,7 @@ final class AssessmentService
             'results' => $c['evaluation']['results'], 'sunset' => $c['sunset'], 'source' => $f->source,
             'available' => $f->available, 'message' => $f->message, 'precip_total_mm' => $f->precipTotalMm,
             'gust_max_kmh' => $f->gustMaxKmh, 'temp_min_c' => $f->tempMinC, 'temp_max_c' => $f->tempMaxC,
-            'alerts_source' => $a->source, 'alerts_message' => $a->message, 'warnings' => $a->warnings,
+            'alerts_source' => $a->source, 'alerts_message' => $a->message, 'warnings' => $a->warnings, 'hourly' => $f->hours,
             'warning_level' => $a->warningLevel, 'fire_risk' => $a->fireRisk,
         ];
     }

@@ -1,0 +1,57 @@
+<?php use TrailSense\Core\Html;
+/** F13 hike mode. Everything live happens in hike.js; this page works as a map + legend without it. */
+$t = $trail; $pts = $t['route_points']; $loop = Html::isTrue($t['is_loop']);
+$publish = ['from' => 'hike', 'trail_id' => $t['id']] + ($planId ? ['plan_id' => $planId] : []);
+$data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $paceKmh, 'trailId' => (int) $t['id'],
+    'publish' => url('publish', $publish)]; ?>
+<div class="hike" data-hike="<?= e((string) json_encode($data, JSON_UNESCAPED_UNICODE)) ?>">
+    <header class="hike-bar">
+        <a class="back" href="<?= e(url('trail', ['id' => $t['id']])) ?>" aria-label="Leave hike mode">←</a>
+        <div class="hike-title">
+            <strong><?= e($t['name']) ?></strong>
+            <span class="small muted"><?php if ($t['ref'] !== ''): ?><?= e($t['ref']) ?> · <?php endif; ?><?= e(Html::km($t['distance_km'])) ?> · <?= $loop ? 'loop' : 'one way' ?></span>
+        </div>
+        <span class="hike-clock" data-el="clock" aria-label="Elapsed time">0:00</span>
+    </header>
+
+    <div class="hike-map-wrap">
+        <div class="hike-map" data-el="map" role="region" aria-label="Live map of <?= e($t['name']) ?>">
+            <?= Html::route($pts, 'Route drawing of ' . $t['name'], 'route route-large') ?>
+        </div>
+        <button class="compass" type="button" data-el="compass" aria-label="Compass. Tap to turn on the phone compass">
+            <svg viewBox="0 0 64 64" aria-hidden="true" data-el="rose">
+                <circle cx="32" cy="32" r="30" class="rose-ring"/>
+                <path d="M32 6 39 32H25z" class="rose-n"/><path d="M32 58 25 32h14z" class="rose-s"/>
+                <text x="32" y="17" text-anchor="middle">N</text>
+            </svg>
+            <span class="compass-read" data-el="heading">tap</span>
+        </button>
+        <button class="btn btn-sm follow" type="button" data-el="follow" aria-pressed="true">Follow me</button>
+    </div>
+
+    <div class="off-route" data-el="offroute" role="alert" hidden></div>
+
+    <section class="hike-panel" aria-label="Hike status">
+        <p class="hike-status" data-el="status" role="status" aria-live="polite">Press <strong>Start hike</strong> when you are at the start. Your position stays on this phone.</p>
+        <div class="progress" aria-hidden="true"><span data-el="bar"></span></div>
+        <dl class="hike-stats">
+            <div><dt>Done</dt><dd data-el="done">—</dd></div>
+            <div><dt>Left</dt><dd data-el="left"><?= e(Html::km($t['distance_km'])) ?></dd></div>
+            <div><dt>Route</dt><dd data-el="pct">0%</dd></div>
+            <div><dt>Finish ≈</dt><dd data-el="eta">—</dd></div>
+        </dl>
+        <div class="hike-actions">
+            <button class="btn btn-primary" type="button" data-el="start">Start hike</button>
+            <button class="btn btn-secondary" type="button" data-el="finish" hidden>Finish</button>
+            <button class="btn btn-secondary" type="button" data-el="share">Share my position</button>
+            <a class="btn btn-danger" href="tel:112">Call 112</a>
+        </div>
+        <p class="small muted" data-el="share-status" role="status" aria-live="polite"></p>
+
+        <details class="hike-legend" open>
+            <summary>Trail marks for this route</summary>
+            <?= \TrailSense\Core\View::partial('partials/waymarks', ['waymarks' => $waymarks]) ?>
+        </details>
+        <noscript><p class="notice">Live position needs JavaScript. You can still use the route drawing and the trail marks.</p></noscript>
+    </section>
+</div>

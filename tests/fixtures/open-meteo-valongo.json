@@ -6,7 +6,8 @@
   "time": "iso8601",
   "temperature_2m": "\u00b0C",
   "precipitation": "mm",
-  "wind_gusts_10m": "km/h"
+  "wind_gusts_10m": "km/h",
+  "weather_code": "wmo code"
  },
  "hourly": {
   "time": [
@@ -112,6 +113,32 @@
    20,
    20,
    20
+  ],
+  "weather_code": [
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   0,
+   61,
+   61,
+   63,
+   61,
+   51,
+   80,
+   3,
+   3,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1,
+   1
   ]
  }
 }

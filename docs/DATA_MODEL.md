@@ -15,7 +15,7 @@ Authoritative SQL: `database/schema.sql` (+ `database/migrations/`). Diagram: `e
 | hike_plan | id | user_id → app_user (CASCADE); trail_id → trail (RESTRICT) | duration 30–720 | F2 plans |
 | group_plan | plan_id | plan_id → hike_plan (CASCADE) | size 2–40; meeting point ≥ 3 chars | F9; **one-to-zero-or-one** (ADR-008) |
 | risk_rule | code | — | metric, comparator, level from fixed lists; `required` (advisory rules) | F4 rules as data (ADR-003, ADR-012) |
-| weather_snapshot | id | plan_id → hike_plan (CASCADE) | if available, all four values NOT NULL; warning_level 0–3, fire_risk 1–5 | F3/F4.2 forecast + IPMA values used (ADR-005) |
+| weather_snapshot | id | plan_id → hike_plan (CASCADE) | if available, all four values NOT NULL; warning_level 0–3, fire_risk 1–5 | F3/F4.2 forecast + IPMA values used (ADR-005); `hourly` JSONB = hike window ± 2 h (time, temp, precip, gust, WMO code, in_window) for the visual check (ADR-017, migration 003) |
 | risk_assessment | id | plan_id → hike_plan (CASCADE); snapshot_id → weather_snapshot UNIQUE (CASCADE) | level ∈ {ok, caution, warning} | F4 one evaluation |
 | assessment_result | (assessment_id, rule_code) | assessment_id → risk_assessment (CASCADE); rule_code → risk_rule (RESTRICT, ON UPDATE CASCADE) | `evaluated OR NOT triggered` | F4/F5 **many-to-many association class** with attributes |
 | activity | id | user_id → app_user (CASCADE); trail_id → trail (RESTRICT); plan_id → hike_plan (**SET NULL**) | distance 0–200; duration 10–1440 | F6/F7 published hikes |

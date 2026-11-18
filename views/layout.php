@@ -29,7 +29,7 @@ $icons = [
     <?php endif; ?>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M2 20 9 7l4 7 3-4 6 10z' fill='%23f4c430'/></svg>">
 </head>
-<body class="<?= $user ? 'signed-in' : 'signed-out' ?>">
+<body class="<?= $user ? 'signed-in' : 'signed-out' ?><?= !empty($bodyClass) ? ' ' . e($bodyClass) : '' ?>">
 <a class="skip" href="#main">Skip to content</a>
 <header class="topbar">
     <a class="brand" href="<?= e(url('home')) ?>" aria-label="TrailSense home">
@@ -65,5 +65,7 @@ $icons = [
 </nav>
 <?php endif; ?>
 <script src="<?= e(asset('app.js')) ?>" defer></script>
+<?php foreach ($scripts ?? [] as $s): ?><script src="<?= e(asset($s)) ?>" defer></script>
+<?php endforeach; ?>
 </body>
 </html>

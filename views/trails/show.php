@@ -31,6 +31,7 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
         <li class="muted small">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</li>
     </ul>
     <div class="map-actions">
+        <a class="btn btn-primary btn-sm" href="<?= e(url('hike', ['id' => $t['id']])) ?>">▶ Start hike (live map &amp; compass)</a>
         <a class="btn btn-secondary btn-sm" href="<?= e(Html::directionsUrl($start)) ?>" target="_blank" rel="noopener">Directions to the start</a>
         <?php if (!empty($t['osm_relation_id'])): ?>
             <a class="btn btn-secondary btn-sm" href="https://www.openstreetmap.org/relation/<?= e($t['osm_relation_id']) ?>" target="_blank" rel="noopener">View route on OpenStreetMap</a>
@@ -45,6 +46,11 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
     <div><dt>Type</dt><dd><?= $loop ? 'Loop' : 'One way' ?></dd></div>
 </dl>
 <p class="prose"><?= e($t['description']) ?></p>
+
+<section class="card" aria-labelledby="marks-h">
+    <h2 id="marks-h">How this trail is marked</h2>
+    <?= View::partial('partials/waymarks', ['waymarks' => \TrailSense\Domain\Waymarks::forTrail((string) $t['ref'], (string) $t['name'])]) ?>
+</section>
 <a class="btn btn-primary btn-block sticky-action" href="<?= e(url('plan.new', ['trail_id' => $t['id']])) ?>">Plan this hike</a>
 
 <?php if ($groupHikes): ?>

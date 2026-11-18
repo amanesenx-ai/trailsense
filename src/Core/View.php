@@ -13,6 +13,8 @@ final class View
         $title = $data['title'] ?? 'TrailSense';
         $active = $data['active'] ?? '';
         $withMap = !empty($data['withMap']);
+        $bodyClass = (string) ($data['bodyClass'] ?? '');
+        $scripts = array_values(array_filter((array) ($data['scripts'] ?? []), fn ($s) => preg_match('/^[a-z0-9-]+\.js$/', (string) $s) === 1));
         $flash = Flash::take();
         $user = Auth::user();
         require TS_ROOT . '/views/layout.php';

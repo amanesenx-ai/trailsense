@@ -52,4 +52,16 @@ Run: `php tests/run.php` (see totals at the end of this file).
 | AC12.1–12.3 | Public REST API | src/Api/Router + Endpoints, public/.htaccess, docs/API.md, docs/openapi.yaml | Http ApiTest (8 tests: index/CORS, filters, 400/404/405, GeoJSON, conditions not stored, no e-mails) |
 | ADR-014 | Migrations upgrade the live DB once | Core/Installer, database/migrations/002_release2.sql | Integration InstallerTest *a release-1 database is upgraded…* |
 
-Run: `php tests/run.php` → 113 tests. CI: `.github/workflows/tests.yml` runs them on every push.
+
+## Release 3 (2026-11-18) — hike mode, map layers, visual risk check
+| Requirement | What | Code | Tests |
+|---|---|---|---|
+| AC13.1–13.9 | Hike mode: live position, compass, progress, off-route alert, 112, share position, finish → publish, wake lock | HikeController, views/hike/show, public/assets/hike.js, ActivityController::create (from=hike) | Release3Flows *hike mode: full-screen map…*, *finishing a hike pre-fills Publish…*, *needs a signed-in user* |
+| AC13.10 | Navigation maths | public/assets/hike-core.js | tests/js/hike-core.test.js (6) via Unit HikeCoreTest |
+| AC13.6 | FCMP waymark legend per trail (PR/GR/PL, boardwalk) | Domain/Waymarks, views/partials/waymarks | Unit Release3 *waymark legend…*, *routes without a code…*; Release3Flows *trail page offers "Start hike"…*, *boardwalk…* |
+| AC1.12 | Map layers OSM / OpenTopoMap / Waymarked Trails, Referer policy | public/assets/app.js `TS.layers`, public/index.php | Release3Flows *map layers…*; Release2Flows *map tiles get our origin as Referer* |
+| AC4.11–4.12 | Verdict + checklist | Domain/Verdict, views/partials/risk | Unit Verdict (4) |
+| AC4.13 | Hour by hour (chart + hour cards), stored hourly | Weather/Forecast::hourRows, OpenMeteoProvider (weather_code), Core/WeatherChart, Domain/WeatherCode, migration 003 | Unit Release3 *hourly rows…*, *WMO codes…*; Verdict *weather chart…*; Installer *migrated:2,3* |
+| AC4.14–4.15 | Factor tiles, direct Open-Meteo/IPMA links (also in the API) | views/partials/risk, AssessmentService::links, Api/Endpoints | Release3Flows *visual risk check…*; ApiTest *conditions…* |
+
+Run: `php tests/run.php` → 132 tests (release 1–2: 113). CI: `.github/workflows/tests.yml` runs them on every push.

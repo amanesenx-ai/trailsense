@@ -40,3 +40,13 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | A1 Priority 1 social features | Likes (aria-pressed), comments, profiles with statistics and a 6-month chart (text alternative in aria-label) |
 | Group hikes and home showed "NOT CHECKED" until opened | Upcoming unchecked hikes are assessed automatically when listed |
 | Map layers covered sticky button (found live) | CSS isolation |
+
+## Release 3 review (2026-11-18) — owner feedback "too basic", "risk layout should be more visual"
+| Before | Problem | After |
+|---|---|---|
+| Risk assessment = 8 equal rows with a badge each | Reader must scan everything to know "can I go?"; same weight for OK and CAUTION | **Verdict card** first (colour + icon + sentence + reason), then hour by hour, then a checklist, then factor **tiles** (icon, value, status in words). Rules table kept one tap away |
+| No hourly view | Hiker can't see *when* the rain or wind comes | 3 small panels on one hour axis (no dual axis), hike window shaded, sunset marked, peak/low labels only; hour cards are the table view |
+| Source = one grey line of text | No way to check the data | Chips linking to the exact Open-Meteo request, its page for the place, and the IPMA district page |
+| Trail page ended at "Plan this hike" | Nothing for the moment on the trail | **Start hike** → full-screen map, compass, progress, off-route alert, 112, share position; FCMP waymark legend for that trail |
+| 360 px: chart text ~5 px; tiles in one long column | Unreadable / long scroll | Chart keeps 560 px and scrolls sideways; tiles in 2 columns |
+| "Finish" visible before starting | `.btn{display}` overrode `[hidden]` | Global `[hidden]{display:none!important}` |

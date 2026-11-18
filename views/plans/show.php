@@ -1,6 +1,6 @@
 <?php use TrailSense\Core\Csrf; use TrailSense\Core\Html; use TrailSense\Domain\RiskEngine;
 $p = $plan; $isGroup = $p['group_size'] !== null; $left = $isGroup ? max(0, (int) $p['group_size'] - (int) $p['participants']) : 0;
-$levelName = ['yellow' => 'Yellow', 'orange' => 'Orange', 'red' => 'Red']; ?>
+?>
 <a class="back" href="<?= e($isOwner ? url('plans') : url('groups')) ?>">← <?= $isOwner ? ($isGroup ? 'My group hikes' : 'My plans') : 'Group hikes' ?></a>
 <header class="plan-head">
     <h1><?= e($p['trail_name']) ?></h1>
@@ -22,91 +22,7 @@ $levelName = ['yellow' => 'Yellow', 'orange' => 'Orange', 'red' => 'Red']; ?>
     </form>
 <?php endif; ?>
 
-<section class="card assessment" aria-labelledby="risk-h">
-    <div class="section-head">
-        <h2 id="risk-h">Risk assessment</h2>
-        <span class="overall"><?= Html::badge($vm['overall'], !$vm['complete']) ?></span>
-    </div>
-
-    <?php if (!$vm['available']): ?>
-        <p class="notice"><?= e($vm['message']) ?> Daylight was still checked.</p>
-    <?php endif; ?>
-
-    <?php if (isset($vm['factors']['daylight']) && $vm['factors']['daylight']['status'] === 'warning'): ?>
-        <p class="callout">Start by <strong><?= e($vm['latest_start']) ?></strong> or choose a shorter trail.</p>
-    <?php endif; ?>
-
-    <?php if ($vm['warnings']): ?>
-        <div class="notice"><strong>IPMA warnings during your hike:</strong>
-            <ul class="official-list">
-                <?php foreach ($vm['warnings'] as $w): ?>
-                    <li><span class="badge badge-<?= e($w['level']) ?>"><?= e($levelName[$w['level']] ?? $w['level']) ?></span> <?= e($w['type']) ?> · <?= e($w['start']) ?>–<?= e($w['end']) ?><?= $w['text'] !== '' ? ' · ' . e($w['text']) : '' ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <ul class="factors">
-        <?php foreach ($vm['factors'] as $f): ?>
-            <li class="factor factor-<?= e($f['status']) ?>">
-                <div class="factor-head">
-                    <span class="factor-name"><?= e($f['label']) ?></span>
-                    <span class="factor-value"><?= e($f['observed_text']) ?></span>
-                    <?= Html::badge($f['status']) ?>
-                </div>
-                <?php if ($f['rule']): ?>
-                    <p class="rule">Rule <code><?= e($f['rule']['code']) ?></code> triggered: <?= e($f['rule']['name']) ?> (<?= e($f['condition']) ?>).</p>
-                    <p class="precaution"><span aria-hidden="true">→</span> <?= e($f['precaution']) ?></p>
-                <?php elseif ($f['status'] === 'unknown'): ?>
-                    <p class="rule">Not checked yet: no forecast data for these hours.</p>
-                <?php elseif ($f['status'] === 'pending'): ?>
-                    <p class="rule"><?= $f['factor'] === 'fire' ? 'IPMA publishes the fire risk for today and tomorrow.' : 'IPMA publishes warnings about 3 days ahead.' ?> Checked again automatically when you open the plan closer to the date.</p>
-                <?php endif; ?>
-            </li>
-        <?php endforeach; ?>
-    </ul>
-
-    <p class="source small muted">
-        <?php if ($vm['source'] === 'demo'): ?>
-            Demo forecast (offline mode, not real data) ·
-        <?php elseif ($vm['source'] === 'open-meteo' && $vm['available']): ?>
-            Forecast: Open-Meteo, checked <?= e(Html::date(substr($vm['fetched_at'], 0, 10), 'j M')) ?> at <?= e(substr($vm['fetched_at'], 11, 5)) ?> ·
-        <?php endif; ?>
-        Sunset <?= e($vm['sunset']) ?> (calculated)<?php if ($vm['alerts_source'] === 'ipma'): ?> · Warnings and fire risk: IPMA<?php elseif ($vm['alerts_source'] === 'demo'): ?> · IPMA: demo data<?php endif; ?>
-    </p>
-
-    <?php if ($report): ?>
-        <div class="community-report">
-            <strong>Latest hiker report:</strong> <?= e(\TrailSense\Repositories\TrailReportRepository::CONDITIONS[$report['condition']]) ?>
-            <span class="muted small">· <?= e($report['author']) ?>, <?= (int) $report['age_days'] === 0 ? 'today' : e($report['age_days']) . ' days ago' ?></span>
-            <?php if ($report['note'] !== ''): ?><p><?= e($report['note']) ?></p><?php endif; ?>
-        </div>
-    <?php endif; ?>
-
-    <details class="rules-table">
-        <summary>See every rule that was checked</summary>
-        <table>
-            <thead><tr><th scope="col">Rule</th><th scope="col">Condition</th><th scope="col">Observed</th><th scope="col">Result</th></tr></thead>
-            <tbody>
-            <?php foreach ($vm['snapshot']['results'] as $r): ?>
-                <tr>
-                    <td><code><?= e($r['rule']['code']) ?></code></td>
-                    <td><?= e(\TrailSense\Domain\RiskEngine::describeCondition($r['rule'])) ?></td>
-                    <td><?= e(\TrailSense\Domain\RiskEngine::formatObserved($r['observed'], $r['rule']['metric'])) ?></td>
-                    <td><?= !$r['evaluated'] ? Html::badge('unknown') : ($r['triggered'] ? Html::badge($r['rule']['level']) : '<span class="muted">not triggered</span>') ?></td>
-                </tr>
-            <?php endforeach; ?>
-            </tbody>
-        </table>
-    </details>
-
-    <?php if (!$isPast && $isOwner): ?>
-        <form method="post" action="<?= e(url('plan.check', ['id' => $p['id']])) ?>">
-            <?= Csrf::field() ?>
-            <button class="btn btn-secondary btn-block" type="submit">Check again with the latest forecast</button>
-        </form>
-    <?php endif; ?>
-</section>
+<?= \TrailSense\Core\View::partial('partials/risk', compact('vm', 'p', 'isOwner', 'isPast', 'report')) ?>
 
 <?php if ($isOwner && $isGroup): ?>
 <section class="card" aria-labelledby="part-h">
@@ -139,6 +55,7 @@ $levelName = ['yellow' => 'Yellow', 'orange' => 'Orange', 'red' => 'Red']; ?>
 <section class="card map-card">
     <?= Html::map($p['route_points'], Html::isTrue($p['is_loop']), $p['trail_name']) ?>
     <div class="map-actions">
+        <a class="btn btn-primary btn-sm" href="<?= e(url('hike', ['id' => $p['trail_id']] + ($isOwner || $isParticipant ? ['plan_id' => $p['id']] : []))) ?>">▶ Start hike</a>
         <a class="btn btn-secondary btn-sm" href="<?= e(Html::directionsUrl($p['route_points'][0] ?? [$p['start_lat'], $p['start_lon']])) ?>" target="_blank" rel="noopener">Directions to the start</a>
         <a class="btn btn-secondary btn-sm" href="<?= e(url('trail', ['id' => $p['trail_id']])) ?>">Trail details</a>
     </div>

@@ -83,10 +83,10 @@ return [
         assertSame(303, $b->status);
         $b->follow();
         assertContains('Caminho do Carteiro', $b->body);
-        assertContains('Risk assessment', $b->body);
+        assertContains('Risk check', $b->body);
         assertContains('Demo forecast', $b->body, 'demo data must be labelled');
         // 15:30 + 150 min = 18:00 in November → after sunset → DAY_W with concrete action (AC5.2)
-        assertContains('Rule <code>DAY_W</code> triggered', $b->body);
+        assertContains('Rule <code>DAY_W</code>:', $b->body);
         assertContains('Start by <strong>', $b->body);
     },
     'invalid plan keeps typed values and shows field errors (AC2.2)' => function () use ($login) {

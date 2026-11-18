@@ -37,6 +37,19 @@ final class DemoWeatherProvider implements WeatherProvider
         $base = $winter ? 9 + ($seed >> 7) % 8 : 17 + ($seed >> 7) % 15;
         $minT = $base - 2 - ($seed >> 11) % 4;
 
-        return new Forecast('demo', true, '', round($rainPerHour * $hours, 1), (float) $gust, (float) $minT, (float) $base);
+        // hourly rows for the visual check, consistent with the aggregates above
+        $times = $precip = $gusts = $temps = $codes = [];
+        $day = $start->setTime(0, 0);
+        for ($h = 0; $h < 48; $h++) {
+            $t = $day->modify("+$h hours");
+            $inside = $t >= $start->setTime((int) $start->format('H'), 0) && $t < $end;
+            $times[] = $t->format('Y-m-d\TH:i');
+            $precip[] = $inside ? $rainPerHour : max(0, $rainPerHour - 0.2);
+            $gusts[] = $gust - 6 + (($seed >> $h % 16) % 7);
+            $temps[] = $minT + ($base - $minT) * max(0, sin(M_PI * (((int) $t->format('H')) - 7) / 12));
+            $codes[] = $rainPerHour >= 1.5 ? 63 : ($rainPerHour > 0 ? 61 : [0, 1, 2, 3][$seed % 4]);
+        }
+        $hourly = Forecast::hourRows($times, $precip, $gusts, $temps, $codes, $start, $end);
+        return new Forecast('demo', true, '', round($rainPerHour * $hours, 1), (float) $gust, (float) $minT, (float) $base, $hourly);
     }
 }

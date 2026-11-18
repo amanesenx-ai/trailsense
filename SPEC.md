@@ -179,3 +179,40 @@ journeys or Priority 1 list).
   `GET /group-hikes`, `GET /feed`.
 - AC12.2 JSON with correct status codes (200, 400 with an error message, 404); CORS enabled; no personal data (no e-mails).
 - AC12.3 Documented in docs/API.md and docs/openapi.yaml; covered by HTTP tests.
+
+## 9. Release 3 — on the trail, and a visual risk check (owner request, 2026-11-18)
+Owner feedback on release 2: the map showed "Access blocked" (fixed: Referer policy); "after starting the trail there should be
+feedback: the legend of that trail's waymarks, a map with a compass — it is too basic"; "the risk assessment layout should be
+more visual, with a direct link to a weather API". Scope change approved by the owner: live GPS navigation moves into scope
+(it was A1 Priority 1 "Automatic GPS tracking"); recording stays on the device until the hiker publishes.
+
+### F13 Hike mode — navigation on the trail
+*As a hiker on the trail, I want to see where I am on the route, which way I face, and how to read the trail's marks.*
+- AC13.1 "Start hike" on the trail page and on plan pages opens a full-screen hike map for that trail.
+- AC13.2 After the hiker allows location, the map shows the live position with its accuracy, and can follow it ("Follow me").
+- AC13.3 Compass: a north arrow and the heading of the phone (device orientation; on iPhone after a tap that asks
+  permission). If the phone has no compass, the heading comes from GPS movement, and the screen says so.
+- AC13.4 Progress along the route: km done / km left, % of the route, elapsed time, estimated finish time.
+- AC13.5 Off-route alert: more than 50 m from the route on two consecutive positions → banner + vibration + distance and
+  direction back to the nearest point of the route. Back on route → banner clears.
+- AC13.6 Waymark legend for this trail (FCMP standard): PR yellow/red, GR white/red, PL green/white — right way, turn left,
+  turn right, wrong way. Boardwalk/managed routes without a PR code show their own guidance. Also shown on the trail page.
+- AC13.7 Safety: 112 button, and "Share my position" (coordinates + OpenStreetMap link, copied/shared).
+- AC13.8 "Finish" stops tracking and opens "Publish a hike" pre-filled with the trail, today's date, the measured distance and duration.
+- AC13.9 The screen stays on while the hike map is open (Wake Lock, when the browser supports it). Nothing is sent to the server while hiking.
+- AC13.10 Navigation maths (distance, nearest point on route, progress, bearing, off-route) is plain JavaScript with automated tests.
+
+### F1.4 Hiking map layers
+- AC1.12 Map layers: Standard (OpenStreetMap), Topographic (OpenTopoMap, contour lines) and an overlay of waymarked hiking routes
+  (Waymarked Trails). Each layer shows its attribution. Requests send only our origin as Referer (tile usage policies).
+
+### F4.3 Visual risk check with direct weather links
+*As a hiker, I want to understand the check at a glance and see the weather hour by hour.*
+- AC4.11 Verdict card: one sentence and icon — "Good to go" (OK), "Go prepared" (CAUTION), "Rethink this plan" (WARNING),
+  "Check again closer to the date" (incomplete) — with the main reason.
+- AC4.12 "What to bring / do" checklist built from the triggered rules' precautions (ticks are kept only on the device).
+- AC4.13 Hour by hour for the hike window (± 2 h): weather icon (WMO code), temperature, rain, gusts — as a chart and as
+  hour cards; hike window shaded, sunset marked. Hourly values are stored with the snapshot.
+- AC4.14 Factors as visual tiles (icon, value, status in text + colour); rule details stay one tap away; full rules table kept.
+- AC4.15 Direct links: the exact Open-Meteo API request used (JSON), the Open-Meteo page for this location, and the IPMA
+  warnings page for the trail's district.
