@@ -14,6 +14,7 @@ Base URL: `https://amanesenx.alwaysdata.net/api/v1` · Machine-readable spec: [o
 | `GET /api/v1` | Index: endpoints and sources |
 | `GET /api/v1/trails?q=&difficulty=easy\|moderate\|hard&max_km=` | Trails with distance, ascent, estimated time, start and end points |
 | `GET /api/v1/trails/{id}` | One trail + GeoJSON `LineString` route + photos (author, licence) + recent condition reports |
+| (release 4) `GET /api/v1/trails/{id}` also returns `route_type`, `climb` {ascent, per_km, highest, longest, steepest, rating, advice} and `elevation_profile` [{km, m}] | |
 | `GET /api/v1/trails/{id}/conditions?date=YYYY-MM-DD&start=HH:MM&duration=MIN` | Live risk check for that hike window: Open-Meteo forecast, IPMA warnings + fire risk, daylight, community reports → rules. **Not stored.** `duration` defaults to the trail estimate, `start` to 09:00. Release 3 adds `verdict` {key, title, reason}, `forecast.hourly` (hike window ± 2 h with WMO `code` + `description`) and `sources` {api, page, ipma} — the exact Open-Meteo request and IPMA page used |
 | `GET /api/v1/group-hikes` | Upcoming group hikes with places left and current risk level |
 | `GET /api/v1/feed?limit=1..50` | Latest published hikes |

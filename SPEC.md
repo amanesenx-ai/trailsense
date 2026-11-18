@@ -216,3 +216,22 @@ more visual, with a direct link to a weather API". Scope change approved by the 
 - AC4.14 Factors as visual tiles (icon, value, status in text + colour); rule details stay one tap away; full rules table kept.
 - AC4.15 Direct links: the exact Open-Meteo API request used (JSON), the Open-Meteo page for this location, and the IPMA
   warnings page for the trail's district.
+
+## 10. Release 4 — trail GPS, "is this route for me?", richer screens (owner request, 2026-11-18)
+Owner feedback: the waymarks are drawn wrong (reference: Rota Vicentina manual "Marcação, Sinalética e Manutenção", FCMP marks p. 13);
+explain whether a route is a Pequena or Grande Rota for first-timers; notes on the climbs; remove 112; hike mode should work like a
+trail GPS; home page too basic (photos, more content); a map image on every card (trails, plans, groups, feed); plans layout confusing.
+
+- AC13.6 (revised) FCMP marks exactly as the manual: caminho certo = two horizontal stripes (GR white over red, PR yellow over red,
+  PL white over green); caminho errado = the two colours crossed; turn left / right = upper stripe straight, lower stripe bent down at
+  the turning side. Placement facts: a mark at most every 250 m, turn marks up to 30 m before the junction, confirmation within 50 m after.
+- AC13.7 (revised) The 112 button is removed (owner decision); "Share my position" stays.
+- AC13.11 Trail GPS: instruction banner "In 120 m turn left / Continue 600 m / Arrive", arrow pointing the way, distance to the next
+  turn, the route already walked drawn behind you, map follows at street zoom, optional voice prompts, next climb ahead.
+- AC1.13 "Is this route for me?": route type in plain words (GR > 30 km or more than one day; PR ≤ 30 km in one day; PL mostly urban),
+  distance and time class, and the climbs: total ascent, highest point, longest climb (where and how steep), steepest section,
+  a climb rating (gentle / moderate / demanding / very demanding) with advice.
+- AC1.14 Elevation profile chart for every trail (stored samples from the Open-Meteo Elevation API, migration 004).
+- AC1.15 Real map image (OpenStreetMap tiles + route, start and end) on trail, plan, group-hike and feed cards; works without JS.
+- AC2.5 Plans as an agenda: one row per hike with date block | map | trail and time | risk verdict | group info; tabs Upcoming / Joined / Past.
+- AC8.3 Home: photo hero with the next hike and its verdict and countdown, your stats, trail photos to discover, group hikes, community with photos.

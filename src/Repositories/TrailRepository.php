@@ -80,6 +80,9 @@ final class TrailRepository
     private function decode(array $row): array
     {
         $row['route_points'] = json_decode((string) ($row['route_points'] ?? '[]'), true) ?: [];
+        if (array_key_exists('elevation_profile', $row)) {
+            $row['elevation_profile'] = json_decode((string) $row['elevation_profile'], true) ?: [];
+        }
         return $row;
     }
 }

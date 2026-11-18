@@ -102,3 +102,15 @@
 - Context: the owner wants a visual check and a direct weather link; aggregates alone cannot draw an hour-by-hour view.
 - Decision: Open-Meteo request adds `weather_code`; the provider returns hourly rows for the hike window ± 2 h, stored in `weather_snapshot.hourly` (JSONB, migration 003). Charts are server-side SVG (no chart library, works without JS). Links point to the exact API request, the Open-Meteo page for the location, and the IPMA district warnings page.
 - Consequences: snapshots are ~1 KB larger; old snapshots without hourly data simply show no chart.
+
+## ADR-018 — Static map thumbnails built on the server
+- Date: 2026-11-18 · Status: accepted
+- Context: the owner wants a real map image on every card; one Leaflet map per card would be heavy.
+- Decision: `Core\StaticMap` picks the zoom that fits the route, and outputs an SVG with the needed OSM tiles (`<image>`) and the route on top. It needs no JS and scales with the card. The tiles are the same public tiles the browser caches.
+- Consequences: about 4–6 tiles per card. Lists are short (≤ 20 cards), within the OSM tile policy for light use. If tiles fail, the route drawing still shows on a plain background.
+
+## ADR-019 — Elevation profiles stored, fetched once from Open-Meteo Elevation
+- Date: 2026-11-18 · Status: accepted
+- Context: climb notes need altitude along the route; calling an API on every page view is fragile.
+- Decision: sample each route every ~1/80 of its length and query the Open-Meteo Elevation API (Copernicus DEM 90 m) once. Store `[km, m]` pairs in `trail.elevation_profile` (JSONB, migration 004). The climb analysis is pure PHP (`Domain\Climb`), and the same data feeds the hike GPS ("next climb").
+- Consequences: 90 m DEM smooths small bumps, so totals are estimates. The UI says so.

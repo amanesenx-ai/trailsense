@@ -34,6 +34,7 @@ CREATE TABLE trail (
     is_loop          BOOLEAN      NOT NULL DEFAULT FALSE,
     ipma_area        CHAR(3)      NOT NULL DEFAULT 'PTO' CHECK (ipma_area ~ '^[A-Z]{3}$'),  -- IPMA warning district
     coastal          BOOLEAN      NOT NULL DEFAULT FALSE,
+    elevation_profile JSONB       NOT NULL DEFAULT '[]', -- [[km, m], ...] Open-Meteo Elevation, 81 samples (ADR-019)
     UNIQUE (name, region)
 );
 
@@ -197,4 +198,4 @@ CREATE TABLE schema_migration (
     version    INTEGER PRIMARY KEY,
     applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-INSERT INTO schema_migration (version) VALUES (1), (2), (3);
+INSERT INTO schema_migration (version) VALUES (1), (2), (3), (4);

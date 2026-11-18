@@ -30,7 +30,8 @@ return [
     'waymark legend follows the trail code (FCMP): PR yellow/red, GR white/red, PL green/white (AC13.6)' => function () {
         $pr = Waymarks::forTrail('PR2 VLG');
         assertSame('PR', $pr['system']);
-        assertSame(['#ffd400', '#d62828'], [$pr['top'], $pr['bottom']]);
+        assertSame(['#ffd400', '#d0202e'], [$pr['top'], $pr['bottom']]);
+        assertSame(['#ffffff', '#7ab51d'], [Waymarks::forTrail('PL 1')['top'], Waymarks::forTrail('PL 1')['bottom']], 'PL is white over green (manual p. 13)');
         assertSame('GR', Waymarks::forTrail('GR28')['system']);
         assertSame('PL', Waymarks::forTrail('PL 1 FAR')['system']);
         assertSame('PR', Waymarks::forTrail('PR10TBR')['system']);

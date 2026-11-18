@@ -44,6 +44,7 @@ final class PlanController
             'active' => 'plans',
             'plans' => $this->plans->forUser($user['id']),
             'joined' => (new ParticipantRepository(Database::connection()))->joinedBy($user['id']),
+            'tab' => in_array(Request::get('tab'), ['upcoming', 'joined', 'past'], true) ? Request::get('tab') : 'upcoming',
         ]);
     }
 

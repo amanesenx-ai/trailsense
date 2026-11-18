@@ -1,6 +1,6 @@
 <?php use TrailSense\Core\Html; /** @var array $p */ ?>
 <a class="plan-card" href="<?= e(url('plan', ['id' => $p['id']])) ?>">
-    <?= Html::route(json_decode((string) $p['route_points'], true) ?: [], 'Route of ' . $p['trail_name'], 'route route-thumb') ?>
+    <?= Html::cardMedia($p['route_points'], $p['is_loop'] ?? false, $p['trail_name'], $p['trail_thumb'] ?? null) ?>
     <div class="plan-card-body">
         <p class="title"><?= e($p['trail_name']) ?></p>
         <p class="muted"><?= e(Html::date($p['planned_date'])) ?> · <?= e(Html::time($p['start_time'])) ?> · <?= e(Html::km($p['distance_km'])) ?></p>

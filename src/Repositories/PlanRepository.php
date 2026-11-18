@@ -9,7 +9,8 @@ final class PlanRepository
 {
     private const SELECT = "SELECT p.*, t.name AS trail_name, t.region, t.distance_km, t.difficulty,
             t.start_lat, t.start_lon, t.route_points, t.est_duration_min, t.ref, t.ipma_area, t.coastal, t.is_loop,
-            t.osm_relation_id, u.name AS organizer_name,
+            t.osm_relation_id, u.name AS organizer_name, t.elevation_gain_m,
+            (SELECT thumb_url FROM trail_photo tp WHERE tp.trail_id = t.id ORDER BY tp.position LIMIT 1) AS trail_thumb,
             (SELECT COUNT(*) FROM hike_participant hp WHERE hp.plan_id = p.id) AS participants,
             g.group_size, g.meeting_point, g.meeting_time,
             a.overall_level, a.is_complete, a.created_at AS assessed_at

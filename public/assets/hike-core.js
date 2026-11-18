@@ -78,5 +78,84 @@
 
     function formatKm(m) { return (m / 1000).toFixed(m < 10000 ? 2 : 1) + ' km'; }
 
-    return { distance, bearing, compassName, cumulative, nearest, progress, offRouteState, trackLength, formatKm };
+    /** Point at `d` metres along the route. */
+    function pointAt(route, cum, d) {
+        d = Math.max(0, Math.min(cum[cum.length - 1], d));
+        let i = 1;
+        while (i < cum.length - 1 && cum[i] < d) i++;
+        const seg = cum[i] - cum[i - 1] || 1, t = (d - cum[i - 1]) / seg;
+        return [route[i - 1][0] + t * (route[i][0] - route[i - 1][0]), route[i - 1][1] + t * (route[i][1] - route[i - 1][1])];
+    }
+
+    const norm = (a) => ((a + 540) % 360) - 180;          // −180…180, + = right
+
+    /** Turns along the route (AC13.11): direction change ≥ 55° over ±25 m, merged within 40 m (gentle bends are not announced). */
+    function turns(route, cum, opts) {
+        cum = cum || cumulative(route);
+        const o = Object.assign({ arm: 25, step: 8, min: 55, gap: 40 }, opts || {});
+        const total = cum[cum.length - 1], out = [];
+        let group = null;                                    // consecutive sharp samples = one turn, keep the strongest
+        for (let d = o.arm; d <= total - o.arm; d += o.step) {
+            const a = pointAt(route, cum, d - o.arm), p = pointAt(route, cum, d), b = pointAt(route, cum, d + o.arm);
+            const delta = norm(bearing(p, b) - bearing(a, p));
+            if (Math.abs(delta) < o.min) continue;
+            if (group && d - group.lastD <= o.gap) {
+                if (Math.abs(delta) > Math.abs(group.angle)) { group.angle = delta; group.alongM = d; }
+                group.lastD = d;
+            } else {
+                if (group) out.push(group);
+                group = { alongM: d, angle: delta, lastD: d };
+            }
+        }
+        if (group) out.push(group);
+        return out.map((t) => ({ alongM: Math.round(t.alongM), angle: Math.round(t.angle), dir: turnName(t.angle) }));
+    }
+
+    function turnName(a) {
+        const side = a > 0 ? 'right' : 'left', m = Math.abs(a);
+        return (m < 70 ? 'slight ' : m >= 135 ? 'sharp ' : '') + side;
+    }
+
+    /** What to show now: the next turn, or the distance to the end (AC13.11). */
+    function instruction(turnList, doneM, totalM) {
+        const next = turnList.find((t) => t.alongM > doneM + 3);
+        if (!next) return { kind: 'arrive', inM: Math.max(0, Math.round(totalM - doneM)) };
+        const after = turnList.find((t) => t.alongM > next.alongM + 3);
+        return { kind: 'turn', dir: next.dir, angle: next.angle, inM: Math.round(next.alongM - doneM),
+            thenM: Math.round((after ? after.alongM : totalM) - next.alongM), thenKind: after ? 'turn' : 'arrive' };
+    }
+
+    /** Altitude at `km` from a [[km, m], ...] profile (linear interpolation). */
+    function altitudeAt(profile, km) {
+        if (!profile || profile.length < 2) return null;
+        for (let i = 1; i < profile.length; i++) {
+            if (profile[i][0] >= km) {
+                const a = profile[i - 1], b = profile[i], t = (km - a[0]) / ((b[0] - a[0]) || 1);
+                return Math.round(a[1] + t * (b[1] - a[1]));
+            }
+        }
+        return profile[profile.length - 1][1];
+    }
+
+    /** The next climb ahead of `km` (gain ≥ 25 m, dips < 15 m ignored): {inM, gainM, lengthM, grade} or null. */
+    function nextClimb(profile, km) {
+        if (!profile || profile.length < 3) return null;
+        const ahead = profile.filter((p) => p[0] >= km);
+        let low = ahead[0], high = ahead[0];
+        for (const p of ahead.slice(1)) {
+            if (p[1] > high[1]) high = p;
+            if (high[1] - p[1] >= 15 || p === ahead[ahead.length - 1]) {
+                if (high[1] - low[1] >= 25) {
+                    const len = (high[0] - low[0]) * 1000;
+                    return { inM: Math.round((low[0] - km) * 1000), gainM: Math.round(high[1] - low[1]), lengthM: Math.round(len), grade: Math.round((high[1] - low[1]) / len * 1000) / 10 };
+                }
+                low = p; high = p;
+            }
+            if (p[1] < low[1]) { low = p; high = p; }
+        }
+        return null;
+    }
+
+    return { distance, bearing, compassName, cumulative, nearest, progress, offRouteState, trackLength, formatKm,
+        pointAt, turns, instruction, altitudeAt, nextClimb };
 }));

@@ -37,11 +37,7 @@
     <ul class="trail-list">
         <?php foreach ($trails as $t): ?>
             <li><a class="trail-card" href="<?= e(url('trail', ['id' => $t['id']])) ?>">
-                <?php if (!empty($t['thumb_url'])): ?>
-                    <img class="trail-photo" src="<?= e($t['thumb_url']) ?>" alt="<?= e($t['thumb_alt']) ?>" loading="lazy">
-                <?php else: ?>
-                    <?= Html::route($t['route_points'], 'Route of ' . $t['name'], 'route route-thumb') ?>
-                <?php endif; ?>
+                <?= Html::cardMedia($t['route_points'], $t['is_loop'], $t['name'], $t['thumb_url'] ?? null, (string) ($t['thumb_alt'] ?? ''), 'split') ?>
                 <div>
                     <p class="title"><?= e($t['name']) ?><?php if ($t['ref'] !== ''): ?> <span class="ref small"><?= e($t['ref']) ?></span><?php endif; ?></p>
                     <p class="muted"><?= e($t['region']) ?></p>

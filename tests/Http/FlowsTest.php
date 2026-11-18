@@ -47,7 +47,7 @@ return [
         $b->post('r=register.submit', ['name' => 'Carla Dias', 'email' => 'carla@example.pt', 'password' => 'hike12345', 'role' => 'hiker']);
         assertSame(303, $b->status);
         $b->follow();
-        assertContains('Hi, Carla!', $b->body);
+        assertContains(', Carla <span class="tag">Hiker</span>', $b->body);
         assertContains('>Plans<', $b->body);
         assertContains('>Groups<', $b->body);
         assertNotContains('>My hikes<', $b->body);

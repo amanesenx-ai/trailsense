@@ -111,6 +111,20 @@ final class Html
             . '</div>';
     }
 
+    /**
+     * Card image (AC1.15): real map (StaticMap) with the trail photo beside it ("split") or as an inset ("inset").
+     * @param mixed $points route points (array or JSON)
+     */
+    public static function cardMedia(mixed $points, mixed $loop, string $name, ?string $photo = null, string $photoAlt = '', string $layout = 'inset'): string
+    {
+        $pts = is_array($points) ? $points : (json_decode((string) $points, true) ?: []);
+        $map = StaticMap::svg($pts, 'Map of ' . $name, 400, 225, self::isTrue($loop));
+        $img = $photo ? '<img class="cm-photo" src="' . e($photo) . '" alt="' . e($photoAlt !== '' ? $photoAlt : 'Photo of ' . $name) . '" loading="lazy" data-fallback>' : '';
+        return '<div class="cm cm-lay-' . e($layout) . ($img === '' ? ' cm-map-only' : '') . '">'
+            . ($layout === 'inset' ? '<div class="cm-map">' . $map . '</div>' . $img : $img . '<div class="cm-map">' . $map . '</div>')
+            . '</div>';
+    }
+
     public static function isTrue(mixed $v): bool
     {
         return $v === true || $v === 't' || $v === 1 || $v === '1';

@@ -500,3 +500,98 @@ body.hike-mode main.container { max-width: none; padding: 0; margin: 0; }
     .tile-icon { width: 22px; height: 22px; }
     .verdict-title { font-size: 21px; }
 }
+
+/* ---- Release 4: route fit, elevation, static maps ---- */
+.fit-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.fit-item { background: rgba(0,0,0,.18); border-radius: 12px; padding: 12px 14px; border-top: 4px solid var(--line); }
+.fit-item p { margin: 0; }
+.fit-k { font-size: 12.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+.fit-v { font-size: 17px; font-weight: 800; margin: 4px 0 !important; }
+.fit-gentle { border-top-color: var(--ok); } .fit-moderate { border-top-color: var(--caution); }
+.fit-demanding { border-top-color: var(--warning); } .fit-very { border-top-color: #ff6b6b; }
+.elev-wrap { background: rgba(0,0,0,.18); border-radius: 12px; padding: 8px 6px 2px; overflow-x: auto; }
+.elev { width: 100%; height: auto; display: block; font-family: var(--font); }
+.elev-grid { stroke: rgba(255,255,255,.12); } .elev-axis { font-size: 11px; fill: var(--muted); }
+.elev-area { fill: rgba(143,224,176,.22); } .elev-line { fill: none; stroke: var(--ok); stroke-width: 2; stroke-linejoin: round; }
+.elev-climb { fill: rgba(255,154,122,.16); } .elev-climb-label { font-size: 11px; fill: var(--warning); }
+.elev-dot { fill: var(--ok); stroke: #163a2b; stroke-width: 2; } .elev-label { font-size: 12px; font-weight: 700; fill: var(--text); }
+.elev-hit { fill: transparent; } .elev-hit:hover { fill: rgba(255,255,255,.07); }
+.climb-notes { margin: 10px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+.smap { display: block; width: 100%; height: 100%; }
+/* trail GPS banner (AC13.11) */
+.nav-banner { display: flex; gap: 12px; align-items: center; padding: 10px 14px; background: #1f6f4a; color: #fff; position: sticky; top: 64px; z-index: 1000; min-height: 72px; }
+.nav-banner.nav-now { background: #f4c430; color: #10201a; }
+.nav-banner.nav-off { background: #c62828; }
+.nav-banner.nav-done { background: #2f80ed; }
+.nav-arrow { width: 46px; height: 46px; flex: none; fill: currentColor; transition: transform .3s ease; }
+.nav-text p { margin: 0; }
+.nav-main { font-size: 19px; line-height: 1.25; }
+.nav-then { font-size: 13.5px; opacity: .9; margin-top: 2px !important; }
+.progress-row { display: flex; align-items: center; gap: 10px; }
+.progress-row .progress { flex: 1; }
+.hike-climb { margin: 0; font-size: 14.5px; color: var(--muted); }
+.hike-climb:empty { display: none; }
+@media (min-width: 900px) {
+    .nav-banner { grid-column: 1 / -1; top: 0; position: relative; }
+    .hike { grid-template-rows: auto auto 1fr; }
+    .hike-map-wrap { grid-row: 3; } .hike-panel { grid-row: 3; }
+    .hike-map { height: calc(100dvh - 140px); } .hike-panel { max-height: calc(100dvh - 140px); }
+}
+/* card images: real map + photo (AC1.15) */
+.cm { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 10px; overflow: hidden; background: #cfdccf; }
+.cm-map, .cm-photo { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cm-photo { object-fit: cover; display: block; }
+.cm-lay-inset .cm-photo { inset: auto auto 8px 8px; width: 34%; height: 44%; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+.cm-lay-photo .cm-map { inset: auto 8px 8px auto; width: 38%; height: 46%; border-radius: 8px; overflow: hidden; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+.cm-lay-split { display: grid; grid-template-columns: 1.15fr 1fr; gap: 3px; background: var(--surface); }
+.cm-lay-split .cm-photo, .cm-lay-split .cm-map { position: static; }
+.cm-lay-split.cm-map-only { grid-template-columns: 1fr; }
+/* cards become vertical: image on top, text below */
+.plan-card, .trail-card, .group-card-link { grid-template-columns: 1fr; align-items: start; }
+.trail-list { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.post-media .cm { border-radius: 0; }
+.cm-lay-split > * { height: 100%; min-height: 0; }
+/* plans agenda (AC2.5) */
+.plan-stats { margin-bottom: 12px; }
+.tabs { display: flex; gap: 6px; overflow-x: auto; margin: 0 0 12px; border-bottom: 1px solid var(--line); }
+.tabs a { white-space: nowrap; padding: 10px 14px; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; font-weight: 700; }
+.tabs a[aria-current="page"] { color: var(--text); border-bottom-color: var(--accent); }
+.tab-count { background: rgba(255,255,255,.1); border-radius: 999px; padding: 0 8px; font-size: 12.5px; }
+.agenda { display: grid; gap: 10px; margin-bottom: 14px; }
+.agenda-head { display: none; }
+.agenda-row { display: grid; grid-template-columns: 64px 1fr; grid-template-areas: "date main" "map map" "risk risk"; gap: 10px 12px; align-items: center;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; color: var(--text); text-decoration: none; }
+.agenda-row:hover { border-color: var(--accent); }
+.agenda-past { opacity: .82; }
+.ag-date { grid-area: date; display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,.22); border-radius: 12px; padding: 6px 0; line-height: 1.1; }
+.ag-dow, .ag-mon { font-size: 12px; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.ag-day { font-size: 26px; font-weight: 800; }
+.ag-map { grid-area: map; } .ag-main { grid-area: main; min-width: 0; } .ag-main p { margin: 0 0 3px; }
+.ag-risk { grid-area: risk; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.ag-verdict { font-weight: 700; }
+.tag-quiet { background: rgba(255,255,255,.1); color: var(--muted); }
+@media (min-width: 760px) {
+    .agenda-head { display: grid; grid-template-columns: 72px 200px 1fr 170px; gap: 16px; padding: 0 12px 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 700; }
+    .agenda-row { grid-template-columns: 72px 200px 1fr 170px; grid-template-areas: "date map main risk"; gap: 16px; }
+    .ag-risk { flex-direction: column; align-items: flex-start; }
+}
+/* home (AC8.3) */
+.hero { position: relative; border-radius: 18px; overflow: hidden; margin: 4px 0 16px; min-height: 300px; display: flex; align-items: flex-end;
+    background: linear-gradient(180deg, rgba(11,34,25,.05) 0%, rgba(11,34,25,.55) 45%, rgba(11,34,25,.95) 100%), var(--hero) center / cover no-repeat, #1e4a36; }
+.hero-plain { background: linear-gradient(135deg, #1f5a40, #0f2a1f); }
+.hero-inner { padding: 22px 20px; width: 100%; }
+.hero h1 { font-size: clamp(24px, 5vw, 36px); line-height: 1.15; margin: 4px 0 8px; text-shadow: 0 2px 12px rgba(0,0,0,.4); }
+.hero-kicker { margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.hero-meta, .hero-verdict { margin: 0 0 8px; }
+.hero-verdict { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.btn-light { background: #fff; color: #10201a; } .btn-light:hover { background: #e9f1ec; }
+.home-stats { margin-bottom: 18px; }
+.discover { list-style: none; margin: 0 0 18px; padding: 0 0 6px; display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; }
+.discover li { flex: 0 0 220px; scroll-snap-align: start; }
+.disc-card { position: relative; display: block; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 5; color: #fff; text-decoration: none; background: #1e4a36; }
+.disc-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .3s; }
+.disc-card:hover img { transform: scale(1.04); }
+.disc-text { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 12px 12px; background: linear-gradient(transparent, rgba(0,0,0,.85)); display: flex; flex-direction: column; gap: 2px; }
+.disc-text span { font-size: 13px; opacity: .92; }
+.feed-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }

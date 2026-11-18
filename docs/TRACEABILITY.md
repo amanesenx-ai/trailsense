@@ -64,4 +64,17 @@ Run: `php tests/run.php` (see totals at the end of this file).
 | AC4.13 | Hour by hour (chart + hour cards), stored hourly | Weather/Forecast::hourRows, OpenMeteoProvider (weather_code), Core/WeatherChart, Domain/WeatherCode, migration 003 | Unit Release3 *hourly rows…*, *WMO codes…*; Verdict *weather chart…*; Installer *migrated:2,3* |
 | AC4.14–4.15 | Factor tiles, direct Open-Meteo/IPMA links (also in the API) | views/partials/risk, AssessmentService::links, Api/Endpoints | Release3Flows *visual risk check…*; ApiTest *conditions…* |
 
-Run: `php tests/run.php` → 132 tests (release 1–2: 113). CI: `.github/workflows/tests.yml` runs them on every push.
+
+## Release 4 (2026-11-18) — trail GPS, "is this route for me?", richer screens
+| Requirement | What | Code | Tests |
+|---|---|---|---|
+| AC13.6 (rev.) | FCMP marks as in the Rota Vicentina manual p. 13; placement rules | Domain/Waymarks (`svg`, `PLACEMENT`), views/partials/waymarks | Unit Release4 *FCMP marks…*; Release3 *waymark legend…* |
+| AC13.7 (rev.) | 112 removed | views/hike/show | Release3Flows *…no 112* |
+| AC13.11 | Trail GPS: turn-by-turn banner, arrow, walked line, voice, next climb, altitude | hike-core.js (`turns`, `instruction`, `pointAt`, `altitudeAt`, `nextClimb`), hike.js | tests/js (9), Release3Flows *hike mode…* |
+| AC1.13 | Route type in plain words + climb analysis and rating | Domain/RouteType, Domain/Climb, views/partials/route-fit | Unit Release4 *climb analysis…*, *climb rating…*, *route type…*; Release4Flows *trail page…*, *flat coastal…* |
+| AC1.14 | Elevation profile | migration 004, Core/ElevationChart, API `/trails/{id}` | Unit Release4 *elevation chart…*; ApiTest; Installer *migrated:2,3,4* |
+| AC1.15 | Real map image on cards | Core/StaticMap, Html::cardMedia, card partials | Unit Release4 *static map…*; Release4Flows *real map image…* |
+| AC2.5 | Plans agenda + tabs | views/plans/index, partials/plan-row, PlanController::index | Release4Flows *plans page is an agenda…* |
+| AC8.3 | Home: hero, stats, discover, community | HomeController, views/home/hiker | Release4Flows *home…* |
+
+Run: `php tests/run.php` → 143 tests (release 3: 132). CI: `.github/workflows/tests.yml` runs them on every push.
