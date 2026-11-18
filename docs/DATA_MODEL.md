@@ -43,3 +43,5 @@ Authoritative SQL: `database/schema.sql` (+ `database/migrations/`). Diagram: `e
 → `bin/gen-trail-data.py` → `database/seed.sql` (fresh installs) and `database/migrations/002_release2.sql` (upgrade).
 Geometry: OpenStreetMap API `relation/{id}/full`, ways joined (ordered or nearest-endpoint), Douglas–Peucker 5 m.
 Elevation gain: 100 samples from the Open-Meteo Elevation API. Duration: Naismith (4 km/h + 10 min per 100 m up).
+
+**Release 4 (migration 004):** `trail.elevation_profile JSONB NOT NULL DEFAULT '[]'` = 81 `[km, m]` samples from the Open-Meteo Elevation API (ADR-019); `trail.elevation_gain_m` recomputed from that profile so lists and climb notes agree.

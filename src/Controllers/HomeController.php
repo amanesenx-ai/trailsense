@@ -45,7 +45,11 @@ final class HomeController
             'active' => 'home',
             'next' => $plans['upcoming'][0] ?? null,
             'more' => array_slice($plans['upcoming'], 1, 2),
-            'feed' => $feed,
+            'feed' => (new ActivityRepository($db))->feed(3),
+            'stats' => (new \TrailSense\Repositories\ProfileRepository($db))->stats($user['id']),
+            'discover' => array_slice(array_values(array_filter((new \TrailSense\Repositories\TrailRepository($db))->search(),
+                static fn (array $t) => !empty($t['thumb_url']))), 0, 8),
+            'pastCount' => count($plans['past']),
         ]);
     }
 }

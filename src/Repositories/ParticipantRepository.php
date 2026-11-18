@@ -19,6 +19,7 @@ final class ParticipantRepository
                        t.region, t.distance_km, t.difficulty, t.route_points, g.group_size, g.meeting_point, g.meeting_time,
                        u.id AS organizer_id, u.name AS organizer_name,
                        (SELECT COUNT(*) FROM hike_participant hp WHERE hp.plan_id = p.id) AS participants,
+                       t.is_loop, (SELECT thumb_url FROM trail_photo tp WHERE tp.trail_id = t.id ORDER BY tp.position LIMIT 1) AS trail_thumb,
                        EXISTS (SELECT 1 FROM hike_participant hp WHERE hp.plan_id = p.id AND hp.user_id = ?) AS joined,
                        a.overall_level, a.is_complete
                 FROM hike_plan p
@@ -112,7 +113,8 @@ final class ParticipantRepository
     public function joinedBy(int $userId): array
     {
         $stmt = $this->db->prepare(
-            "SELECT p.id, p.planned_date, p.start_time, t.name AS trail_name, t.distance_km, t.route_points,
+            "SELECT p.id, p.planned_date, p.start_time, p.duration_min, t.name AS trail_name, t.distance_km, t.route_points,
+                    t.is_loop, t.elevation_gain_m, (SELECT thumb_url FROM trail_photo tp WHERE tp.trail_id = t.id ORDER BY tp.position LIMIT 1) AS trail_thumb,
                     g.group_size, g.meeting_point, g.meeting_time, u.name AS organizer_name,
                     (SELECT COUNT(*) FROM hike_participant x WHERE x.plan_id = p.id) AS participants,
                     a.overall_level, a.is_complete, NULL AS notes

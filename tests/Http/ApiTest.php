@@ -54,6 +54,9 @@ return [
         assertTrue(count($j['data']['route']['coordinates']) > 50);
         assertContains('CC BY', $j['data']['photos'][0]['license']);
         assertSame('Passadiços do Paiva', $j['data']['name']);
+        assertSame(81, count($j['data']['elevation_profile']), 'elevation profile (AC1.14)');
+        assertTrue(in_array($j['data']['climb']['rating'], ['gentle', 'moderate', 'demanding', 'very'], true));
+        assertContains('Not an official', $j['data']['route_type']['name']);
     },
     'unknown trail → 404, unknown endpoint → 404, POST → 405' => function () use ($get) {
         assertSame(404, $get('/api/v1/trails/999')[0]);

@@ -26,17 +26,18 @@ return [
         assertContains('r=hike&amp;id=2', $b->body);
         assertContains('How this trail is marked', $b->body);
         assertContains('Pequena Rota (PR)', $b->body);
-        assertContains('stroke="#ffd400"', $b->body, 'PR marks are yellow over red');
+        assertContains('fill="#ffd400"', $b->body, 'PR marks are yellow over red');
         assertContains('Wrong way', $b->body);
     },
-    'hike mode: full-screen map, compass, progress, 112, share, finish, legend; scripts loaded (AC13.1–13.9)' => function () use ($login) {
+    'hike mode: full-screen map, compass, GPS banner, progress, share, voice, finish, legend; no 112 (AC13.1–13.11)' => function () use ($login) {
         $b = $login('joana@trailsense.pt')->get('r=hike&id=2');
         assertSame(200, $b->status);
-        foreach (['signed-in hike-mode"', 'data-hike=', 'data-el="compass"', 'data-el="offroute"', 'href="tel:112"',
+        foreach (['signed-in hike-mode"', 'data-hike=', 'data-el="compass"', 'data-el="offroute"', 'data-el="nav"', 'data-el="voice"', 'data-el="alt"', '&quot;profile&quot;:[[0',
             'Share my position', 'data-el="finish"', 'Trail marks for this route', 'hike-core.js', 'hike.js', 'leaflet@1.9.4'] as $needle) {
             assertContains($needle, $b->body);
         }
         assertContains('from=hike', $b->body, 'Finish goes to Publish a hike, pre-filled');
+        assertTrue(!str_contains($b->body, 'tel:112'), '112 button removed by the owner (AC13.7 revised)');
     },
     'hike mode on a boardwalk route explains its own signage; unknown trail is 404' => function () use ($login) {
         $b = $login('joana@trailsense.pt')->get('r=hike&id=4');

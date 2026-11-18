@@ -50,3 +50,15 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | Trail page ended at "Plan this hike" | Nothing for the moment on the trail | **Start hike** → full-screen map, compass, progress, off-route alert, 112, share position; FCMP waymark legend for that trail |
 | 360 px: chart text ~5 px; tiles in one long column | Unreadable / long scroll | Chart keeps 560 px and scrolls sideways; tiles in 2 columns |
 | "Finish" visible before starting | `.btn{display}` overrode `[hidden]` | Global `[hidden]{display:none!important}` |
+
+## Release 4 review (2026-11-18) — owner feedback
+| Before | Problem | After |
+|---|---|---|
+| Marks drawn with bent diagonal stripes; PL green over white | Did not match the FCMP marks (Rota Vicentina manual p. 13) | Right way = two horizontal stripes; wrong way = the colours crossed; turn = top stripe straight, bottom stripe bent down on the turning side; PL white over green; placement rules (≤ 250 m, 30 m before junctions, 50 m confirmation) |
+| Only "PR2 VLG" and a difficulty word | A first-timer does not know what PR/GR means or how hard the climbs are | "Is this route for me?": type in plain words, distance/time class, climb rating with advice, elevation profile, longest and steepest climb with km and % |
+| Hike mode = map + stats | Not like a GPS | Banner "In 70 m · turn left" with an arrow, "Turn left now", walked part greyed, own track, turn dots on the map, voice prompts, altitude, next climb |
+| 112 button | Owner decision | Removed; share position kept |
+| Cards with a small route drawing | Owner wants the real map on every card | Static OSM map + trail photo on trail, plan, group and feed cards |
+| Plans: 2-column card grid with sections | Confusing | Agenda: date block · map · trail and time · verdict; tabs Upcoming / Joined / Past; summary numbers |
+| Home: "Hi" + list | Too basic | Photo hero with the next hike, countdown, verdict and Start hike; stats; "Discover trails" photo strip; community posts with photos |
+| 360 px: elevation chart scrolled sideways, peak label clipped; tab label cut | Hidden information | Chart redrawn at a narrower size; labels kept inside; tab "Joined" |

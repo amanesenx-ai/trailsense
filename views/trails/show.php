@@ -47,6 +47,8 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
 </dl>
 <p class="prose"><?= e($t['description']) ?></p>
 
+<?= View::partial('partials/route-fit', ['t' => $t]) ?>
+
 <section class="card" aria-labelledby="marks-h">
     <h2 id="marks-h">How this trail is marked</h2>
     <?= View::partial('partials/waymarks', ['waymarks' => \TrailSense\Domain\Waymarks::forTrail((string) $t['ref'], (string) $t['name'])]) ?>

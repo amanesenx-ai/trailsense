@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let state = store.load() || { startedAt: null, track: [] };
     let pos = null, accuracy = null, heading = null, headingSource = '', follow = true, off = { count: 0, off: false };
-    let watchId = null, wakeLock = null, map = null, me = null, meCircle = null, toRoute = null;
+    let watchId = null, wakeLock = null, map = null, me = null, meCircle = null, toRoute = null, walked = null, trail = null;
+    const turnList = H.turns(route, cum), total = cum[cum.length - 1], profile = data.profile || [];
+    const announced = {};
+    let voice = false;
 
     // ---- map (AC13.1, AC1.12) ----
     if (window.L) {
@@ -25,13 +28,17 @@ document.addEventListener('DOMContentLoaded', () => {
         TS.layers(map);
         L.polyline(route, { color: '#0b2219', weight: 9, opacity: 0.45 }).addTo(map);
         const line = L.polyline(route, { color: '#ff6a00', weight: 5 }).addTo(map);
+        walked = L.polyline([], { color: '#7d8580', weight: 5, opacity: 0.95 }).addTo(map);     // part already done
+        trail = L.polyline([], { color: '#2f80ed', weight: 3, dashArray: '2 6' }).addTo(map);  // where you actually walked
+        turnList.forEach((t) => L.circleMarker(H.pointAt(route, cum, t.alongM), { radius: 4, color: '#fff', weight: 2, fillColor: '#0b2219', fillOpacity: 1 })
+            .bindTooltip(t.dir.charAt(0).toUpperCase() + t.dir.slice(1)).addTo(map));
         const pin = (cls, label) => L.divIcon({ className: 'pin ' + cls, html: '<span>' + label + '</span>', iconSize: null });
         if (!data.loop) L.marker(route[route.length - 1], { icon: pin('pin-end', 'End') }).addTo(map);
         L.marker(route[0], { icon: pin('pin-start', data.loop ? 'Start / finish' : 'Start') }).addTo(map);
         map.fitBounds(line.getBounds(), { padding: [30, 30] });
         map.on('dragstart', () => setFollow(false));
     }
-    function setFollow(v) { follow = v; $('follow').setAttribute('aria-pressed', String(v)); if (v && pos && map) map.panTo(pos); }
+    function setFollow(v) { follow = v; $('follow').setAttribute('aria-pressed', String(v)); if (v && pos && map) map.setView(pos, Math.max(map.getZoom(), 17)); }
     $('follow').addEventListener('click', () => setFollow(!follow));
 
     // ---- compass (AC13.3) ----
@@ -65,6 +72,56 @@ document.addEventListener('DOMContentLoaded', () => {
     $('compass').addEventListener('click', enableCompass);
     if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission !== 'function') enableCompass();
 
+    // ---- trail GPS guidance (AC13.11) ----
+    const fmtM = (m) => m >= 1000 ? (m / 1000).toFixed(1) + ' km' : (Math.round(m / 10) * 10) + ' m';
+    function say(text) {
+        if (!voice || !('speechSynthesis' in window)) return;
+        try { const u = new SpeechSynthesisUtterance(text); u.lang = 'en-GB'; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) { /* no voice */ }
+    }
+    function arrow(deg) { $('nav-arrow').style.transform = 'rotate(' + Math.max(-150, Math.min(150, deg)) + 'deg)'; }
+    function navTo(main, then, deg, cls) {
+        $('nav-main').innerHTML = main; $('nav-then').textContent = then || '';
+        $('nav').className = 'nav-banner' + (cls ? ' nav-' + cls : ''); arrow(deg);
+    }
+    function guide(pr, n) {
+        if (off.off) {
+            const b = H.bearing(pos, n.point), rel = heading === null ? 0 : ((b - heading + 540) % 360) - 180;
+            navTo('Back to the route: <strong>' + fmtM(n.offRouteM) + '</strong> ' + H.compassName(b), 'Follow the dashed red line on the map.', rel, 'off');
+            if (!announced.off) { say('You are off the route. The route is ' + Math.round(n.offRouteM) + ' metres to the ' + H.compassName(b)); announced.off = true; }
+            return;
+        }
+        announced.off = false;
+        if (!state.startedAt) {
+            if (n.offRouteM > 150) {
+                const b = H.bearing(pos, route[0]), rel = heading === null ? 0 : ((b - heading + 540) % 360) - 180;
+                navTo('Go to the start: <strong>' + fmtM(H.distance(pos, route[0])) + '</strong> ' + H.compassName(b), 'Then press Start hike.', rel);
+            } else navTo('You are at the trail — press <strong>Start hike</strong>', 'Directions start when you do.', 0);
+            return;
+        }
+        const ins = H.instruction(turnList, pr.doneM, total);
+        if (ins.kind === 'arrive') {
+            if (ins.inM < 40) { navTo('<strong>You have arrived!</strong>', 'Press Finish to save your hike.', 0, 'done'); if (!announced.end) { say('You have arrived.'); announced.end = true; } }
+            else navTo('Continue <strong>' + fmtM(ins.inM) + '</strong> to the ' + (data.loop ? 'finish' : 'end'), 'No more turns.', 0);
+            return;
+        }
+        navTo((ins.inM < 30 ? '<strong>Turn ' + ins.dir + ' now</strong>' : 'In <strong>' + fmtM(ins.inM) + '</strong> · turn ' + ins.dir),
+            'Look for the ' + (ins.angle < 0 ? 'turn-left' : 'turn-right') + ' mark · then ' + fmtM(ins.thenM) + (ins.thenKind === 'arrive' ? ' to the end' : ' to the next turn'),
+            ins.angle, ins.inM < 30 ? 'now' : '');
+        const key = Math.round(ins.inM + pr.doneM);
+        if (ins.inM < 80 && !announced[key + 'a']) { say('In ' + Math.round(ins.inM / 10) * 10 + ' metres, turn ' + ins.dir); announced[key + 'a'] = true; }
+        if (ins.inM < 25 && !announced[key + 'b']) { say('Turn ' + ins.dir + ' now'); if (navigator.vibrate) navigator.vibrate(200); announced[key + 'b'] = true; }
+    }
+    function climbInfo(pr) {
+        const km = pr.doneM / 1000, alt = H.altitudeAt(profile, km);
+        $('alt').textContent = alt === null ? '—' : alt + ' m';
+        const c = H.nextClimb(profile, km);
+        $('climb').textContent = c ? (c.inM < 50 ? 'Climbing now: ' : 'Next climb in ' + fmtM(c.inM) + ': ') + '+' + c.gainM + ' m over ' + fmtM(c.lengthM) + ' (' + c.grade + ' %)' : (profile.length ? 'No big climbs left — mostly flat or downhill.' : '');
+    }
+    $('voice').addEventListener('click', () => {
+        voice = !voice; $('voice').setAttribute('aria-pressed', String(voice)); $('voice').textContent = 'Voice: ' + (voice ? 'on' : 'off');
+        if (voice) say('Voice directions on.');
+    });
+
     // ---- position, progress and off-route (AC13.2, 13.4, 13.5) ----
     function status(html) { $('status').innerHTML = html; }
     const clock = (min) => { const d = new Date(Date.now() + min * 60000); return d.toTimeString().slice(0, 5); };
@@ -77,10 +134,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!me) {
                 me = L.marker(pos, { icon: L.divIcon({ className: 'me', html: '<span class="me-arrow"></span><span class="me-dot"></span>', iconSize: [34, 34] }), keyboard: false }).addTo(map);
                 meCircle = L.circle(pos, { radius: accuracy, color: '#2f80ed', weight: 1, fillOpacity: 0.12 }).addTo(map);
-                map.setView(pos, Math.max(map.getZoom(), 16));
+                map.setView(pos, Math.max(map.getZoom(), 17));
             } else { me.setLatLng(pos); meCircle.setLatLng(pos).setRadius(accuracy); }
             if (follow) map.panTo(pos);
             showHeading();
+            if (state.startedAt) trail.setLatLngs(state.track);
         }
         const pr = H.progress(route, pos, cum, data.pace);
         const n = pr.nearest;
@@ -88,12 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const last = state.track[state.track.length - 1];
             if (!last || H.distance(last, pos) >= 5) { state.track.push([+pos[0].toFixed(6), +pos[1].toFixed(6)]); store.save(state); }
         }
+        if (walked && state.startedAt) walked.setLatLngs(route.slice(0, n.segment + 1).concat([n.point]));
         $('done').textContent = H.formatKm(pr.doneM);
         $('left').textContent = H.formatKm(pr.leftM);
         $('pct').textContent = pr.percent + '%';
         $('bar').style.width = pr.percent + '%';
         $('eta').textContent = pr.etaMin !== null ? clock(pr.etaMin) : '—';
         off = H.offRouteState(off, n.offRouteM, accuracy);
+        guide(pr, n); climbInfo(pr);
         const banner = $('offroute');
         if (off.off) {
             const b = H.bearing(pos, n.point);

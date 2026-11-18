@@ -41,3 +41,6 @@ Security checklist (run with the security-reviewer subagent prompt + grep scan):
 | M-R3-3 | Walk > 50 m away from the route → red banner, vibration, dashed line back to the route; back on route → banner clears | to do on a walk |
 | M-R3-4 | Finish → Publish a hike with trail, today, distance and duration filled in | ✅ (automated + desktop) |
 | M-R3-5 | Plan page 360 px: verdict, chart scrolls sideways, hour cards, 2-column tiles, checklist ticks survive reload | ✅ screenshots |
+| M-R4-1 | Simulated GPS on Trilho dos Romanos: 70 m before the first turn → "In 70 m · turn left"; at 15 m → "Turn left now"; next climb "+151 m over 1.2 km" | ✅ (headless Chrome, simulated position) |
+| M-R4-2 | Live: card maps show OSM tiles aligned with the route (trails, plans, groups, feed) | to check on the live site |
+| M-R4-3 | Voice prompts on a phone (speech synthesis) | to do on a walk |

@@ -12,3 +12,8 @@
 - A security header can break a third-party service: `Referrer-Policy: same-origin` made OSM block our tiles. It looked fine in one browser because cached tiles were shown. Lesson: check a fresh browser profile and read the service's usage policy.
 - Navigation maths written as pure JS functions, so they could be tested with Node from the same `php tests/run.php` command. The DOM code stays thin.
 - Screenshots at 360 px caught two problems the tests could not (5 px chart text, a "hidden" button that showed).
+
+## Release 4
+- A reference document beats memory: the waymark drawings changed after reading the Rota Vicentina manual (PL is white over green, not green over white).
+- A 90 m terrain model gives false steep steps, and our first ascent numbers were inflated by noise. Smoothing plus a fixed window gave believable ratings; the numbers are labelled as estimates.
+- Data from an external API is fetched once and stored (migration), so pages never depend on it at view time.

@@ -3,6 +3,7 @@
 $t = $trail; $pts = $t['route_points']; $loop = Html::isTrue($t['is_loop']);
 $publish = ['from' => 'hike', 'trail_id' => $t['id']] + ($planId ? ['plan_id' => $planId] : []);
 $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $paceKmh, 'trailId' => (int) $t['id'],
+    'profile' => $t['elevation_profile'] ?? [],
     'publish' => url('publish', $publish)]; ?>
 <div class="hike" data-hike="<?= e((string) json_encode($data, JSON_UNESCAPED_UNICODE)) ?>">
     <header class="hike-bar">
@@ -13,6 +14,14 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
         </div>
         <span class="hike-clock" data-el="clock" aria-label="Elapsed time">0:00</span>
     </header>
+
+    <div class="nav-banner" data-el="nav" aria-live="polite">
+        <svg class="nav-arrow" viewBox="0 0 48 48" aria-hidden="true" data-el="nav-arrow"><path d="M24 4 40 26H30v18H18V26H8z"/></svg>
+        <div class="nav-text">
+            <p class="nav-main" data-el="nav-main">Press <strong>Start hike</strong> at the start of the trail</p>
+            <p class="nav-then" data-el="nav-then">Directions appear here, like a GPS.</p>
+        </div>
+    </div>
 
     <div class="hike-map-wrap">
         <div class="hike-map" data-el="map" role="region" aria-label="Live map of <?= e($t['name']) ?>">
@@ -33,18 +42,19 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
 
     <section class="hike-panel" aria-label="Hike status">
         <p class="hike-status" data-el="status" role="status" aria-live="polite">Press <strong>Start hike</strong> when you are at the start. Your position stays on this phone.</p>
-        <div class="progress" aria-hidden="true"><span data-el="bar"></span></div>
+        <div class="progress-row"><div class="progress" aria-hidden="true"><span data-el="bar"></span></div><span class="small" data-el="pct">0%</span></div>
+        <p class="hike-climb" data-el="climb"></p>
         <dl class="hike-stats">
             <div><dt>Done</dt><dd data-el="done">—</dd></div>
             <div><dt>Left</dt><dd data-el="left"><?= e(Html::km($t['distance_km'])) ?></dd></div>
-            <div><dt>Route</dt><dd data-el="pct">0%</dd></div>
+            <div><dt>Altitude</dt><dd data-el="alt">—</dd></div>
             <div><dt>Finish ≈</dt><dd data-el="eta">—</dd></div>
         </dl>
         <div class="hike-actions">
             <button class="btn btn-primary" type="button" data-el="start">Start hike</button>
             <button class="btn btn-secondary" type="button" data-el="finish" hidden>Finish</button>
             <button class="btn btn-secondary" type="button" data-el="share">Share my position</button>
-            <a class="btn btn-danger" href="tel:112">Call 112</a>
+            <button class="btn btn-secondary" type="button" data-el="voice" aria-pressed="false">Voice: off</button>
         </div>
         <p class="small muted" data-el="share-status" role="status" aria-live="polite"></p>
 

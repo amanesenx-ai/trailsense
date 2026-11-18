@@ -3,7 +3,7 @@ $left = max(0, (int) $h['group_size'] - (int) $h['participants']); $joined = Htm
 $mine = (int) $h['organizer_id'] === (int) (TrailSense\Core\Auth::user()['id'] ?? 0); ?>
 <article class="group-card">
     <a class="group-card-link" href="<?= e(url('plan', ['id' => $h['id']])) ?>">
-        <?= Html::route(is_array($h['route_points']) ? $h['route_points'] : (json_decode((string) $h['route_points'], true) ?: []), 'Route of ' . $h['trail_name'], 'route route-thumb') ?>
+        <?= Html::cardMedia($h['route_points'], $h['is_loop'] ?? false, $h['trail_name'], $h['trail_thumb'] ?? null) ?>
         <div>
             <p class="title"><?= e($h['trail_name']) ?></p>
             <p class="muted"><?= e(Html::date($h['planned_date'])) ?> · start <?= e(Html::time($h['start_time'])) ?> · <?= e(Html::km($h['distance_km'])) ?></p>

@@ -67,6 +67,10 @@ final class Endpoints
                 'source' => $p['source_url'], 'alt' => $p['alt_text']], $this->trails->photos($id)),
             'recent_reports' => array_map(fn ($r) => ['condition' => $r['condition'], 'note' => $r['note'],
                 'reported_at' => $r['created_at']], $reports),
+            'route_type' => \TrailSense\Domain\RouteType::describe((string) $t['ref'], (string) $t['name'], (float) $t['distance_km'],
+                (int) $t['est_duration_min'], \TrailSense\Core\Html::isTrue($t['is_loop'])),
+            'climb' => \TrailSense\Domain\Climb::analyse($t['elevation_profile'] ?? [], (int) $t['elevation_gain_m'], (float) $t['distance_km']),
+            'elevation_profile' => array_map(fn ($p) => ['km' => $p[0], 'm' => $p[1]], $t['elevation_profile'] ?? []),
         ]];
     }
 

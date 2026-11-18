@@ -13,7 +13,8 @@ final class ActivityRepository
             (SELECT alt_text FROM activity_photo ph WHERE ph.activity_id = a.id ORDER BY ph.id LIMIT 1) AS photo_alt,
             (SELECT COUNT(*) FROM activity_like l WHERE l.activity_id = a.id) AS likes,
             (SELECT COUNT(*) FROM activity_comment c WHERE c.activity_id = a.id) AS comments,
-            t.elevation_gain_m
+            t.elevation_gain_m, t.is_loop,
+            (SELECT thumb_url FROM trail_photo tp WHERE tp.trail_id = t.id ORDER BY tp.position LIMIT 1) AS trail_thumb
         FROM activity a
         JOIN app_user u ON u.id = a.user_id
         JOIN trail t ON t.id = a.trail_id';
