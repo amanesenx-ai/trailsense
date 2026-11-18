@@ -5,6 +5,7 @@ namespace TrailSense\Api;
 
 use DateTimeImmutable;
 use TrailSense\Core\Database;
+use TrailSense\Domain\WeatherCode;
 use TrailSense\Domain\PlanValidator;
 use TrailSense\Repositories\ActivityRepository;
 use TrailSense\Repositories\ParticipantRepository;
@@ -103,6 +104,7 @@ final class Endpoints
             'trail' => ['id' => $id, 'name' => $t['name'], 'link' => self::link('/trail', $id)],
             'window' => ['date' => $plan['planned_date'], 'start' => $start, 'end' => $vm['end_time'], 'duration_min' => (int) $duration],
             'overall' => $vm['overall'], 'complete' => $vm['complete'],
+            'verdict' => $vm['verdict'],
             'sunset' => $vm['sunset'], 'latest_safe_start' => $vm['latest_start'],
             'factors' => array_values(array_map(fn ($f) => [
                 'factor' => $f['factor'], 'label' => $f['label'], 'status' => $f['status'], 'observed' => $f['observed_text'],
@@ -112,7 +114,9 @@ final class Endpoints
             ], $vm['factors'])),
             'forecast' => ['source' => $c['forecast']->source, 'available' => $c['forecast']->available, 'message' => $c['forecast']->message,
                 'precip_total_mm' => $c['forecast']->precipTotalMm, 'gust_max_kmh' => $c['forecast']->gustMaxKmh,
-                'temp_min_c' => $c['forecast']->tempMinC, 'temp_max_c' => $c['forecast']->tempMaxC],
+                'temp_min_c' => $c['forecast']->tempMinC, 'temp_max_c' => $c['forecast']->tempMaxC,
+                'hourly' => array_map(fn ($h) => $h + ['description' => WeatherCode::describe($h['code'])[0]], $c['forecast']->hours)],
+            'sources' => $vm['links'],
             'official' => ['source' => $c['alerts']->source, 'warning_level' => $c['alerts']->warningLevel,
                 'warnings' => $c['alerts']->warnings, 'fire_risk' => $c['alerts']->fireRisk, 'message' => $c['alerts']->message],
         ]];

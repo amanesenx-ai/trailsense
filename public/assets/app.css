@@ -1,4 +1,5 @@
 /* TrailSense — one external stylesheet, phone-first (NFR1). Palette from the A1 mockups. */
+[hidden] { display: none !important; }
 :root {
     --bg: #0f2a1f;
     --surface: #163a2b;
@@ -375,3 +376,126 @@ legend { padding: 0 6px; font-weight: 700; }
 .signout { margin-top: 24px; }
 a.author { color: var(--text); text-decoration: none; }
 a.author:hover { text-decoration: underline; }
+
+/* ---- Release 3: map layers, waymarks, hike mode (F13) ---- */
+.leaflet-control-layers { color: #1a1a12; font: 14px/1.4 var(--font); }
+.leaflet-control-layers label { min-height: 32px; display: flex; align-items: center; gap: 6px; }
+.btn-danger { background: #c62828; color: #fff; }
+.btn-danger:hover { background: #e53935; }
+.waymarks-system { margin: 0 0 12px; }
+.marks { list-style: none; padding: 0; margin: 0 0 12px; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.mark { display: flex; gap: 10px; align-items: center; background: rgba(0,0,0,.18); border-radius: 10px; padding: 8px; }
+.mark svg { width: 60px; height: 40px; flex: none; }
+.mark span { display: flex; flex-direction: column; }
+.mark small { color: var(--muted); font-size: 12.5px; line-height: 1.3; }
+.waymark-tips { margin: 0 0 8px; padding-left: 20px; color: var(--muted); }
+.waymark-tips li { margin: 4px 0; }
+
+body.hike-mode .tabbar, body.hike-mode .topbar { display: none; }
+body.hike-mode main.container { max-width: none; padding: 0; margin: 0; }
+.hike { display: flex; flex-direction: column; min-height: 100dvh; }
+.hike-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #0b2219; position: sticky; top: 0; z-index: 1001; }
+.hike-bar .back { margin: 0; font-size: 22px; min-width: 44px; min-height: 44px; display: grid; place-items: center; text-decoration: none; }
+.hike-title { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.hike-title strong { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hike-clock { font-variant-numeric: tabular-nums; font-weight: 800; font-size: 20px; color: var(--accent); }
+.hike-map-wrap { position: relative; isolation: isolate; }
+.hike-map { height: 58dvh; min-height: 320px; background: #dfe7e2; }
+.hike-map .route { width: 100%; height: 100%; }
+.compass { position: absolute; top: 12px; right: 12px; z-index: 500; width: 76px; border: 0; border-radius: 16px; padding: 6px 4px 4px;
+    background: rgba(11,34,25,.88); color: var(--text); display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+.compass svg { width: 58px; height: 58px; transition: transform .25s linear; }
+.rose-ring { fill: #f3f6f1; stroke: #0b2219; stroke-width: 2; }
+.rose-n { fill: #d62828; } .rose-s { fill: #4a5a52; }
+.compass text { font: 800 11px var(--font); fill: #fff; }
+.compass-read { font-size: 12px; font-variant-numeric: tabular-nums; }
+.follow { position: absolute; bottom: 14px; right: 12px; z-index: 500; background: #fff; color: #0b2219; box-shadow: 0 2px 8px rgba(0,0,0,.35); }
+.follow[aria-pressed="true"] { background: #2f80ed; color: #fff; }
+.me { position: relative; }
+.me-dot { position: absolute; left: 9px; top: 9px; width: 16px; height: 16px; border-radius: 50%; background: #2f80ed; border: 3px solid #fff; box-shadow: 0 0 0 2px rgba(47,128,237,.4); }
+.me-arrow { position: absolute; left: 0; top: 0; width: 34px; height: 34px; transform-origin: 50% 50%; }
+.me-arrow::before { content: ""; position: absolute; left: 11px; top: -6px; border: 6px solid transparent; border-bottom: 14px solid #2f80ed; }
+.off-route { background: #c62828; color: #fff; padding: 12px 16px; font-size: 16px; }
+.hike-panel { padding: 14px 16px 28px; display: flex; flex-direction: column; gap: 12px; }
+.hike-status { margin: 0; }
+.progress { height: 10px; border-radius: 6px; background: rgba(255,255,255,.12); overflow: hidden; }
+.progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ok), var(--accent)); transition: width .4s; }
+.hike-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 0; }
+.hike-stats div { background: var(--surface); border-radius: 10px; padding: 8px; text-align: center; }
+.hike-stats dt { font-size: 12px; color: var(--muted); }
+.hike-stats dd { margin: 2px 0 0; font-weight: 800; font-size: 17px; font-variant-numeric: tabular-nums; }
+.hike-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hike-actions .btn[data-el="start"], .hike-actions .btn[data-el="finish"] { grid-column: 1 / -1; font-size: 18px; min-height: 52px; }
+.hike-legend { background: var(--surface); border-radius: var(--radius); padding: 10px 14px; }
+.hike-legend summary { font-weight: 700; cursor: pointer; min-height: 32px; }
+@media (min-width: 900px) {
+    .hike { display: grid; grid-template-columns: 1fr 420px; grid-template-rows: auto 1fr; min-height: 100dvh; }
+    .hike-bar { grid-column: 1 / -1; }
+    .hike-map-wrap { grid-row: 2; } .hike-map { height: calc(100dvh - 66px); }
+    .off-route { position: absolute; z-index: 1002; left: 16px; right: 436px; top: 80px; border-radius: 12px; }
+    .hike-panel { grid-row: 2; overflow-y: auto; max-height: calc(100dvh - 66px); }
+}
+
+/* ---- Release 3: visual risk check (F4.3) ---- */
+.risk { display: flex; flex-direction: column; gap: 14px; }
+.verdict { display: flex; gap: 14px; align-items: flex-start; border-radius: var(--radius); padding: 16px; color: #10201a; }
+.verdict-ok { background: #8fe0b0; } .verdict-caution { background: #f4c430; } .verdict-warning { background: #ff9a7a; } .verdict-pending { background: #c6d0ca; }
+.verdict-icon { width: 44px; height: 44px; flex: none; stroke-width: 2.2; }
+.verdict p { margin: 0; }
+.verdict-kicker { font-size: 13px; font-weight: 600; opacity: .8; }
+.verdict-title { font-size: 24px; font-weight: 800; line-height: 1.2; margin: 2px 0 4px !important; }
+.verdict-reason { font-size: 15px; }
+.risk-h3 { font-size: 17px; margin: 6px 0 0; }
+.wx-wrap { background: rgba(0,0,0,.18); border-radius: 12px; padding: 10px 8px 4px; }
+.wx-chart { width: 100%; height: auto; display: block; font-family: var(--font); }
+.wx-window { fill: rgba(244,196,48,.13); }
+.wx-window-label, .wx-sunset-label { font-size: 11px; fill: var(--muted); }
+.wx-title { font-size: 12px; font-weight: 700; fill: var(--text); }
+.wx-unit, .wx-axis { font-size: 11px; fill: var(--muted); }
+.wx-label { font-size: 12px; font-weight: 700; fill: var(--text); }
+.wx-base { stroke: rgba(255,255,255,.18); stroke-width: 1; }
+.wx-temp { fill: none; stroke: #f4c430; stroke-width: 2; stroke-linejoin: round; }
+.wx-temp-dot { fill: #f4c430; stroke: #163a2b; stroke-width: 2; }
+.wx-gust { fill: none; stroke: #e6ece8; stroke-width: 2; stroke-linejoin: round; }
+.wx-gust-dot { fill: #e6ece8; stroke: #163a2b; stroke-width: 2; }
+.wx-rain { fill: #6cb4ff; }
+.wx-sunset { stroke: #ff9a7a; stroke-width: 1.5; stroke-dasharray: 4 4; }
+.wx-hit { fill: transparent; } .wx-hit:hover { fill: rgba(255,255,255,.06); }
+.hours { list-style: none; margin: 0; padding: 0 0 6px; display: flex; gap: 6px; overflow-x: auto; scroll-snap-type: x proximity; }
+.hour { flex: 0 0 74px; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: rgba(0,0,0,.18); border: 2px solid transparent; border-radius: 12px; padding: 8px 4px; font-size: 13px; }
+.hour-in { border-color: var(--accent); background: rgba(244,196,48,.1); }
+.hour-time { font-weight: 700; } .hour-icon { width: 28px; height: 28px; }
+.hour-temp { font-size: 17px; font-weight: 800; }
+.hour-rain { color: #9ccbff; } .hour-gust { color: var(--muted); }
+.checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.checklist label { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border-radius: 10px; background: rgba(0,0,0,.18); min-height: 44px; cursor: pointer; }
+.checklist input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: none; }
+.checklist input:checked + span { text-decoration: line-through; color: var(--muted); }
+.check-warning label { border-left: 4px solid var(--warning); } .check-caution label { border-left: 4px solid var(--caution); }
+.tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.tile details { height: 100%; border-radius: 12px; background: rgba(0,0,0,.18); border-top: 4px solid var(--unknown); }
+.tile-ok details { border-top-color: var(--ok); } .tile-caution details { border-top-color: var(--caution); }
+.tile-warning details { border-top-color: var(--warning); } .tile-pending details { border-top-style: dashed; }
+.tile summary { list-style: none; cursor: pointer; padding: 12px; display: grid; grid-template-columns: 30px 1fr; column-gap: 8px; row-gap: 2px; min-height: 44px; }
+.tile summary::-webkit-details-marker { display: none; }
+.tile-icon { width: 28px; height: 28px; grid-row: span 3; }
+.tile-ok .tile-icon { color: var(--ok); } .tile-caution .tile-icon { color: var(--caution); } .tile-warning .tile-icon { color: var(--warning); } .tile-pending .tile-icon, .tile-unknown .tile-icon { color: var(--unknown); }
+.tile-name { font-weight: 700; } .tile-value { font-size: 14px; color: var(--muted); }
+.tile-status { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; }
+.tile-ok .tile-status { color: var(--ok); } .tile-caution .tile-status { color: var(--caution); } .tile-warning .tile-status { color: var(--warning); } .tile-pending .tile-status, .tile-unknown .tile-status { color: var(--unknown); }
+.tile .rule, .tile .precaution { margin: 0; padding: 0 12px 10px; font-size: 13.5px; }
+.tile[open] details, .tile details[open] { grid-column: 1 / -1; }
+.source-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip-link { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 14px; text-decoration: none; }
+.chip-link:hover { border-color: var(--accent); }
+.icon-xs { width: 14px; height: 14px; }
+.checklist input[type=checkbox] { margin: 2px 0 0; padding: 0; min-height: 0; height: 20px; }
+@media (max-width: 600px) {
+    .wx-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .wx-chart { min-width: 560px; }
+    .tiles { grid-template-columns: 1fr 1fr; }
+    .tile summary { grid-template-columns: 24px 1fr; padding: 10px; }
+    .tile-icon { width: 22px; height: 22px; }
+    .verdict-title { font-size: 21px; }
+}

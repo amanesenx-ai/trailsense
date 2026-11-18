@@ -115,6 +115,7 @@ CREATE TABLE weather_snapshot (
     warnings        JSONB       NOT NULL DEFAULT '[]',
     fire_risk       SMALLINT    CHECK (fire_risk BETWEEN 1 AND 5),         -- IPMA RCM; NULL not published
     alerts_message  VARCHAR(300) NOT NULL DEFAULT '',
+    hourly          JSONB       NOT NULL DEFAULT '[]',                    -- hike window ± 2 h (ADR-017)
     CHECK (available = FALSE OR (precip_total_mm IS NOT NULL AND gust_max_kmh IS NOT NULL
                                  AND temp_min_c IS NOT NULL AND temp_max_c IS NOT NULL))
 );
@@ -196,4 +197,4 @@ CREATE TABLE schema_migration (
     version    INTEGER PRIMARY KEY,
     applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-INSERT INTO schema_migration (version) VALUES (1), (2);
+INSERT INTO schema_migration (version) VALUES (1), (2), (3);

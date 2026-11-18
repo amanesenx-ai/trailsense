@@ -122,6 +122,21 @@ final class ActivityController
                 $old = ['plan_id' => $plan['id'], 'trail_id' => $plan['trail_id'], 'hiked_on' => $plan['planned_date'],
                     'duration_min' => $plan['duration_min'], 'distance_km' => ''];
             }
+            // AC13.8: "Finish" in hike mode passes what was measured; values are only suggestions, validated on submit
+            if (Request::get('from') === 'hike') {
+                $old['hiked_on'] = date('Y-m-d');
+                if (Request::id('trail_id')) {
+                    $old['trail_id'] = Request::id('trail_id');
+                }
+                $km = Request::get('distance_km');
+                if (is_numeric($km) && (float) $km > 0 && (float) $km <= 100) {
+                    $old['distance_km'] = number_format((float) $km, 1, '.', '');
+                }
+                $min = Request::get('duration_min');
+                if (ctype_digit($min) && (int) $min >= 1 && (int) $min <= 1440) {
+                    $old['duration_min'] = (int) $min;
+                }
+            }
         }
         View::render('feed/form', [
             'title' => 'Publish a hike',

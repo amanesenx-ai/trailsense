@@ -32,7 +32,7 @@ paths:
         - {name: start, in: query, schema: {type: string, pattern: '^\d{2}:\d{2}$', default: '09:00'}}
         - {name: duration, in: query, schema: {type: integer, minimum: 30, maximum: 720}}
       responses:
-        "200": {description: Conditions with rule results}
+        "200": {description: "Conditions with rule results, verdict {key, title, reason}, forecast.hourly (time, temp, precip, gust, code, description, in_window) and sources {api, page, ipma}"}
         "400": {$ref: '#/components/responses/Error'}
         "404": {$ref: '#/components/responses/Error'}
   /group-hikes:

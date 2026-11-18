@@ -14,6 +14,13 @@ function assertSame(mixed $expected, mixed $actual, string $msg = ''): void
     }
 }
 
+function assertMatches(string $pattern, string $haystack, string $msg = ''): void
+{
+    if (preg_match($pattern, $haystack) !== 1) {
+        throw new AssertionFailed(trim($msg . ' expected to match ' . $pattern));
+    }
+}
+
 function assertTrue(bool $cond, string $msg = 'expected true'): void
 {
     if (!$cond) {

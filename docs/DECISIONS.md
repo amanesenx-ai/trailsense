@@ -84,3 +84,21 @@
 - Context: the live database already has data; release 2 changes the schema.
 - Decision: `database/schema.sql` is always the full current schema (fresh installs); `database/migrations/NNN_*.sql` upgrade existing databases; table `schema_migration(version)` records what ran. `Core\Installer` applies pending migrations on the first request after a deploy (marker file holds the version).
 - Consequences: deploy = push; the live database upgrades itself once, in a transaction per migration.
+
+## ADR-015 — Hike mode runs in the browser; nothing tracked on the server
+- Date: 2026-11-18 · Status: accepted
+- Context: owner asked for on-trail feedback (map, compass, waymark legend). GPS tracking was A1 Priority 1.
+- Decision: a dedicated page `?r=hike&id=` using the Geolocation API (watchPosition), DeviceOrientation (compass, iOS permission), Vibration and Screen Wake Lock. Route maths in `public/assets/hike-core.js` (pure functions, tested with Node). The track lives in memory; "Finish" passes only distance and duration to the publish form.
+- Consequences: privacy by design (no location history stored); needs HTTPS (we have it) and permission prompts; accuracy depends on the phone.
+
+## ADR-016 — Map layers: OSM, OpenTopoMap, Waymarked Trails; Referrer-Policy
+- Date: 2026-11-18 · Status: accepted
+- Context: OSM tiles were blocked ("Access blocked") because our `Referrer-Policy: same-origin` sent no Referer; hikers need contour lines and waymarked routes.
+- Decision: `Referrer-Policy: strict-origin-when-cross-origin` (other sites see only our origin, never paths/ids). Leaflet layer control with OSM standard, OpenTopoMap and the Waymarked Trails hiking overlay, each with its attribution.
+- Consequences: we depend on three volunteer tile services — low traffic, attribution shown, no bulk downloads, as their policies ask.
+
+## ADR-017 — Store hourly forecast with the snapshot; visual risk check
+- Date: 2026-11-18 · Status: accepted
+- Context: the owner wants a visual check and a direct weather link; aggregates alone cannot draw an hour-by-hour view.
+- Decision: Open-Meteo request adds `weather_code`; the provider returns hourly rows for the hike window ± 2 h, stored in `weather_snapshot.hourly` (JSONB, migration 003). Charts are server-side SVG (no chart library, works without JS). Links point to the exact API request, the Open-Meteo page for the location, and the IPMA district warnings page.
+- Consequences: snapshots are ~1 KB larger; old snapshots without hourly data simply show no chart.

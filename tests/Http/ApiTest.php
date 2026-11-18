@@ -69,6 +69,10 @@ return [
         assertSame('demo', $j['data']['forecast']['source']);
         assertTrue($j['data']['official']['fire_risk'] !== null, 'tomorrow has an IPMA fire risk');
         assertSame($before, (int) resetlessCount('risk_assessment'), 'nothing stored');
+        assertTrue(in_array($j['data']['verdict']['key'], ['ok', 'caution', 'warning', 'pending'], true), 'verdict (AC4.11)');
+        assertTrue(count($j['data']['forecast']['hourly']) >= 4, 'hourly rows for the window ± 2 h (AC4.13)');
+        assertTrue(isset($j['data']['forecast']['hourly'][0]['description']), 'weather code described');
+        assertContains('api.open-meteo.com', (string) $j['data']['sources']['api'], 'direct link to the weather API (AC4.15)');
     },
     'conditions validation: past date and bad time → 400' => function () use ($get) {
         assertSame(400, $get('/api/v1/trails/7/conditions?date=2020-01-01')[0]);

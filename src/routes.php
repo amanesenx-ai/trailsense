@@ -4,6 +4,7 @@ declare(strict_types=1);
 use TrailSense\Controllers\ActivityController;
 use TrailSense\Controllers\AuthController;
 use TrailSense\Controllers\GroupController;
+use TrailSense\Controllers\HikeController;
 use TrailSense\Controllers\HomeController;
 use TrailSense\Controllers\PlanController;
 use TrailSense\Controllers\ProfileController;
@@ -22,6 +23,7 @@ return [
     'trails'          => ['GET',  TrailController::class, 'index'],
     'trail'           => ['GET',  TrailController::class, 'show'],
     'trail.report'    => ['POST', TrailController::class, 'report'],
+    'hike'            => ['GET',  HikeController::class, 'show'],
 
     'groups'          => ['GET',  GroupController::class, 'index'],
     'group.join'      => ['POST', GroupController::class, 'join'],

@@ -20,13 +20,14 @@ final class AssessmentRepository
         try {
             $s = $this->db->prepare(
                 'INSERT INTO weather_snapshot (plan_id, source, available, message, precip_total_mm, gust_max_kmh,
-                    temp_min_c, temp_max_c, sunset, alerts_source, warning_level, warnings, fire_risk, alerts_message)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id'
+                    temp_min_c, temp_max_c, sunset, alerts_source, warning_level, warnings, fire_risk, alerts_message, hourly)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id'
             );
             $alerts ??= OfficialAlerts::unavailable('');
             $s->execute([$planId, $f->source, $f->available ? 'true' : 'false', $f->message, $f->precipTotalMm,
                 $f->gustMaxKmh, $f->tempMinC, $f->tempMaxC, $sunset, $alerts->source, $alerts->warningLevel,
-                json_encode($alerts->warnings, JSON_UNESCAPED_UNICODE), $alerts->fireRisk, mb_substr($alerts->message, 0, 300)]);
+                json_encode($alerts->warnings, JSON_UNESCAPED_UNICODE), $alerts->fireRisk, mb_substr($alerts->message, 0, 300),
+                json_encode($f->hours)]);
             $snapshotId = (int) $s->fetchColumn();
 
             $a = $this->db->prepare(
@@ -59,7 +60,7 @@ final class AssessmentRepository
             'SELECT a.id, a.overall_level, a.is_complete, a.created_at,
                     s.source, s.available, s.message, s.precip_total_mm, s.gust_max_kmh, s.temp_min_c,
                     s.temp_max_c, s.sunset, s.fetched_at, s.alerts_source, s.warning_level, s.warnings, s.fire_risk,
-                    s.alerts_message
+                    s.alerts_message, s.hourly
              FROM risk_assessment a JOIN weather_snapshot s ON s.id = a.snapshot_id
              WHERE a.plan_id = ? ORDER BY a.created_at DESC, a.id DESC LIMIT 1'
         );

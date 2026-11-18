@@ -30,21 +30,33 @@ final class OpenMeteoProvider implements WeatherProvider
             return Forecast::unavailable('none', 'Forecast not available yet — it is published up to 16 days ahead.');
         }
 
-        $url = self::ENDPOINT . '?' . http_build_query([
-            'latitude' => round($lat, 4),
-            'longitude' => round($lon, 4),
-            'hourly' => 'temperature_2m,precipitation,wind_gusts_10m',
-            'wind_speed_unit' => 'kmh',
-            'timezone' => 'Europe/Lisbon',
-            'start_date' => $start->format('Y-m-d'),
-            'end_date' => $end->format('Y-m-d'),
-        ]);
-
+        $url = self::url($lat, $lon, $start, $end);
         $body = ($this->fetch)($url);
         if ($body === null) {
             return Forecast::unavailable('open-meteo', 'The weather service did not answer. Try "Check again" in a moment.');
         }
         return self::parse($body, $start, $end);
+    }
+
+    /** The exact request we make — also shown to users as "raw forecast" (AC4.15). */
+    public static function url(float $lat, float $lon, DateTimeImmutable $start, DateTimeImmutable $end): string
+    {
+        return self::ENDPOINT . '?' . http_build_query([
+            'latitude' => round($lat, 4),
+            'longitude' => round($lon, 4),
+            'hourly' => 'temperature_2m,precipitation,wind_gusts_10m,weather_code',
+            'wind_speed_unit' => 'kmh',
+            'timezone' => 'Europe/Lisbon',
+            'start_date' => $start->format('Y-m-d'),
+            'end_date' => $end->format('Y-m-d'),
+        ]);
+    }
+
+    /** Open-Meteo's own human-readable page for this location. */
+    public static function pageUrl(float $lat, float $lon): string
+    {
+        return 'https://open-meteo.com/en/docs?latitude=' . round($lat, 4) . '&longitude=' . round($lon, 4)
+            . '&hourly=temperature_2m,precipitation,wind_gusts_10m,weather_code&timezone=Europe%2FLisbon';
     }
 
     public static function parse(string $json, DateTimeImmutable $start, DateTimeImmutable $end): Forecast
@@ -61,7 +73,8 @@ final class OpenMeteoProvider implements WeatherProvider
             $h['wind_gusts_10m'],
             $h['temperature_2m'],
             $start,
-            $end
+            $end,
+            $h['weather_code'] ?? []
         );
     }
 

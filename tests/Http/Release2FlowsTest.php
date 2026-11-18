@@ -73,7 +73,7 @@ return [
         $o = $login('bruno@trailsense.pt')->get('r=plan&id=3');
         $o->post('r=plan.check&id=3', []);
         $o->follow();
-        assertContains('Rule <code>TRAIL_CL</code> triggered', $o->body);
+        assertContains('Rule <code>TRAIL_CL</code>:', $o->body);
         assertContains('Latest hiker report:</strong> Closed', $o->body);
     },
     'report without a condition is rejected with a message' => function () use ($login) {
