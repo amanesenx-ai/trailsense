@@ -21,8 +21,8 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
         <button class="compass" type="button" data-el="compass" aria-label="Compass. Tap to turn on the phone compass">
             <svg viewBox="0 0 64 64" aria-hidden="true" data-el="rose">
                 <circle cx="32" cy="32" r="30" class="rose-ring"/>
-                <path d="M32 6 39 32H25z" class="rose-n"/><path d="M32 58 25 32h14z" class="rose-s"/>
-                <text x="32" y="17" text-anchor="middle">N</text>
+                <path d="M32 17 38 32H26z" class="rose-n"/><path d="M32 52 26 32h12z" class="rose-s"/>
+                <text x="32" y="14" text-anchor="middle">N</text>
             </svg>
             <span class="compass-read" data-el="heading">tap</span>
         </button>
