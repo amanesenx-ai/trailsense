@@ -4,6 +4,7 @@ $t = $trail; $pts = $t['route_points']; $loop = Html::isTrue($t['is_loop']);
 $publish = ['from' => 'hike', 'trail_id' => $t['id']] + ($planId ? ['plan_id' => $planId] : []);
 $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $paceKmh, 'trailId' => (int) $t['id'],
     'profile' => $t['elevation_profile'] ?? [],
+    'directions' => Html::directionsUrl($pts[0]),
     'publish' => url('publish', $publish)]; ?>
 <div class="hike" data-hike="<?= e((string) json_encode($data, JSON_UNESCAPED_UNICODE)) ?>">
     <header class="hike-bar">
@@ -15,11 +16,11 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
         <span class="hike-clock" data-el="clock" aria-label="Elapsed time">0:00</span>
     </header>
 
-    <div class="nav-banner" data-el="nav" aria-live="polite">
+    <div class="nav-banner" data-el="nav" aria-live="polite" hidden>
         <svg class="nav-arrow" viewBox="0 0 48 48" aria-hidden="true" data-el="nav-arrow"><path d="M24 4 40 26H30v18H18V26H8z"/></svg>
         <div class="nav-text">
-            <p class="nav-main" data-el="nav-main">Press <strong>Start hike</strong> at the start of the trail</p>
-            <p class="nav-then" data-el="nav-then">Directions appear here, like a GPS.</p>
+            <p class="nav-main" data-el="nav-main"></p>
+            <p class="nav-then" data-el="nav-then"></p>
         </div>
     </div>
 

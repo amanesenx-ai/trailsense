@@ -6,8 +6,8 @@ namespace TrailSense\Domain;
 /**
  * Trail waymark legend (AC13.6, revised in release 4) following the FCMP marks as shown in the Rota Vicentina manual
  * "Marcação, Sinalética e Manutenção" (2021), p. 13: GR white over red, PR yellow over red, PL white over green.
- * Shapes: right way = two horizontal stripes; wrong way = the two colours crossed; turn = upper stripe straight,
- * lower stripe bent down on the side you turn to.
+ * Shapes: right way = two horizontal stripes; wrong way = the two colours crossed; turn = a corner whose
+ * horizontal part points the way to turn (the leg goes down on the opposite side).
  */
 final class Waymarks
 {
@@ -24,8 +24,8 @@ final class Waymarks
     public const MARKS = [
         'right' => ['Right way', 'Two horizontal stripes.', 'Keep going on this path.'],
         'wrong' => ['Wrong way', 'The two colours crossed (an X).', 'Not this way — go back to the last mark.'],
-        'left' => ['Turn left', 'Top stripe straight, bottom stripe bent down on the left.', 'Turn left at the next junction.'],
-        'turn-right' => ['Turn right', 'Top stripe straight, bottom stripe bent down on the right.', 'Turn right at the next junction.'],
+        'left' => ['Turn left', 'The stripes make a corner whose horizontal part points left.', 'Turn left at the next junction.'],
+        'turn-right' => ['Turn right', 'The stripes make a corner whose horizontal part points right.', 'Turn right at the next junction.'],
     ];
 
     /** How the marks are placed on the ground (manual, pp. 26–27 and 32). */
@@ -61,8 +61,9 @@ final class Waymarks
         $shapes = [
             'right' => '<rect x="12" y="11" width="36" height="7" fill="' . $top . '"/><rect x="12" y="21" width="36" height="7" fill="' . $bottom . '"/>',
             'wrong' => '<path d="M15 8 45 32" stroke="' . $top . '" stroke-width="7"/><path d="M45 8 15 32" stroke="' . $bottom . '" stroke-width="7"/>',
-            'left' => '<rect x="12" y="7" width="36" height="7" fill="' . $top . '"/><path d="M48 17H12v17h8V24h28z" fill="' . $bottom . '"/>',
-            'turn-right' => '<rect x="12" y="7" width="36" height="7" fill="' . $top . '"/><path d="M12 17h36v17h-8V24H12z" fill="' . $bottom . '"/>',
+            // the corner's leg goes down on the far side; the horizontal part points the way to turn (owner check vs manual p. 13)
+            'left' => '<rect x="12" y="7" width="36" height="7" fill="' . $top . '"/><path d="M12 17h36v17h-8V24H12z" fill="' . $bottom . '"/>',
+            'turn-right' => '<rect x="12" y="7" width="36" height="7" fill="' . $top . '"/><path d="M48 17H12v17h8V24h28z" fill="' . $bottom . '"/>',
         ];
         return '<svg viewBox="0 0 60 40" role="img" aria-label="' . htmlspecialchars($label, ENT_QUOTES) . '">'
             . '<rect x="1" y="1" width="58" height="38" rx="6" fill="#7d8580"/>' . ($shapes[$mark] ?? '') . '</svg>';

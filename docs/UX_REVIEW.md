@@ -62,3 +62,5 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | Plans: 2-column card grid with sections | Confusing | Agenda: date block · map · trail and time · verdict; tabs Upcoming / Joined / Past; summary numbers |
 | Home: "Hi" + list | Too basic | Photo hero with the next hike, countdown, verdict and Start hike; stats; "Discover trails" photo strip; community posts with photos |
 | 360 px: elevation chart scrolled sideways, peak label clipped; tab label cut | Hidden information | Chart redrawn at a narrower size; labels kept inside; tab "Joined" |
+| Turn-left and turn-right marks drawn the wrong way round (owner check) | Hiker would turn the wrong way | Swapped: the horizontal part of the corner points the way to turn |
+| Banner said "Directions appear here, like a GPS" every time | Placeholder noise | Banner hidden until the first GPS fix; far away → "Go to the start: 10.9 km to the E" + road directions; on the trail → turn-by-turn straight away, Start only records |

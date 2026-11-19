@@ -80,24 +80,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     function arrow(deg) { $('nav-arrow').style.transform = 'rotate(' + Math.max(-150, Math.min(150, deg)) + 'deg)'; }
     function navTo(main, then, deg, cls) {
-        $('nav-main').innerHTML = main; $('nav-then').textContent = then || '';
+        $('nav').hidden = false;
+        $('nav-main').innerHTML = main; $('nav-then').innerHTML = then || '';
         $('nav').className = 'nav-banner' + (cls ? ' nav-' + cls : ''); arrow(deg);
     }
     function guide(pr, n) {
-        if (off.off) {
+        if (off.off && state.startedAt) {
             const b = H.bearing(pos, n.point), rel = heading === null ? 0 : ((b - heading + 540) % 360) - 180;
             navTo('Back to the route: <strong>' + fmtM(n.offRouteM) + '</strong> ' + H.compassName(b), 'Follow the dashed red line on the map.', rel, 'off');
             if (!announced.off) { say('You are off the route. The route is ' + Math.round(n.offRouteM) + ' metres to the ' + H.compassName(b)); announced.off = true; }
             return;
         }
         announced.off = false;
-        if (!state.startedAt) {
-            if (n.offRouteM > 150) {
-                const b = H.bearing(pos, route[0]), rel = heading === null ? 0 : ((b - heading + 540) % 360) - 180;
-                navTo('Go to the start: <strong>' + fmtM(H.distance(pos, route[0])) + '</strong> ' + H.compassName(b), 'Then press Start hike.', rel);
-            } else navTo('You are at the trail — press <strong>Start hike</strong>', 'Directions start when you do.', 0);
+        if (!state.startedAt && n.offRouteM > 150) {          // not on the trail yet: guide to the start
+            const b = H.bearing(pos, route[0]), rel = heading === null ? b : ((b - heading + 540) % 360) - 180;
+            const far = H.distance(pos, route[0]);
+            navTo('Go to the start: <strong>' + fmtM(far) + '</strong> to the ' + H.compassName(b),
+                far > 2000 ? '<a href="' + data.directions + '" target="_blank" rel="noopener">Road directions to the start</a>' : 'Follow the arrow' + (heading === null ? ' (north is up — tap the compass to turn it with you)' : ''), rel);
             return;
         }
+        // on the trail: turn-by-turn directions straight away; Start only begins recording
         const ins = H.instruction(turnList, pr.doneM, total);
         if (ins.kind === 'arrive') {
             if (ins.inM < 40) { navTo('<strong>You have arrived!</strong>', 'Press Finish to save your hike.', 0, 'done'); if (!announced.end) { say('You have arrived.'); announced.end = true; } }
