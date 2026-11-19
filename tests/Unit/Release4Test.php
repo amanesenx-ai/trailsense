@@ -48,6 +48,8 @@ return [
         $x = Waymarks::svg('wrong', '#ffd400', '#d0202e', 'Wrong way');
         assertSame(2, substr_count($x, 'stroke-width="7"'));
         assertContains('fill="#d0202e"', Waymarks::svg('left', '#ffd400', '#d0202e', 'Turn left'));
+        assertContains('h-8V24H12z', Waymarks::svg('left', '#ffd400', '#d0202e', 'Turn left'), 'turn left: leg on the right, corner points left');
+        assertContains('h8V24h28z', Waymarks::svg('turn-right', '#ffd400', '#d0202e', 'Turn right'), 'turn right: leg on the left, corner points right');
         assertTrue(count(Waymarks::PLACEMENT) >= 3);
         assertContains('250 m', Waymarks::PLACEMENT[0]);
     },

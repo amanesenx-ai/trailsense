@@ -38,6 +38,8 @@ return [
         }
         assertContains('from=hike', $b->body, 'Finish goes to Publish a hike, pre-filled');
         assertTrue(!str_contains($b->body, 'tel:112'), '112 button removed by the owner (AC13.7 revised)');
+        assertTrue(!str_contains($b->body, 'Directions appear here'), 'no placeholder text; the banner shows only with a GPS fix');
+        assertContains('data-el="nav" aria-live="polite" hidden', $b->body);
     },
     'hike mode on a boardwalk route explains its own signage; unknown trail is 404' => function () use ($login) {
         $b = $login('joana@trailsense.pt')->get('r=hike&id=4');
