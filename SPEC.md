@@ -235,3 +235,21 @@ trail GPS; home page too basic (photos, more content); a map image on every card
 - AC1.15 Real map image (OpenStreetMap tiles + route, start and end) on trail, plan, group-hike and feed cards; works without JS.
 - AC2.5 Plans as an agenda: one row per hike with date block | map | trail and time | risk verdict | group info; tabs Upcoming / Joined / Past.
 - AC8.3 Home: photo hero with the next hike and its verdict and countdown, your stats, trail photos to discover, group hikes, community with photos.
+
+## 11. Release 5 — reviewer's list of 45 improvements (owner request, 2026-11-19)
+Source: "TrailSense – Final List of Recommended Improvements" (owner upload). Items already met are mapped in docs/TRACEABILITY.md.
+New acceptance criteria for the gaps:
+- AC0.1 Public landing page (signed-out home): headline "Hike smarter. Explore safer. Share the experience.", the three pillars
+  (discovery & planning · weather-informed decisions · community), what makes TrailSense different, Hiker vs Organizer benefits,
+  real trail photos, sign-up / sign-in. Demo credentials are no longer shown publicly (item 35).
+- AC1.16 Trail page weather: next 7 days for the trail start (icon, min/max °C, rain probability, max wind and gusts), the time it
+  was fetched, and a link to plan on a chosen day. Plan hour-by-hour adds rain probability and wind speed (items 10, 11, 13).
+- AC1.17 Filters: region, distance, difficulty and duration (item 8).
+- AC1.18 Save trails (favourites, stored in the DB) and "recently viewed" (this session); saved trails on home and profile (items 6, 14, 20).
+- AC1.19 Share: a share/copy-link button on trail pages and group hikes (items 14, 17).
+- AC9.8 Organizer dashboard: my events with participants / places left / registration status, totals, quick "New group hike" (item 7).
+- AC9.9 Organizers and hikers can edit a future plan (date, time, duration, group details) and cancel it; a group hike cannot shrink
+  below the people already joined; the participant list is shown to the organizer (items 15, 16, 32).
+- AC8.5 Change password on the account page (current password required) (items 30, 32, 35).
+- AC8.6 Forms show a busy state while submitting; empty states suggest the next action (items 27, 28).
+Out of scope still: following users (item 21 "if within MVP scope" — likes and comments cover it).

@@ -5,6 +5,15 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
 <header class="trail-head">
     <h1><?= e($t['name']) ?></h1>
     <p class="muted"><?php if ($t['ref'] !== ''): ?><span class="ref"><?= e($t['ref']) ?></span> · <?php endif; ?><?= e($t['region']) ?> · <?= Html::difficulty($t['difficulty']) ?> · <?= $loop ? 'Loop' : 'One way' ?></p>
+    <div class="head-actions">
+        <form method="post" action="<?= e(url('trail.save', ['id' => $t['id']])) ?>">
+            <?= \TrailSense\Core\Csrf::field() ?>
+            <button class="btn btn-sm <?= $saved ? 'btn-saved' : 'btn-secondary' ?>" type="submit" aria-pressed="<?= $saved ? 'true' : 'false' ?>"><?= $saved ? '★ Saved' : '☆ Save trail' ?></button>
+        </form>
+        <button class="btn btn-sm btn-secondary" type="button" data-share data-title="<?= e($t['name']) ?> on TrailSense" data-url="<?= e(url('trail', ['id' => $t['id']])) ?>">Share</button>
+        <a class="btn btn-sm btn-primary" href="<?= e(url('plan.new', ['trail_id' => $t['id']])) ?>">Plan this hike</a>
+    </div>
+    <p class="small muted" data-share-status role="status" aria-live="polite"></p>
 </header>
 
 <?php if ($photos): ?>
@@ -46,6 +55,8 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
     <div><dt>Type</dt><dd><?= $loop ? 'Loop' : 'One way' ?></dd></div>
 </dl>
 <p class="prose"><?= e($t['description']) ?></p>
+
+<?= View::partial('partials/trail-weather', ['outlook' => $outlook, 't' => $t]) ?>
 
 <?= View::partial('partials/route-fit', ['t' => $t]) ?>
 

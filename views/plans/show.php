@@ -6,6 +6,10 @@ $p = $plan; $isGroup = $p['group_size'] !== null; $left = $isGroup ? max(0, (int
     <h1><?= e($p['trail_name']) ?></h1>
     <p class="muted"><?= e(Html::date($p['planned_date'], 'l j F Y')) ?> · start <?= e(Html::time($p['start_time'])) ?> · back about <?= e($vm['end_time']) ?></p>
     <p class="muted"><?= e(Html::km($p['distance_km'])) ?> · <?= e(Html::duration((int) $p['duration_min'])) ?> · <?= e(ucfirst($p['difficulty'])) ?><?= $isGroup ? ' · ' . e($p['participants']) . ' of ' . e($p['group_size']) . ' places taken' : '' ?></p>
+    <?php if ($isGroup && !$isPast): ?>
+        <div class="head-actions"><button class="btn btn-sm btn-secondary" type="button" data-share data-title="Join my group hike: <?= e($p['trail_name']) ?>, <?= e(Html::date($p['planned_date'], 'D j M')) ?>" data-url="<?= e(url('plan', ['id' => $p['id']])) ?>">Share invite link</button></div>
+        <p class="small muted" data-share-status role="status" aria-live="polite"></p>
+    <?php endif; ?>
     <?php if (!$isOwner): ?><p class="muted">Organised by <?= e($p['organizer_name']) ?> · <a href="<?= e(url('trail', ['id' => $p['trail_id']])) ?>">trail details</a></p><?php endif; ?>
 </header>
 
@@ -67,9 +71,13 @@ $p = $plan; $isGroup = $p['group_size'] !== null; $left = $isGroup ? max(0, (int
     <?php if ($isPast): ?>
         <a class="btn btn-primary btn-block" href="<?= e(url('publish', ['plan_id' => $p['id']])) ?>">Publish this hike</a>
     <?php endif; ?>
-    <form method="post" action="<?= e(url('plan.delete', ['id' => $p['id']])) ?>" data-confirm="Delete this plan?">
+    <?php if (!$isPast): ?>
+        <a class="btn btn-secondary btn-block" href="<?= e(url('plan.edit', ['id' => $p['id']])) ?>"><?= $isGroup ? 'Edit group hike' : 'Edit plan' ?></a>
+    <?php endif; ?>
+    <form method="post" action="<?= e(url('plan.delete', ['id' => $p['id']])) ?>" data-confirm="<?= $isGroup && !$isPast ? 'Cancel this group hike? ' . (int) $p['participants'] . ' participant(s) will no longer see it.' : 'Delete this plan?' ?>">
         <?= Csrf::field() ?>
-        <button class="btn btn-ghost btn-block" type="submit">Delete plan</button>
+        <input type="hidden" name="kind" value="<?= $isGroup ? 'group' : 'personal' ?>">
+        <button class="btn btn-ghost btn-block" type="submit"><?= $isGroup && !$isPast ? 'Cancel group hike' : 'Delete plan' ?></button>
     </form>
 </div>
 <?php endif; ?>

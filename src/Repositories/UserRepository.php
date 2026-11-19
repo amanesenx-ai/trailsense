@@ -32,6 +32,20 @@ final class UserRepository
         return (int) $stmt->fetchColumn();
     }
 
+    /** AC8.5 */
+    public function updatePassword(int $id, string $password): void
+    {
+        $this->db->prepare('UPDATE app_user SET password_hash = ? WHERE id = ?')->execute([password_hash($password, PASSWORD_DEFAULT), $id]);
+    }
+
+    public function passwordHash(int $id): ?string
+    {
+        $s = $this->db->prepare('SELECT password_hash FROM app_user WHERE id = ?');
+        $s->execute([$id]);
+        $h = $s->fetchColumn();
+        return $h === false ? null : (string) $h;
+    }
+
     public function find(int $id): ?array
     {
         $stmt = $this->db->prepare('SELECT id, name, email, role FROM app_user WHERE id = ?');

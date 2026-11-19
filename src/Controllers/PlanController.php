@@ -55,7 +55,8 @@ final class PlanController
             $trail = Request::id('trail_id') ? $this->trails->find((int) Request::id('trail_id')) : null;
             $old = [
                 'trail_id' => $trail['id'] ?? '',
-                'planned_date' => (new DateTimeImmutable('next saturday'))->format('Y-m-d'),
+                'planned_date' => preg_match('/^\d{4}-\d{2}-\d{2}$/', (string) Request::get('date')) === 1 && Request::get('date') >= date('Y-m-d')
+                    ? Request::get('date') : (new DateTimeImmutable('next saturday'))->format('Y-m-d'),
                 'start_time' => '09:30',
                 'duration_min' => $trail['est_duration_min'] ?? '',
             ];
@@ -125,6 +126,55 @@ final class PlanController
         ]);
     }
 
+    /** AC9.9 edit form for a future plan the user owns. */
+    public function edit(array $errors = [], array $old = []): void
+    {
+        $plan = $this->ownedPlan();
+        if ($plan['planned_date'] < date('Y-m-d')) {
+            throw HttpException::forbidden();
+        }
+        $isGroup = $plan['group_size'] !== null;
+        $old = $old ?: ['trail_id' => $plan['trail_id'], 'planned_date' => $plan['planned_date'], 'start_time' => substr((string) $plan['start_time'], 0, 5),
+            'duration_min' => $plan['duration_min'], 'notes' => $plan['notes'] ?? '', 'group_size' => $plan['group_size'],
+            'meeting_point' => $plan['meeting_point'], 'meeting_time' => substr((string) $plan['meeting_time'], 0, 5)];
+        View::render('plans/form', [
+            'title' => $isGroup ? 'Edit group hike' : 'Edit plan',
+            'active' => 'plans',
+            'trails' => $this->trails->options(),
+            'isGroup' => $isGroup,
+            'errors' => $errors,
+            'old' => $old,
+            'editId' => (int) $plan['id'],
+        ], $errors ? 422 : 200);
+    }
+
+    public function update(): void
+    {
+        Csrf::check();
+        $plan = $this->ownedPlan();                                   // auth + ownership before any write
+        if ($plan['planned_date'] < date('Y-m-d')) {
+            throw HttpException::forbidden();
+        }
+        $isGroup = $plan['group_size'] !== null;
+        $input = [];
+        foreach (['trail_id', 'planned_date', 'start_time', 'duration_min', 'notes', 'group_size', 'meeting_point', 'meeting_time'] as $f) {
+            $input[$f] = Request::post($f);
+        }
+        [$data, $errors] = PlanValidator::validate($input, fn (int $id) => $this->trails->exists($id), $isGroup, new DateTimeImmutable('today'));
+        $joined = (int) $plan['participants'];
+        if ($isGroup && !isset($errors['group_size']) && (int) $input['group_size'] < $joined) {
+            $errors['group_size'] = $joined . ' people have already joined, so the group cannot be smaller than ' . $joined . '.';
+        }
+        if ($errors !== []) {
+            $this->edit($errors, $input);
+            return;
+        }
+        $this->plans->update((int) $plan['id'], $data);
+        $this->service()->assess((array) $this->plans->find((int) $plan['id']));
+        Flash::set('success', $isGroup ? 'Group hike updated. Participants see the new details and a fresh weather check.' : 'Plan updated and checked again.');
+        View::redirect('plan', ['id' => $plan['id']]);
+    }
+
     public function check(): void
     {
         Csrf::check();
@@ -142,7 +192,7 @@ final class PlanController
         if (!$this->plans->deleteOwned($id, $user['id'])) {      // AC2.4
             throw HttpException::forbidden();
         }
-        Flash::set('info', 'Plan deleted.');
+        Flash::set('info', Request::post('kind') === 'group' ? 'Group hike cancelled. It no longer appears to participants.' : 'Plan deleted.');
         View::redirect('plans');
     }
 

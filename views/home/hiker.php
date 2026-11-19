@@ -31,6 +31,26 @@ $hour = (int) date('G'); $greet = $hour < 12 ? 'Good morning' : ($hour < 20 ? 'G
     <div><dt>Trails done</dt><dd><?= e($stats['trails']) ?></dd></div>
 </dl>
 
+<div class="dash-grid">
+    <section class="card dash-box" aria-labelledby="saved-h">
+        <div class="section-head"><h2 id="saved-h" class="section-title">★ Saved trails</h2><a href="<?= e(url('trails', ['saved' => '1'])) ?>">All</a></div>
+        <?php if ($saved): ?><ul class="tile-list"><?php foreach (array_slice($saved, 0, 4) as $t): ?><?= View::partial('partials/trail-tile', ['t' => $t]) ?><?php endforeach; ?></ul>
+        <?php else: ?><p class="muted small">Nothing saved yet. Open a trail and press “☆ Save trail” to keep it here.</p><?php endif; ?>
+    </section>
+    <section class="card dash-box" aria-labelledby="recent-h">
+        <div class="section-head"><h2 id="recent-h" class="section-title">Recently viewed</h2><a href="<?= e(url('trails')) ?>">Browse</a></div>
+        <?php if ($recent): ?><ul class="tile-list"><?php foreach (array_slice($recent, 0, 4) as $t): ?><?= View::partial('partials/trail-tile', ['t' => $t]) ?><?php endforeach; ?></ul>
+        <?php else: ?><p class="muted small">Trails you open appear here so you can get back to them.</p><?php endif; ?>
+    </section>
+    <section class="card dash-box" aria-labelledby="mine-h">
+        <div class="section-head"><h2 id="mine-h" class="section-title">Your recent hikes</h2><a href="<?= e(url('publish')) ?>">Publish</a></div>
+        <?php if ($myHikes): ?><ul class="tile-list"><?php foreach ($myHikes as $a): ?>
+            <li><a class="tile-link" href="<?= e(url('activity', ['id' => $a['id']])) ?>"><span><strong><?= e($a['trail_name']) ?></strong><span class="small muted"><?= e(Html::date($a['hiked_on'], 'j M')) ?> · <?= e(Html::km($a['distance_km'])) ?> · ♥ <?= e($a['likes'] ?? 0) ?></span></span></a></li>
+        <?php endforeach; ?></ul>
+        <?php else: ?><p class="muted small">No hikes published yet. After a walk, press Finish in hike mode or “Publish”.</p><?php endif; ?>
+    </section>
+</div>
+
 <?php if ($more): ?>
 <section aria-labelledby="later-h">
     <div class="section-head"><h2 id="later-h" class="section-title">Also planned</h2><a href="<?= e(url('plans')) ?>">All plans</a></div>
@@ -40,7 +60,7 @@ $hour = (int) date('G'); $greet = $hour < 12 ? 'Good morning' : ($hour < 20 ? 'G
 
 <?php if ($discover): ?>
 <section aria-labelledby="disc-h">
-    <div class="section-head"><h2 id="disc-h" class="section-title">Discover trails</h2><a href="<?= e(url('trails')) ?>">See all</a></div>
+    <div class="section-head"><h2 id="disc-h" class="section-title">Recommended trails</h2><a href="<?= e(url('trails')) ?>">See all</a></div>
     <ul class="discover">
         <?php foreach ($discover as $t): $c = Climb::analyse([], (int) $t['elevation_gain_m'], (float) $t['distance_km']); ?>
             <li><a class="disc-card" href="<?= e(url('trail', ['id' => $t['id']])) ?>">

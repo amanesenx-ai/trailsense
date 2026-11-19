@@ -41,12 +41,12 @@ $hours = $vm['hours']; $links = $vm['links']; ?>
                     <span class="hour-time"><?= e($h['time']) ?></span>
                     <?= Icons::svg($icon, 'hour-icon') ?><span class="sr-only"><?= e($label) ?></span>
                     <span class="hour-temp"><?= $h['temp'] === null ? '–' : e(round((float) $h['temp'])) . '°' ?></span>
-                    <span class="hour-rain"><?= e($h['precip'] ?? '–') ?> mm</span>
-                    <span class="hour-gust"><?= e($h['gust'] ?? '–') ?> km/h</span>
+                    <span class="hour-rain"><?= e($h['precip'] ?? '–') ?> mm<?= isset($h['prob']) ? ' · ' . e($h['prob']) . '%' : '' ?></span>
+                    <span class="hour-gust"><?= isset($h['wind']) ? e($h['wind']) . '/' : '' ?><?= e($h['gust'] ?? '–') ?> km/h</span>
                 </li>
             <?php endforeach; ?>
         </ol>
-        <p class="small muted">Highlighted: the hours of your hike. Tap or hover the chart for each hour's values.</p>
+        <p class="small muted">Highlighted: the hours of your hike. Rain: mm · chance. Wind: speed/gusts. Tap or hover the chart for each hour's values.</p>
     <?php else: ?>
         <p class="muted">No hourly forecast stored for this check yet<?= !$isPast && $isOwner ? ' — press “Check again” below to see it hour by hour' : '' ?>.</p>
     <?php endif; ?>

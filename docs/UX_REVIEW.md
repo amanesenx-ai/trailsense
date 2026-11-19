@@ -64,3 +64,6 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | 360 px: elevation chart scrolled sideways, peak label clipped; tab label cut | Hidden information | Chart redrawn at a narrower size; labels kept inside; tab "Joined" |
 | Turn-left and turn-right marks drawn the wrong way round (owner check) | Hiker would turn the wrong way | Swapped: the horizontal part of the corner points the way to turn |
 | Banner said "Directions appear here, like a GPS" every time | Placeholder noise | Banner hidden until the first GPS fix; far away → "Go to the start: 10.9 km to the E" + road directions; on the trail → turn-by-turn straight away, Start only records |
+
+## Release 5 review (2026-11-19) — reviewer's list of 45 improvements
+See docs/REVIEW_CHECKLIST.md for every item. Main UX changes: public landing page with the value proposition; separate, richer dashboards (hiker: saved / recently viewed / own hikes; organizer: events table with sign-up bars and status); weather on every trail page; save + share; region and duration filters; edit/cancel events; change password; busy state on submit; error messages announced (role=alert); two 360 px overflows fixed (screen-reader labels inside scroll strips; long names in dashboard boxes).

@@ -73,6 +73,27 @@ document.addEventListener('DOMContentLoaded', () => {
         map.fitBounds(line.getBounds(), { padding: [24, 24] });
     });
 
+    // AC1.19 share a trail or a group hike: native share sheet, else copy the link
+    document.querySelectorAll('[data-share]').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            const link = new URL(btn.dataset.url, location.href).toString();
+            const out = document.querySelector('[data-share-status]');
+            try {
+                if (navigator.share) { await navigator.share({ title: btn.dataset.title, url: link }); return; }
+                await navigator.clipboard.writeText(link);
+                if (out) out.textContent = 'Link copied: ' + link;
+            } catch (e) { if (out) out.textContent = link; }
+        });
+    });
+
+    // AC8.6 forms show a busy state while submitting (prevents double submits)
+    document.querySelectorAll('form[method="post"]').forEach((form) => {
+        form.addEventListener('submit', () => {
+            const b = form.querySelector('button[type="submit"]');
+            if (b && !b.disabled) { b.dataset.label = b.textContent; b.setAttribute('aria-busy', 'true'); setTimeout(() => { b.disabled = true; }, 0); b.textContent = 'Working…'; }
+        });
+    });
+
     // AC4.12 checklist ticks are kept only on this device (light per-viewer convenience)
     document.querySelectorAll('[data-checklist]').forEach((list) => {
         const key = 'ts-check-' + list.dataset.checklist;

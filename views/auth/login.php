@@ -14,9 +14,5 @@
         <input id="password" name="password" type="password" autocomplete="current-password" required>
         <button class="btn btn-primary btn-block" type="submit">Sign in</button>
         <p class="muted center">New here? <a href="<?= e(url('register')) ?>">Create an account</a></p>
-        <details class="demo-accounts">
-            <summary>Demo accounts</summary>
-            <p>Hiker: <code>joana@trailsense.pt</code><br>Organizer: <code>bruno@trailsense.pt</code><br>Password: <code>trailsense123</code></p>
-        </details>
     </form>
 </section>

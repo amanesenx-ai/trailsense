@@ -77,4 +77,7 @@ Run: `php tests/run.php` (see totals at the end of this file).
 | AC2.5 | Plans agenda + tabs | views/plans/index, partials/plan-row, PlanController::index | Release4Flows *plans page is an agenda…* |
 | AC8.3 | Home: hero, stats, discover, community | HomeController, views/home/hiker | Release4Flows *home…* |
 
-Run: `php tests/run.php` → 143 tests (release 3: 132). CI: `.github/workflows/tests.yml` runs them on every push.
+Run: `php tests/run.php` → 143 tests (release 3: 132).
+
+## Release 5 (2026-11-19) — reviewer's 45 improvements
+Item-by-item mapping: docs/REVIEW_CHECKLIST.md. New ACs: AC0.1, AC1.16–1.19, AC2.5, AC8.5–8.6, AC9.8–9.9 (SPEC §11). Tests: Release5FlowsTest (12), Unit Release5Test (3), InstallerTest (migration 005). Run: `php tests/run.php` → 158 tests. CI: `.github/workflows/tests.yml` runs them on every push.

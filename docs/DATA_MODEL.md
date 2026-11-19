@@ -45,3 +45,5 @@ Geometry: OpenStreetMap API `relation/{id}/full`, ways joined (ordered or neares
 Elevation gain: 100 samples from the Open-Meteo Elevation API. Duration: Naismith (4 km/h + 10 min per 100 m up).
 
 **Release 4 (migration 004):** `trail.elevation_profile JSONB NOT NULL DEFAULT '[]'` = 81 `[km, m]` samples from the Open-Meteo Elevation API (ADR-019); `trail.elevation_gain_m` recomputed from that profile so lists and climb notes agree.
+
+**Release 5 (migration 005):** `trail_favourite (user_id FK→app_user ON DELETE CASCADE, trail_id FK→trail ON DELETE CASCADE, created_at, PRIMARY KEY (user_id, trail_id))` — saved trails, a many-to-many between users and trails. Total: **17 tables**.

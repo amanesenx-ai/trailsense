@@ -61,7 +61,7 @@ return [
     },
     'organizer sees Groups menu and the completeness indicator (AC8.4, K1)' => function () use ($login) {
         $b = $login('bruno@trailsense.pt')->follow();
-        assertContains('Hi, Bruno!', $b->body);
+        assertContains('Hi, Bruno <span class="tag tag-org">Organizer</span>', $b->body);
         assertContains('>Groups<', $b->body);
         assertContains('Upcoming hikes fully checked', $b->body);
     },

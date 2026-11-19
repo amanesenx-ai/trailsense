@@ -29,6 +29,9 @@ final class ProfileController
             'stats' => $profiles->stats($id),
             'monthly' => $profiles->monthly($id),
             'posts' => (new ActivityRepository($db))->byUser($id),
+            // saved trails are private: only on your own profile (AC1.18)
+            'saved' => $id === $me['id'] ? (new \TrailSense\Repositories\TrailRepository($db))->search('', null, null, null, null,
+                (new \TrailSense\Repositories\FavouriteRepository($db))->ids($id)) : [],
         ]);
     }
 }

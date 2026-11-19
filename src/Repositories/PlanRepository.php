@@ -54,6 +54,25 @@ final class PlanRepository
         }
     }
 
+    /** AC9.9 edit a plan (+ group details) atomically; the assessment is redone by the caller. */
+    public function update(int $planId, array $data): void
+    {
+        $this->db->beginTransaction();
+        try {
+            $this->db->prepare('UPDATE hike_plan SET trail_id = ?, planned_date = ?, start_time = ?, duration_min = ?, notes = ? WHERE id = ?')
+                ->execute([$data['trail_id'], $data['planned_date'], $data['start_time'], $data['duration_min'], $data['notes'] ?? '', $planId]);
+            if (!empty($data['group'])) {
+                $g = $data['group'];
+                $this->db->prepare('UPDATE group_plan SET group_size = ?, meeting_point = ?, meeting_time = ? WHERE plan_id = ?')
+                    ->execute([$g['group_size'], $g['meeting_point'], $g['meeting_time'], $planId]);
+            }
+            $this->db->commit();
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     public function find(int $id): ?array
     {
         $stmt = $this->db->prepare(self::SELECT . ' WHERE p.id = ?');

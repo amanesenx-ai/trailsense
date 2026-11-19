@@ -26,7 +26,13 @@ final class TrailController
 
     public function index(): void
     {
-        Auth::requireLogin();
+        $user = Auth::requireLogin();
+        $favs = new \TrailSense\Repositories\FavouriteRepository(Database::connection());
+        $regions = $this->trails->regions();
+        $region = in_array(Request::get('region'), $regions, true) ? Request::get('region') : null;
+        $minRaw = Request::get('max_min');
+        $maxMin = in_array($minRaw, ['120', '180', '240', '360'], true) ? (int) $minRaw : null;
+        $saved = Request::get('saved') === '1';
         // AC1.5: invalid filter values are silently ignored
         $q = mb_substr(Request::get('q'), 0, 60);
         $difficulty = in_array(Request::get('difficulty'), TrailRepository::DIFFICULTIES, true) ? Request::get('difficulty') : null;
@@ -36,8 +42,10 @@ final class TrailController
         View::render('trails/index', [
             'title' => 'Trails',
             'active' => 'trails',
-            'trails' => $this->trails->search($q, $difficulty, $maxKm),
-            'filters' => ['q' => $q, 'difficulty' => $difficulty, 'max_km' => $maxKm],
+            'trails' => $this->trails->search($q, $difficulty, $maxKm, $region, $maxMin, $saved ? $favs->ids($user['id']) : null),
+            'filters' => ['q' => $q, 'difficulty' => $difficulty, 'max_km' => $maxKm, 'region' => $region, 'max_min' => $maxMin, 'saved' => $saved],
+            'regions' => $regions,
+            'savedIds' => $favs->ids($user['id']),
         ]);
     }
 
@@ -46,11 +54,16 @@ final class TrailController
         $user = Auth::requireLogin();
         $trail = $this->trailOr404();
         $db = Database::connection();
+        // AC1.18 recently viewed: last 6 trails, this session only
+        $recent = array_values(array_diff($_SESSION['recent_trails'] ?? [], [(int) $trail['id']]));
+        $_SESSION['recent_trails'] = array_slice(array_merge([(int) $trail['id']], $recent), 0, 6);
         View::render('trails/show', [
             'title' => $trail['name'],
             'active' => 'trails',
             'trail' => $trail,
             'photos' => $this->trails->photos((int) $trail['id']),
+            'outlook' => \TrailSense\Services\WeatherOutlook::forPlace((float) $trail['start_lat'], (float) $trail['start_lon']),
+            'saved' => (new \TrailSense\Repositories\FavouriteRepository($db))->isSaved($user['id'], (int) $trail['id']),
             'reports' => (new TrailReportRepository($db))->recent((int) $trail['id']),
             'groupHikes' => (new ParticipantRepository($db))->upcomingGroupHikes($user['id'], (int) $trail['id'], 5),
             'conditions' => TrailReportRepository::CONDITIONS,
@@ -82,6 +95,17 @@ final class TrailController
         (new TrailReportRepository(Database::connection()))->create((int) $trail['id'], $user['id'], $condition, $note);
         Flash::set('success', 'Thanks! Your report helps other hikers.');
         View::redirect('trail', ['id' => $trail['id']]);
+    }
+
+    /** AC1.18 save / unsave a trail (CSRF → auth → validate → act → redirect). */
+    public function save(): void
+    {
+        Csrf::check();
+        $user = Auth::requireLogin();
+        $trail = $this->trailOr404();
+        $now = (new \TrailSense\Repositories\FavouriteRepository(Database::connection()))->toggle($user['id'], (int) $trail['id']);
+        Flash::set('success', $now ? 'Trail saved. Find it under Saved trails.' : 'Removed from your saved trails.');
+        Request::post('back') === 'list' ? View::redirect('trails', ['saved' => '1']) : View::redirect('trail', ['id' => $trail['id']]);
     }
 
     private function trailOr404(): array
