@@ -2,7 +2,7 @@
 SET client_min_messages = warning;
 -- Re-runnable: drops and recreates everything.
 
-DROP TABLE IF EXISTS schema_migration, activity_comment, activity_like, trail_report, hike_participant, trail_photo,
+DROP TABLE IF EXISTS trail_favourite, schema_migration, activity_comment, activity_like, trail_report, hike_participant, trail_photo,
     activity_photo, activity, assessment_result, risk_assessment,
     weather_snapshot, risk_rule, group_plan, hike_plan, trail, app_user CASCADE;
 
@@ -198,4 +198,13 @@ CREATE TABLE schema_migration (
     version    INTEGER PRIMARY KEY,
     applied_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-INSERT INTO schema_migration (version) VALUES (1), (2), (3), (4);
+-- Saved trails (release 5, AC1.18): many-to-many app_user <-> trail
+CREATE TABLE trail_favourite (
+    user_id    INTEGER     NOT NULL REFERENCES app_user (id) ON DELETE CASCADE,
+    trail_id   INTEGER     NOT NULL REFERENCES trail (id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    PRIMARY KEY (user_id, trail_id)
+);
+CREATE INDEX trail_favourite_trail ON trail_favourite (trail_id);
+
+INSERT INTO schema_migration (version) VALUES (1), (2), (3), (4), (5);

@@ -42,12 +42,17 @@ $icons = [
             <?php endforeach; ?>
         </nav>
         <a class="avatar" href="<?= e(url('account')) ?>" aria-label="Account: <?= e($user['name']) ?>"<?= $active === 'account' ? ' aria-current="page"' : '' ?>><?= Html::initial($user['name']) ?></a>
+    <?php else: ?>
+        <nav class="topnav topnav-out" aria-label="Account">
+            <a href="<?= e(url('login')) ?>">Sign in</a>
+            <a class="btn btn-primary btn-sm" href="<?= e(url('register')) ?>">Create account</a>
+        </nav>
     <?php endif; ?>
 </header>
 
 <main id="main" class="container">
     <?php if ($flash): ?>
-        <div class="flash flash-<?= e($flash['type']) ?>" role="status"><?= e($flash['message']) ?></div>
+        <div class="flash flash-<?= e($flash['type']) ?>" role="<?= $flash['type'] === 'error' ? 'alert' : 'status' ?>"><?= e($flash['message']) ?></div>
     <?php endif; ?>
     <?= $content ?>
 </main>

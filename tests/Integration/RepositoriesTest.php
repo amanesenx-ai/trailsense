@@ -18,15 +18,19 @@ $fixedWeather = new class implements WeatherProvider {
     {
         return $this->next ?? new Forecast('open-meteo', true, '', 12.0, 20.0, 8.0, 14.0);
     }
+    public function outlook(float $lat, float $lon): array
+    {
+        return [];
+    }
 };
 $future = (new DateTimeImmutable('+5 days'))->format('Y-m-d');
 
 return [
     '__before' => function () use (&$db) { $db = resetTestDatabase(); },
 
-    'schema has the 16 tables of the data model' => function () use (&$db) {
+    'schema has the 17 tables (incl. trail_favourite) of the data model' => function () use (&$db) {
         $n = (int) $db->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = current_schema()")->fetchColumn();
-        assertSame(16, $n);
+        assertSame(17, $n);
     },
     'seed: 11 real OSM trails with photos, 13 rules, 4 users' => function () use (&$db) {
         assertSame(11, (int) $db->query('SELECT COUNT(*) FROM trail WHERE osm_relation_id IS NOT NULL')->fetchColumn());

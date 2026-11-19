@@ -123,3 +123,6 @@ UPDATE trail SET elevation_gain_m = 400 WHERE id = 8;
 UPDATE trail SET elevation_gain_m = 610 WHERE id = 9;
 UPDATE trail SET elevation_gain_m = 110 WHERE id = 10;
 UPDATE trail SET elevation_gain_m = 280 WHERE id = 11;
+
+-- Saved trails (release 5)
+INSERT INTO trail_favourite (user_id, trail_id) VALUES (1, 4), (1, 7), (1, 9);

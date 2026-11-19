@@ -44,3 +44,6 @@ Security checklist (run with the security-reviewer subagent prompt + grep scan):
 | M-R4-1 | Simulated GPS on Trilho dos Romanos: 70 m before the first turn → "In 70 m · turn left"; at 15 m → "Turn left now"; next climb "+151 m over 1.2 km" | ✅ (headless Chrome, simulated position) |
 | M-R4-2 | Live: card maps show OSM tiles aligned with the route (trails, plans, groups, feed) | to check on the live site |
 | M-R4-3 | Voice prompts on a phone (speech synthesis) | to do on a walk |
+| M-R5-1 | Every screen at 360 px for hiker and organizer (home, trails, trail, plans, plan, edit, groups, feed, account, hike) — no horizontal scroll | ✅ (headless Chrome; fixed 2 overflows) |
+| M-R5-2 | Landing page signed out; top bar shows Sign in / Create account | ✅ |
+| M-R5-3 | Live: trail page 7-day forecast from Open-Meteo, "updated" time | to check on the live site |

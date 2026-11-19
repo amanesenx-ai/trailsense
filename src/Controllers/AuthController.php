@@ -86,4 +86,23 @@ final class AuthController
         Auth::requireLogin();
         (new ProfileController())->show();     // "Me" = my own profile with statistics (F11)
     }
+
+    /** AC8.5 change password (CSRF → auth → validate → act → redirect). */
+    public function changePassword(): void
+    {
+        Csrf::check();
+        $user = Auth::requireLogin();
+        $users = new UserRepository(Database::connection());
+        $hash = (string) $users->passwordHash($user['id']);
+        $errors = \TrailSense\Domain\UserValidator::newPassword(Request::post('current_password'), Request::post('new_password'),
+            Request::post('repeat_password'), fn (string $p) => password_verify($p, $hash));
+        if ($errors !== []) {
+            Flash::set('error', implode(' ', $errors));
+        } else {
+            $users->updatePassword($user['id'], Request::post('new_password'));
+            session_regenerate_id(true);
+            Flash::set('success', 'Password changed.');
+        }
+        View::redirect('account');
+    }
 }

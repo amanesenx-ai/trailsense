@@ -2,7 +2,8 @@
 <a class="back" href="<?= e(url('plans')) ?>">← <?= $isGroup ? 'Group hikes' : 'My plans' ?></a>
 <h1><?= e($title) ?></h1>
 <?php if ($errors): ?><p class="alert" role="alert">Please fix the highlighted fields.</p><?php endif; ?>
-<form class="card form" method="post" action="<?= e(url('plan.store')) ?>" novalidate>
+<?php $editId = $editId ?? null; ?>
+<form class="card form" method="post" action="<?= e($editId ? url('plan.update', ['id' => $editId]) : url('plan.store')) ?>" novalidate>
     <?= Csrf::field() ?>
     <label for="trail_id">Trail</label>
     <select id="trail_id" name="trail_id" required data-duration-source<?= Html::aria($errors, 'trail_id') ?>>
@@ -57,5 +58,5 @@
     <textarea id="notes" name="notes" rows="2" maxlength="500"<?= Html::aria($errors, 'notes') ?>><?= e($old['notes'] ?? '') ?></textarea>
     <?= Html::error($errors, 'notes') ?>
 
-    <button class="btn btn-primary btn-block" type="submit">Save plan and check conditions</button>
+    <button class="btn btn-primary btn-block" type="submit"><?= $editId ? 'Save changes and check again' : 'Save plan and check conditions' ?></button>
 </form>

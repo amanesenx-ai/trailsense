@@ -14,7 +14,9 @@ final class TrailRepository
     }
 
     /** F1: combined filters (AC1.2). Invalid values must already be dropped by the caller (AC1.5). */
-    public function search(string $text = '', ?string $difficulty = null, ?float $maxKm = null): array
+    /** @param ?list<int> $onlyIds restrict to these trails (saved / recently viewed) */
+    public function search(string $text = '', ?string $difficulty = null, ?float $maxKm = null, ?string $region = null,
+        ?int $maxMinutes = null, ?array $onlyIds = null): array
     {
         $sql = 'SELECT t.id, t.name, t.region, t.distance_km, t.elevation_gain_m, t.est_duration_min, t.difficulty,
                        t.route_points, t.ref, t.is_loop,
@@ -34,6 +36,21 @@ final class TrailRepository
         if ($maxKm !== null) {
             $sql .= ' AND t.distance_km <= ?';
             $params[] = $maxKm;
+        }
+        if ($region !== null) {
+            $sql .= ' AND t.region = ?';
+            $params[] = $region;
+        }
+        if ($maxMinutes !== null) {
+            $sql .= ' AND t.est_duration_min <= ?';
+            $params[] = $maxMinutes;
+        }
+        if ($onlyIds !== null) {
+            if ($onlyIds === []) {
+                return [];
+            }
+            $sql .= ' AND t.id IN (' . implode(',', array_fill(0, count($onlyIds), '?')) . ')';
+            array_push($params, ...array_map('intval', $onlyIds));
         }
         $sql .= " ORDER BY array_position(ARRAY['easy','moderate','hard']::varchar[], t.difficulty), t.distance_km";
         $stmt = $this->db->prepare($sql);

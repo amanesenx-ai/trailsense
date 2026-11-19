@@ -19,10 +19,12 @@ return [
     'register.submit' => ['POST', AuthController::class, 'register'],
     'logout'          => ['POST', AuthController::class, 'logout'],
     'account'         => ['GET',  AuthController::class, 'account'],
+    'password.update' => ['POST', AuthController::class, 'changePassword'],
 
     'trails'          => ['GET',  TrailController::class, 'index'],
     'trail'           => ['GET',  TrailController::class, 'show'],
     'trail.report'    => ['POST', TrailController::class, 'report'],
+    'trail.save'      => ['POST', TrailController::class, 'save'],
     'hike'            => ['GET',  HikeController::class, 'show'],
 
     'groups'          => ['GET',  GroupController::class, 'index'],
@@ -37,6 +39,8 @@ return [
     'plan'            => ['GET',  PlanController::class, 'show'],
     'plan.check'      => ['POST', PlanController::class, 'check'],
     'plan.delete'     => ['POST', PlanController::class, 'delete'],
+    'plan.edit'       => ['GET',  PlanController::class, 'edit'],
+    'plan.update'     => ['POST', PlanController::class, 'update'],
 
     'feed'            => ['GET',  ActivityController::class, 'feed'],
     'activity'        => ['GET',  ActivityController::class, 'show'],

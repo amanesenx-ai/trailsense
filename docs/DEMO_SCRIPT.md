@@ -1,15 +1,13 @@
-# DEMO_SCRIPT.md — 5-minute live demo
+# 5-minute live demo — both journeys (release 5)
 
-Before: `php bin/db-reset.php` on the server (fresh, realistic data; plans are relative to today). Two tabs: phone-sized window (DevTools 390 px) and desktop.
+Use two browser windows: a hiker account and an organizer account (demo accounts are given to the teachers privately).
 
-| Time | Show | Say |
-|---|---|---|
-| 0:00–0:30 | Login page | "TrailSense helps beginners and club organizers plan safer hikes. A1 promised: discover, prepare, record, connect. This is the working MVP: PHP + PostgreSQL, online at …" |
-| 0:30–1:15 | Sign in as **Joana** → hiker home → Trails, filter *Moderate, ≤ 10 km* → Serra de Santa Justa | "Role-specific home. Filters combine and live in the URL." |
-| 1:15–2:30 | *Plan this hike* → date in 3 days, **start 15:30**, save | "The plan is saved, the forecast for exactly those hours is fetched from Open-Meteo and every rule in the rule table is evaluated. Each warning says **which rule fired**, the observed value and **what to do** — here: *Start by HH:MM or choose a shorter trail*." Open *See every rule that was checked*. |
-| 2:30–3:00 | Plan 30 days ahead | "No forecast yet: we never invent data — it is marked *incomplete*, daylight is still checked." |
-| 3:00–3:50 | Sign in as **Bruno** → organizer home (KPI card) → New group hike → **Copy briefing** | "Organizers see Groups and the planning-completeness KPI from my A1 business case. The briefing is generated from the same assessment — same checks every time." |
-| 3:50–4:30 | Feed → Publish a hike with a photo → appears first | "Record and connect. Photo type is checked by content." |
-| 4:30–5:00 | Terminal: `php tests/run.php` → `PASSED: 73 FAILED: 0`; show CLAUDE.md, SPEC.md, docs/TRACEABILITY.md | "How I worked with the agent: architecture and spec first, rules in CLAUDE.md, every change accepted only with tests." |
-
-Backup if Wi-Fi fails: screenshots in docs/screenshots/.
+| Time | Who | What to show | What to say |
+|---|---|---|---|
+| 0:00–0:30 | Signed out | Landing page | "Hike smarter, explore safer, share the experience. A clear go/no-go for *your* hike with official IPMA data — not just another trails app." |
+| 0:30–1:30 | Hiker | Trails → filter Region + ≤ 3 h → open a trail | Photos, real map, 7-day weather (rain chance, wind, updated time), "Is this route for me?" (PR explained, climbs), FCMP marks. ☆ Save trail, Share. |
+| 1:30–2:30 | Hiker | "Plan this day" → save → risk check | Verdict ("Go prepared" + reason), hour by hour, what to bring, the rule behind each factor, link to the raw Open-Meteo data and IPMA. |
+| 2:30–3:00 | Hiker | Home | Next hike hero with countdown, saved trails, recently viewed, group hikes to join → Join. |
+| 3:00–4:15 | Organizer | Dashboard → event → Edit → Share invite link | Sign-ups 2/8, places left, status, weather per event, briefing to copy; edit time → weather re-checked; cannot shrink below people joined. |
+| 4:15–4:45 | Hiker | Start hike (phone) | GPS banner "In 70 m · turn left", compass, progress; Finish → publish pre-filled → feed. |
+| 4:45–5:00 | — | Repo | SPEC.md, CLAUDE.md, 17 tables, 158 tests passing, app online + public API. |

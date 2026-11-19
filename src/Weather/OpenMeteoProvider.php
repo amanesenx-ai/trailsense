@@ -44,7 +44,7 @@ final class OpenMeteoProvider implements WeatherProvider
         return self::ENDPOINT . '?' . http_build_query([
             'latitude' => round($lat, 4),
             'longitude' => round($lon, 4),
-            'hourly' => 'temperature_2m,precipitation,wind_gusts_10m,weather_code',
+            'hourly' => 'temperature_2m,precipitation,wind_gusts_10m,weather_code,precipitation_probability,wind_speed_10m',
             'wind_speed_unit' => 'kmh',
             'timezone' => 'Europe/Lisbon',
             'start_date' => $start->format('Y-m-d'),
@@ -74,8 +74,45 @@ final class OpenMeteoProvider implements WeatherProvider
             $h['temperature_2m'],
             $start,
             $end,
-            $h['weather_code'] ?? []
+            $h['weather_code'] ?? [],
+            ['prob' => $h['precipitation_probability'] ?? [], 'wind' => $h['wind_speed_10m'] ?? []]
         );
+    }
+
+    /** AC1.16 7-day outlook request for a trail start. */
+    public static function outlookUrl(float $lat, float $lon): string
+    {
+        return self::ENDPOINT . '?' . http_build_query([
+            'latitude' => round($lat, 4), 'longitude' => round($lon, 4),
+            'daily' => 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,precipitation_sum,wind_speed_10m_max,wind_gusts_10m_max',
+            'wind_speed_unit' => 'kmh', 'timezone' => 'Europe/Lisbon', 'forecast_days' => 7,
+        ]);
+    }
+
+    public function outlook(float $lat, float $lon): array
+    {
+        $body = self::httpGet(self::outlookUrl($lat, $lon));
+        return $body === null ? [] : self::parseOutlook($body);
+    }
+
+    /** @return list<array{date:string,code:?int,tmax:?float,tmin:?float,prob:?int,rain:?float,wind:?int,gust:?int}> */
+    public static function parseOutlook(string $json): array
+    {
+        $d = json_decode($json, true)['daily'] ?? null;
+        if (!is_array($d) || !isset($d['time'])) {
+            return [];
+        }
+        $rows = [];
+        foreach ($d['time'] as $i => $date) {
+            $rows[] = ['date' => (string) $date, 'code' => isset($d['weather_code'][$i]) ? (int) $d['weather_code'][$i] : null,
+                'tmax' => isset($d['temperature_2m_max'][$i]) ? round((float) $d['temperature_2m_max'][$i]) : null,
+                'tmin' => isset($d['temperature_2m_min'][$i]) ? round((float) $d['temperature_2m_min'][$i]) : null,
+                'prob' => isset($d['precipitation_probability_max'][$i]) ? (int) $d['precipitation_probability_max'][$i] : null,
+                'rain' => isset($d['precipitation_sum'][$i]) ? round((float) $d['precipitation_sum'][$i], 1) : null,
+                'wind' => isset($d['wind_speed_10m_max'][$i]) ? (int) round((float) $d['wind_speed_10m_max'][$i]) : null,
+                'gust' => isset($d['wind_gusts_10m_max'][$i]) ? (int) round((float) $d['wind_gusts_10m_max'][$i]) : null];
+        }
+        return $rows;
     }
 
     public static function httpGet(string $url): ?string

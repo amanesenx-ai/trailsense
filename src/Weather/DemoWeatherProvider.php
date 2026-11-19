@@ -49,7 +49,25 @@ final class DemoWeatherProvider implements WeatherProvider
             $temps[] = $minT + ($base - $minT) * max(0, sin(M_PI * (((int) $t->format('H')) - 7) / 12));
             $codes[] = $rainPerHour >= 1.5 ? 63 : ($rainPerHour > 0 ? 61 : [0, 1, 2, 3][$seed % 4]);
         }
-        $hourly = Forecast::hourRows($times, $precip, $gusts, $temps, $codes, $start, $end);
+        $probs = array_map(fn ($mm) => (int) min(95, round($mm * 40 + 5)), $precip);
+        $winds = array_map(fn ($g) => (int) round($g * 0.6), $gusts);
+        $hourly = Forecast::hourRows($times, $precip, $gusts, $temps, $codes, $start, $end, ['prob' => $probs, 'wind' => $winds]);
         return new Forecast('demo', true, '', round($rainPerHour * $hours, 1), (float) $gust, (float) $minT, (float) $base, $hourly);
+    }
+
+    /** Deterministic 7-day outlook (demo/offline mode, AC1.16). */
+    public function outlook(float $lat, float $lon): array
+    {
+        $rows = [];
+        $day = ($this->today ?? new DateTimeImmutable('today'))->setTime(0, 0);
+        for ($i = 0; $i < 7; $i++) {
+            $d = $day->modify("+$i days");
+            $seed = crc32($d->format('Y-m-d') . round($lat, 2));
+            $prob = [5, 10, 20, 35, 60, 80][$seed % 6];
+            $rows[] = ['date' => $d->format('Y-m-d'), 'code' => $prob >= 60 ? 63 : ($prob >= 35 ? 61 : [0, 1, 2, 3][$seed % 4]),
+                'tmax' => 14 + $seed % 8, 'tmin' => 6 + $seed % 5, 'prob' => $prob, 'rain' => $prob >= 35 ? round($prob / 20, 1) : 0.0,
+                'wind' => 10 + $seed % 25, 'gust' => 25 + $seed % 40];
+        }
+        return $rows;
     }
 }

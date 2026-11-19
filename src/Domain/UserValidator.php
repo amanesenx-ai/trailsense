@@ -30,4 +30,21 @@ final class UserValidator
 
         return [['name' => $name, 'email' => $email, 'password' => $password, 'role' => $role], $errors];
     }
+
+    /** AC8.5 change password: current one correct, new one ≥ 8 characters, typed twice, different from the current. */
+    public static function newPassword(string $current, string $new, string $repeat, callable $currentIsValid): array
+    {
+        $errors = [];
+        if ($current === '' || !$currentIsValid($current)) {
+            $errors[] = 'Your current password is not correct.';
+        }
+        if (strlen($new) < 8) {
+            $errors[] = 'The new password needs at least 8 characters.';
+        } elseif ($new !== $repeat) {
+            $errors[] = 'The two new passwords do not match.';
+        } elseif ($new === $current) {
+            $errors[] = 'Choose a password different from the current one.';
+        }
+        return $errors;
+    }
 }

@@ -22,6 +22,14 @@ $max = max(1, ...array_map(fn ($m) => (int) $m['hikes'], $monthly)); ?>
         <?php endforeach; ?>
     </div>
 </section>
+<?php if ($isMe): ?>
+<section class="card dash-box" aria-labelledby="psaved-h">
+    <div class="section-head"><h2 id="psaved-h" class="section-title">★ My saved trails <span class="small muted">(only you see these)</span></h2></div>
+    <?php if ($saved): ?><ul class="tile-list tile-list-2"><?php foreach ($saved as $t): ?><?= \TrailSense\Core\View::partial('partials/trail-tile', ['t' => $t]) ?><?php endforeach; ?></ul>
+    <?php else: ?><p class="muted small">No saved trails yet. <a href="<?= e(url('trails')) ?>">Find a trail</a> and press “☆ Save trail”.</p><?php endif; ?>
+</section>
+<?php endif; ?>
+
 <h2 class="section-title"><?= $isMe ? 'My published hikes' : 'Published hikes' ?></h2>
 <?php if ($posts === []): ?>
     <div class="card empty-inline"><p><?= $isMe ? 'You have not published a hike yet.' : 'No published hikes yet.' ?></p>
@@ -30,6 +38,19 @@ $max = max(1, ...array_map(fn ($m) => (int) $m['hikes'], $monthly)); ?>
     <div class="feed"><?php foreach ($posts as $post): ?><?= View::partial('partials/post-card', ['post' => $post]) ?><?php endforeach; ?></div>
 <?php endif; ?>
 <?php if ($isMe): ?>
+    <details class="card password-box">
+        <summary>Change password</summary>
+        <form class="form" method="post" action="<?= e(url('password.update')) ?>" novalidate>
+            <?= \TrailSense\Core\Csrf::field() ?>
+            <label for="current_password">Current password</label>
+            <input id="current_password" name="current_password" type="password" autocomplete="current-password" required>
+            <label for="new_password">New password <span class="muted small">(at least 8 characters)</span></label>
+            <input id="new_password" name="new_password" type="password" autocomplete="new-password" minlength="8" required>
+            <label for="repeat_password">Repeat new password</label>
+            <input id="repeat_password" name="repeat_password" type="password" autocomplete="new-password" minlength="8" required>
+            <button class="btn btn-primary" type="submit">Change password</button>
+        </form>
+    </details>
     <form method="post" action="<?= e(url('logout')) ?>" class="signout">
         <?= Csrf::field() ?>
         <button class="btn btn-secondary btn-block" type="submit">Sign out</button>
