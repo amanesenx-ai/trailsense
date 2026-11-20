@@ -18,7 +18,7 @@
                 </li>
             <?php endforeach; ?>
         </ol>
-        <p class="small muted">Wind and gusts in km/h. Days with a high chance of rain or strong gusts are highlighted. <?= $outlook['source'] === 'demo' ? 'Demo forecast (offline mode).' : 'Source: Open-Meteo' ?>, updated <?= e(substr((string) $outlook['fetched_at'], 8, 2) . '/' . substr((string) $outlook['fetched_at'], 5, 2) . ' at ' . substr((string) $outlook['fetched_at'], 11, 5)) ?>.
+        <p class="small muted">Wind and gusts in km/h. Days with a high chance of rain or strong gusts are highlighted. <?= $outlook['source'] === 'demo' ? 'Demo forecast (offline mode)' : 'Source: Open-Meteo' ?>, updated <?= e(substr((string) $outlook['fetched_at'], 8, 2) . '/' . substr((string) $outlook['fetched_at'], 5, 2) . ' at ' . substr((string) $outlook['fetched_at'], 11, 5)) ?>.
             <?php if ($outlook['url']): ?><a href="<?= e($outlook['url']) ?>" target="_blank" rel="noopener">Raw data</a>.<?php endif; ?>
             Plan a hike to get the full risk check with IPMA warnings, fire risk and daylight.</p>
     <?php endif; ?>

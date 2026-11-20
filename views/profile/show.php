@@ -38,7 +38,7 @@ $max = max(1, ...array_map(fn ($m) => (int) $m['hikes'], $monthly)); ?>
     <div class="feed"><?php foreach ($posts as $post): ?><?= View::partial('partials/post-card', ['post' => $post]) ?><?php endforeach; ?></div>
 <?php endif; ?>
 <?php if ($isMe): ?>
-    <details class="card password-box">
+    <details class="card password-box" id="password">
         <summary>Change password</summary>
         <form class="form" method="post" action="<?= e(url('password.update')) ?>" novalidate>
             <?= \TrailSense\Core\Csrf::field() ?>

@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         root.classList.add('is-hiking');
         tick(); ticker = setInterval(tick, 15000);
         keepAwake(); watch();
-        const legend = root.querySelector('.hike-legend'); if (legend && window.innerWidth < 700) legend.open = false;
+        root.querySelectorAll('.drop').forEach((d) => { d.open = false; });   // on the trail: only map, directions and progress
     }
     $('start').addEventListener('click', () => { state = { startedAt: Date.now(), track: pos ? [pos] : [] }; store.save(state); enableCompass(); started(); });
     $('finish').addEventListener('click', () => {
@@ -247,6 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
             $('offline-status').innerHTML = '<strong>✓ Ready offline</strong> — saved ' + new Date(m.at).toLocaleDateString() + ', ' + m.tiles + ' map tiles (' +
                 (m.bytes / 1048576).toFixed(1) + ' MB). Directions, compass and progress work without signal; the map zooms to street level 16.';
             $('offline').textContent = 'Update offline copy';
+            $('offline-preview').textContent = '✓ Ready offline · ' + m.tiles + ' map tiles';
+        } else if (!state.startedAt) {
+            $('offline-drop').open = true;                              // before the hike, invite to download
         }
     };
     function setOffline(isOff) {

@@ -41,7 +41,21 @@ $icons = [
                 <a href="<?= e($href) ?>"<?= $active === $key ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
             <?php endforeach; ?>
         </nav>
-        <a class="avatar" href="<?= e(url('account')) ?>" aria-label="Account: <?= e($user['name']) ?>"<?= $active === 'account' ? ' aria-current="page"' : '' ?>><?= Html::initial($user['name']) ?></a>
+        <details class="user-menu" data-menu>
+            <summary class="avatar" aria-label="Account menu: <?= e($user['name']) ?>"><?= Html::initial($user['name']) ?></summary>
+            <div class="menu" role="menu">
+                <p class="menu-head"><strong><?= e($user['name']) ?></strong><span><?= $isOrg ? 'Organizer' : 'Hiker' ?></span></p>
+                <a role="menuitem" href="<?= e(url('account')) ?>">My profile and stats</a>
+                <a role="menuitem" href="<?= e(url('trails', ['saved' => '1'])) ?>">★ Saved trails</a>
+                <a role="menuitem" href="<?= e(url('plans')) ?>"><?= $isOrg ? 'My group hikes' : 'My plans' ?></a>
+                <a role="menuitem" href="<?= e(url('publish')) ?>">Publish a hike</a>
+                <a role="menuitem" href="<?= e(url('account')) ?>#password">Change password</a>
+                <form method="post" action="<?= e(url('logout')) ?>">
+                    <?= \TrailSense\Core\Csrf::field() ?>
+                    <button type="submit" role="menuitem">Sign out</button>
+                </form>
+            </div>
+        </details>
     <?php else: ?>
         <nav class="topnav topnav-out" aria-label="Account">
             <a href="<?= e(url('login')) ?>">Sign in</a>

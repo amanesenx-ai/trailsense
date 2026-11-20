@@ -118,6 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     } catch (e) { /* ignore */ }
 
+    // Dropdown menus (account menu): close on outside click or Escape
+    document.querySelectorAll('[data-menu]').forEach((m) => {
+        document.addEventListener('click', (e) => { if (m.open && !m.contains(e.target)) m.open = false; });
+        m.addEventListener('keydown', (e) => { if (e.key === 'Escape') { m.open = false; m.querySelector('summary').focus(); } });
+    });
+    if (location.hash === '#password') { const pw = document.getElementById('password'); if (pw) pw.open = true; }
+
     // AC4.12 checklist ticks are kept only on this device (light per-viewer convenience)
     document.querySelectorAll('[data-checklist]').forEach((list) => {
         const key = 'ts-check-' + list.dataset.checklist;
