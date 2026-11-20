@@ -33,8 +33,9 @@
     <label for="notes">Notes for other hikers <span class="hint">max 1000</span></label>
     <textarea id="notes" name="notes" rows="4" maxlength="1000" placeholder="Trail conditions, tips, what you would do differently…"<?= Html::aria($errors, 'notes') ?>><?= e($old['notes'] ?? '') ?></textarea>
     <?= Html::error($errors, 'notes') ?>
-    <label for="photo">Photo <span class="hint">JPEG, PNG or WebP, max 3 MB</span></label>
-    <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp"<?= Html::aria($errors, 'photo') ?>>
+    <label for="photo">Photo <span class="hint">JPEG, PNG or WebP · phone photos are resized automatically</span></label>
+    <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" data-shrink<?= Html::aria($errors, 'photo') ?>>
+    <p class="hint" id="photo-status" role="status" aria-live="polite"></p>
     <?= Html::error($errors, 'photo') ?>
     <label for="photo_alt">Describe the photo <span class="hint">for screen readers, optional</span></label>
     <input id="photo_alt" name="photo_alt" maxlength="150" value="<?= e($old['photo_alt'] ?? '') ?>">

@@ -141,6 +141,7 @@ final class ActivityController
         View::render('feed/form', [
             'title' => 'Publish a hike',
             'active' => 'feed',
+            'scripts' => ['photo-shrink.js'],      // AC7.5: phone photos shrunk before upload
             'trails' => $this->trails->options(),
             'errors' => $errors,
             'old' => $old,

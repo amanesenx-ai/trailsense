@@ -106,7 +106,8 @@ write access through the public API.
 ### F7 — Publish a hike (US7)
 *As a hiker, I want to publish a hike with photos and notes **so that** I keep a record of it and help others decide whether to go.*
 - AC7.1 Required: trail, date (not in the future), duration (10–1440 min). Distance defaults to the trail's.
-- AC7.2 Optional photo: JPEG/PNG/WebP only (checked by content), max 3 MB; stored with a random file name.
+- AC7.2 Optional photo: JPEG/PNG/WebP only (checked by content), max 15 MB (rev. 20 Nov: was 3 MB, iPhone photos are 4–8 MB); stored with a random file name, ≤ 1600 px, upright (EXIF orientation applied), metadata removed.
+- AC7.5 *As a hiker I want to add a photo straight from my phone **so that** I do not have to shrink it myself first.* The browser resizes photos over 600 KB to ≤ 1600 px JPEG before upload and shows "Photo ready (6.2 MB → 0.4 MB)"; if it cannot, the original is sent and the server resizes it.
 - AC7.3 Notes max 1000 chars. When published from a plan, the plan is linked.
 - AC7.4 After publishing, the hike appears at the top of the feed.
 
