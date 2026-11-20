@@ -70,3 +70,12 @@ See docs/REVIEW_CHECKLIST.md for every item. Main UX changes: public landing pag
 
 ## Landing page v2 (2026-11-20) — reviewer's 5 final points
 Kept headline and structure. Added: real app screenshots (risk check, hike GPS, organizer dashboard, labelled as demo data); "Where the information comes from — and its limits" (Open-Meteo, IPMA publication windows, calculated sunset, OSM routes, 90 m DEM; guidance not a guarantee, not a replacement for official alerts, directions follow the route shape, needs data + screen on, no offline maps); organizer 4-step flow + dashboard screenshot; trail cards with PR code, loop/one way, distance, duration, ascent, difficulty and climb rating. The same limits are now stated inside the app (risk check and hike mode), so the app does not promise more than it does.
+
+## Release 6 (2026-11-20) — "everything feels visually confusing"; owner chose: trail page + hike mode, new visual style, dropdowns
+| Before | After |
+|---|---|
+| Dark green theme, many dark panels inside dark cards | Calm light theme: off-white page, white cards with soft shadows, forest-green primary, yellow kept only for highlights; status colours have dark "ink" versions for text (contrast ≥ 4.5:1) |
+| Trail page: 9 stacked sections | Essentials visible (photos, numbers, description, map, Start hike); weather / is it for me? / trail marks / group hikes / reports as **dropdowns with a one-line preview** |
+| Hike mode: 4 buttons + offline box + legend + notes | Map, directions, progress, one main button; Voice and Share as small buttons; offline / trail marks / how directions work as dropdowns (offline opens by itself before the hike, all close when the hike starts) |
+| Avatar letter off-centre; avatar only linked to profile | Letter centred (measured 0 px); **account dropdown menu**: profile, saved trails, plans, publish, change password, sign out |
+| Dropdown grid widened the phone page | `min-width: 0` on dropdowns; every screen re-checked at 360 px with all dropdowns open |

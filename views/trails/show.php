@@ -56,25 +56,39 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
 </dl>
 <p class="prose"><?= e($t['description']) ?></p>
 
-<?= View::partial('partials/trail-weather', ['outlook' => $outlook, 't' => $t]) ?>
-
-<?= View::partial('partials/route-fit', ['t' => $t]) ?>
-
-<section class="card" aria-labelledby="marks-h">
-    <h2 id="marks-h">How this trail is marked</h2>
-    <?= View::partial('partials/waymarks', ['waymarks' => \TrailSense\Domain\Waymarks::forTrail((string) $t['ref'], (string) $t['name'])]) ?>
-</section>
-<a class="btn btn-primary btn-block sticky-action" href="<?= e(url('plan.new', ['trail_id' => $t['id']])) ?>">Plan this hike</a>
+<?php // Release 6: secondary information in dropdown sections, each with a one-line preview
+$wm = \TrailSense\Domain\Waymarks::forTrail((string) $t['ref'], (string) $t['name']);
+$fitType = \TrailSense\Domain\RouteType::describe((string) $t['ref'], (string) $t['name'], (float) $t['distance_km'], (int) $t['est_duration_min'], $loop);
+$fitClimb = \TrailSense\Domain\Climb::analyse($t['elevation_profile'] ?? [], (int) $t['elevation_gain_m'], (float) $t['distance_km']);
+$today = $outlook['days'][0] ?? null; ?>
+<div class="drops">
+    <details class="drop" open>
+        <summary><span class="drop-title">Weather, next 7 days</span>
+            <span class="drop-preview"><?= $today ? 'Today ' . e($today['tmax']) . '° · rain ' . e($today['prob']) . '% · gusts ' . e($today['gust']) . ' km/h' : 'Forecast not available right now' ?></span></summary>
+        <?= View::partial('partials/trail-weather', ['outlook' => $outlook, 't' => $t]) ?>
+    </details>
+    <details class="drop">
+        <summary><span class="drop-title">Is this route for me?</span>
+            <span class="drop-preview"><?= e(explode(' — ', $fitType['name'])[0]) ?> · <?= e($fitClimb['label']) ?> climbs · <?= e(ucfirst($fitType['size'])) ?> walk</span></summary>
+        <?= View::partial('partials/route-fit', ['t' => $t]) ?>
+    </details>
+    <details class="drop">
+        <summary><span class="drop-title">How this trail is marked</span>
+            <span class="drop-preview"><?= e($wm['name']) ?><?= $wm['system'] ? ' · ' . e(explode('.', $wm['about'])[0]) : '' ?></span></summary>
+        <div class="drop-body"><?= View::partial('partials/waymarks', ['waymarks' => $wm]) ?></div>
+    </details>
 
 <?php if ($groupHikes): ?>
-<section aria-labelledby="gh-h">
-    <h2 id="gh-h" class="section-title">Group hikes on this trail</h2>
-    <div class="grid-2"><?php foreach ($groupHikes as $h): ?><?= View::partial('partials/group-card', ['h' => $h]) ?><?php endforeach; ?></div>
-</section>
+    <details class="drop">
+        <summary><span class="drop-title">Group hikes on this trail</span><span class="drop-preview"><?= count($groupHikes) ?> upcoming — join one</span></summary>
+        <div class="drop-body grid-2"><?php foreach ($groupHikes as $h): ?><?= View::partial('partials/group-card', ['h' => $h]) ?><?php endforeach; ?></div>
+    </details>
 <?php endif; ?>
-
+    <details class="drop"<?= $errors ? ' open' : '' ?>>
+        <summary><span class="drop-title">Trail conditions from hikers</span>
+            <span class="drop-preview"><?= $reports ? e($conditions[$reports[0]['condition']]) . ' · ' . ((int) $reports[0]['age_days'] === 0 ? 'today' : e($reports[0]['age_days']) . ' days ago') : 'No reports yet' ?></span></summary>
 <section class="card reports" aria-labelledby="rep-h">
-    <h2 id="rep-h">Trail conditions from hikers</h2>
+    <h2 id="rep-h" class="sr-only">Trail conditions from hikers</h2>
     <?php if ($reports === []): ?>
         <p class="muted">No reports yet. Hiked it recently? Tell others how it was.</p>
     <?php else: ?>
@@ -109,3 +123,6 @@ $start = $pts[0] ?? [$t['start_lat'], $t['start_lon']]; $end = $pts[count($pts) 
         </form>
     </details>
 </section>
+    </details>
+</div>
+<a class="btn btn-primary btn-block sticky-action" href="<?= e(url('plan.new', ['trail_id' => $t['id']])) ?>">Plan this hike</a>

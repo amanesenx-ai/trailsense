@@ -33,7 +33,7 @@ return [
         $b = $login('joana@trailsense.pt')->get('r=hike&id=2');
         assertSame(200, $b->status);
         foreach (['signed-in hike-mode"', 'data-hike=', 'data-el="compass"', 'data-el="offroute"', 'data-el="nav"', 'data-el="voice"', 'data-el="alt"', '&quot;profile&quot;:[[0',
-            'Share my position', 'data-el="finish"', 'Trail marks for this route', 'hike-core.js', 'hike.js', 'leaflet@1.9.4'] as $needle) {
+            'Share my position', 'data-el="finish"', 'Trail marks for this route', 'How directions work', 'hike-core.js', 'hike.js', 'leaflet@1.9.4'] as $needle) {
             assertContains($needle, $b->body);
         }
         assertContains('from=hike', $b->body, 'Finish goes to Publish a hike, pre-filled');

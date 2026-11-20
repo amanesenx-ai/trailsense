@@ -45,33 +45,39 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
     <section class="hike-panel" aria-label="Hike status">
         <p class="hike-status" data-el="status" role="status" aria-live="polite">Press <strong>Start hike</strong> when you are at the start. Your position stays on this phone.</p>
         <div class="progress-row"><div class="progress" aria-hidden="true"><span data-el="bar"></span></div><span class="small" data-el="pct">0%</span></div>
-        <p class="hike-climb" data-el="climb"></p>
         <dl class="hike-stats">
             <div><dt>Done</dt><dd data-el="done">—</dd></div>
             <div><dt>Left</dt><dd data-el="left"><?= e(Html::km($t['distance_km'])) ?></dd></div>
             <div><dt>Altitude</dt><dd data-el="alt">—</dd></div>
             <div><dt>Finish ≈</dt><dd data-el="eta">—</dd></div>
         </dl>
-        <div class="hike-actions">
-            <button class="btn btn-primary" type="button" data-el="start">Start hike</button>
-            <button class="btn btn-secondary" type="button" data-el="finish" hidden>Finish</button>
-            <button class="btn btn-secondary" type="button" data-el="share">Share my position</button>
-            <button class="btn btn-secondary" type="button" data-el="voice" aria-pressed="false">Voice: off</button>
+        <p class="hike-climb" data-el="climb"></p>
+        <button class="btn btn-primary btn-block hike-main" type="button" data-el="start">Start hike</button>
+        <button class="btn btn-secondary btn-block hike-main" type="button" data-el="finish" hidden>Finish</button>
+        <div class="hike-tools">
+            <button class="btn btn-sm btn-secondary" type="button" data-el="voice" aria-pressed="false">Voice: off</button>
+            <button class="btn btn-sm btn-secondary" type="button" data-el="share">Share my position</button>
         </div>
         <p class="small muted" data-el="share-status" role="status" aria-live="polite"></p>
 
-        <section class="offline-box" aria-labelledby="off-h">
-            <h2 id="off-h" class="offline-title">Use it without signal</h2>
-            <p class="small muted" data-el="offline-status">Download this trail before you leave: the map around the route, directions, compass and progress then work with no signal.</p>
-            <div class="progress" data-el="offline-progress" hidden aria-hidden="true"><span data-el="offline-bar"></span></div>
-            <button class="btn btn-secondary btn-block" type="button" data-el="offline">Download for offline</button>
-        </section>
-
-        <details class="hike-legend" open>
-            <summary>Trail marks for this route</summary>
-            <?= \TrailSense\Core\View::partial('partials/waymarks', ['waymarks' => $waymarks]) ?>
-        </details>
-        <p class="small muted">Directions follow the shape of the route, not a map of junctions — always confirm with the trail marks. The live map needs mobile data, location permission and the screen on (no offline maps yet).</p>
+        <div class="drops">
+            <details class="drop" data-el="offline-drop">
+                <summary><span class="drop-title">Use it without signal</span><span class="drop-preview" data-el="offline-preview">Download this trail before you leave</span></summary>
+                <div class="drop-body offline-box">
+                    <p class="small muted" data-el="offline-status">Download this trail before you leave: the map around the route, directions, compass and progress then work with no signal.</p>
+                    <div class="progress" data-el="offline-progress" hidden aria-hidden="true"><span data-el="offline-bar"></span></div>
+                    <button class="btn btn-secondary btn-block" type="button" data-el="offline">Download for offline</button>
+                </div>
+            </details>
+            <details class="drop">
+                <summary><span class="drop-title">Trail marks for this route</span><span class="drop-preview"><?= e($waymarks['name']) ?></span></summary>
+                <div class="drop-body"><?= \TrailSense\Core\View::partial('partials/waymarks', ['waymarks' => $waymarks]) ?></div>
+            </details>
+            <details class="drop">
+                <summary><span class="drop-title">How directions work</span><span class="drop-preview">Follow the route shape · confirm with trail marks</span></summary>
+                <div class="drop-body"><p class="small muted">Directions follow the shape of the route, not a map of junctions — always confirm with the trail marks. The live map needs mobile data, location permission and the screen on, unless you downloaded the trail for offline use (map up to zoom 16).</p></div>
+            </details>
+        </div>
         <noscript><p class="notice">Live position needs JavaScript. You can still use the route drawing and the trail marks.</p></noscript>
     </section>
 </div>

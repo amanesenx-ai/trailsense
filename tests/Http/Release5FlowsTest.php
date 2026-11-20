@@ -153,6 +153,18 @@ return [
         assertContains('ts-pending-hike', $js);
         assertContains("serviceWorker.register('sw.js')", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },
+    'cleaner screens: trail page sections and hike tools in dropdowns; account dropdown menu (release 6)' => function () use ($login) {
+        $b = $login('joana@trailsense.pt');
+        $trail = $b->get('r=trail&id=2')->body;
+        assertTrue(substr_count($trail, '<details class="drop"') >= 4, 'weather, fit, marks, reports as dropdowns');
+        assertContains('class="drop-preview"', $trail);
+        $hike = $b->get('r=hike&id=2')->body;
+        assertTrue(substr_count($hike, '<details class="drop"') === 3, 'offline, marks, how directions work');
+        assertContains('class="user-menu" data-menu', $hike . $trail);
+        foreach (['My profile and stats', '★ Saved trails', 'Publish a hike', 'Sign out'] as $item) {
+            assertContains($item, $trail);
+        }
+    },
     'forms show a busy state while submitting (AC8.6, item 28)' => function () {
         assertContains("aria-busy", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },
