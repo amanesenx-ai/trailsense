@@ -656,3 +656,23 @@ button[aria-busy="true"] { opacity: .7; cursor: progress; }
 /* keep scroll strips and dashboard boxes inside the phone width (360 px check) */
 .day, .hour { position: relative; }
 .dash-grid > *, .tile-list > li { min-width: 0; }
+/* landing v2: showcase, organizer steps, sources & limits, richer trail cards */
+.showcase { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 820px) { .showcase { grid-template-columns: 1.6fr 1fr; align-items: start; } }
+.showcase figure, .show-wide { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.showcase img, .show-wide img { display: block; width: 100%; height: auto; }
+.showcase figcaption, .show-wide figcaption { padding: 10px 14px; font-size: 14.5px; color: var(--muted); }
+.showcase figcaption strong, .show-wide figcaption strong { color: var(--text); }
+.org-steps { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+.org-steps li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+.org-steps li span:last-child { color: var(--muted); font-size: 14.5px; }
+.step-n { width: 28px; height: 28px; border-radius: 50%; background: #f4c430; color: #10201a; font-weight: 800; display: grid; place-items: center; }
+.sources-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-bottom: 12px; }
+.src { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+.src h3, .limits h3 { margin: 0 0 6px; font-size: 16.5px; } .src p { margin: 0; color: var(--muted); font-size: 14.5px; }
+.limits { border-left: 4px solid var(--caution); } .limits ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.lp-trail { aspect-ratio: 3 / 4; }
+.lp-ref { position: absolute; top: 10px; left: 10px; background: rgba(11,34,25,.85); color: #fff; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }
+.lp-facts { display: flex; gap: 10px; font-weight: 700; opacity: 1 !important; }
+.lp-diff-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.lp-climb { font-size: 12.5px; }

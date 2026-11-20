@@ -63,6 +63,7 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
             <summary>Trail marks for this route</summary>
             <?= \TrailSense\Core\View::partial('partials/waymarks', ['waymarks' => $waymarks]) ?>
         </details>
+        <p class="small muted">Directions follow the shape of the route, not a map of junctions — always confirm with the trail marks. The live map needs mobile data, location permission and the screen on (no offline maps yet).</p>
         <noscript><p class="notice">Live position needs JavaScript. You can still use the route drawing and the trail marks.</p></noscript>
     </section>
 </div>

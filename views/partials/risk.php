@@ -106,6 +106,8 @@ $hours = $vm['hours']; $links = $vm['links']; ?>
         </div>
     </div>
 
+    <p class="small muted limits-note">Guidance, not a guarantee: forecasts can change and conditions on the ground can differ. Check again before you leave, follow IPMA / Proteção Civil instructions and any closures on site.</p>
+
     <details class="rules-table">
         <summary>See every rule that was checked</summary>
         <table>

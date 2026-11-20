@@ -25,8 +25,18 @@ return [
         $b = (new Browser($base))->get('r=home');
         assertSame(200, $b->status);
         foreach (['Hike smarter. Explore safer. Share the experience.', 'Discover and plan', 'Decide with the weather', 'Share and hike together',
-            'Why TrailSense and not just another trails app?', 'Run safer group hikes', 'Create a free account', 'class="disc-card"'] as $n) {
+            'Why TrailSense and not just another trails app?', 'Run safer group hikes', 'Create a free account', 'class="disc-card',
+            'See it in the app', 'img/shot-risk.jpg', 'img/shot-gps.jpg', 'img/shot-organizer.jpg', 'For club organizers: from invite to briefing',
+            'Where the information comes from', 'What TrailSense cannot do', 'not published yet', 'class="lp-facts"', 'chip chip-', 'climbs</span>'] as $n) {
             assertContains($n, $b->body);
+        }
+    },
+    'the app states its limits where users decide (risk check and hike mode)' => function () use ($login) {
+        $b = $login('joana@trailsense.pt');
+        assertContains('Guidance, not a guarantee', $b->get('r=plan&id=1')->body);
+        assertContains('always confirm with the trail marks', $b->get('r=hike&id=2')->body);
+        foreach (['shot-risk.jpg', 'shot-gps.jpg', 'shot-organizer.jpg'] as $img) {
+            assertTrue(is_file(TS_ROOT . '/public/assets/img/' . $img), $img . ' exists');
         }
     },
     'demo credentials are not shown publicly (item 35)' => function () use ($base) {
