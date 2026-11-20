@@ -156,6 +156,29 @@
         return null;
     }
 
-    return { distance, bearing, compassName, cumulative, nearest, progress, offRouteState, trackLength, formatKm,
+    /** Slippy-map tile x/y for a point at zoom z. */
+    function tileXY(lat, lon, z) {
+        const n = 2 ** z, r = rad(lat);
+        return [Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)];
+    }
+
+    /** AC13.12 tiles to save for offline: every tile the route crosses (sampled every ~25 m) plus a corridor of `pad` tiles. */
+    function tilesForRoute(route, zooms, pad, max) {
+        zooms = zooms || [13, 14, 15, 16]; pad = pad === undefined ? 1 : pad; max = max || 600;
+        const cum = cumulative(route), total = cum[cum.length - 1], seen = new Set(), out = [];
+        for (const z of zooms) {
+            for (let d = 0; d <= total; d += 25) {
+                const p = pointAt(route, cum, d), [x, y] = tileXY(p[0], p[1], z);
+                for (let dx = -pad; dx <= pad; dx++) for (let dy = -pad; dy <= pad; dy++) {
+                    const k = z + '/' + (x + dx) + '/' + (y + dy);
+                    if (!seen.has(k)) { seen.add(k); out.push({ z, x: x + dx, y: y + dy }); }
+                }
+            }
+            if (out.length > max) return out.slice(0, max);
+        }
+        return out;
+    }
+
+    return { distance, bearing, compassName, cumulative, nearest, progress, offRouteState, trackLength, formatKm, tileXY, tilesForRoute,
         pointAt, turns, instruction, altitudeAt, nextClimb };
 }));

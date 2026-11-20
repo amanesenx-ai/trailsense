@@ -94,6 +94,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // ADR-020: register the offline worker; signing out removes saved pages (AC13.15)
+    if ('serviceWorker' in navigator) {
+        if (document.body.classList.contains('signed-out')) {
+            navigator.serviceWorker.getRegistration().then((r) => r && r.active && r.active.postMessage('clear-pages')).catch(() => {});
+            try { Object.keys(localStorage).filter((k) => k.startsWith('ts-offline-') || k === 'ts-pending-hike').forEach((k) => localStorage.removeItem(k)); } catch (e) { /* ignore */ }
+        } else {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    }
+    // AC13.14 a hike finished without signal waits on the phone
+    try {
+        const pending = JSON.parse(localStorage.getItem('ts-pending-hike') || 'null');
+        const slot = document.querySelector('main');
+        if (pending && navigator.onLine && slot && !document.body.classList.contains('hike-mode') && !location.search.includes('r=publish')) {
+            const n = document.createElement('div');
+            n.className = 'flash flash-info'; n.setAttribute('role', 'status');
+            n.innerHTML = 'You finished <strong></strong> offline (' + pending.km + ' km, ' + pending.minutes + ' min). <a href="#">Publish it now</a>';
+            n.querySelector('strong').textContent = pending.name;
+            n.querySelector('a').href = pending.url;
+            n.querySelector('a').addEventListener('click', () => { try { localStorage.removeItem('ts-pending-hike'); } catch (e) { /* ignore */ } });
+            slot.prepend(n);
+        }
+    } catch (e) { /* ignore */ }
+
     // AC4.12 checklist ticks are kept only on this device (light per-viewer convenience)
     document.querySelectorAll('[data-checklist]').forEach((list) => {
         const key = 'ts-check-' + list.dataset.checklist;

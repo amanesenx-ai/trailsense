@@ -257,7 +257,8 @@ legend { padding: 0 6px; font-weight: 700; }
 @media (min-width: 900px) {
     body { padding-bottom: 0; }
     .tabbar { display: none; }
-    .topnav, .topbar .avatar { display: flex; }
+    .topnav { display: flex; }
+    .topbar .avatar { display: inline-grid; place-items: center; }   /* letter centred in the circle */
     .auth { grid-template-columns: 1.1fr 1fr; align-items: center; min-height: 70vh; }
     .auth-hero h1 { font-size: 2.6rem; }
     .sticky-action { position: static; box-shadow: none; max-width: 320px; }
@@ -676,3 +677,10 @@ button[aria-busy="true"] { opacity: .7; cursor: progress; }
 .lp-facts { display: flex; gap: 10px; font-weight: 700; opacity: 1 !important; }
 .lp-diff-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .lp-climb { font-size: 12.5px; }
+
+.avatar { line-height: 1; text-align: center; padding: 0; }
+/* offline (AC13.12) */
+.offline-box { background: var(--surface); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 8px; }
+.offline-title { font-size: 16px; margin: 0; }
+.offline-box p { margin: 0; }
+.offline-badge { background: #f4c430; color: #10201a; font-size: 12px; font-weight: 800; padding: 3px 8px; border-radius: 999px; }

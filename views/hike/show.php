@@ -13,6 +13,7 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
             <strong><?= e($t['name']) ?></strong>
             <span class="small muted"><?php if ($t['ref'] !== ''): ?><?= e($t['ref']) ?> · <?php endif; ?><?= e(Html::km($t['distance_km'])) ?> · <?= $loop ? 'loop' : 'one way' ?></span>
         </div>
+        <span class="offline-badge" data-el="offline-badge" hidden>Offline</span>
         <span class="hike-clock" data-el="clock" aria-label="Elapsed time">0:00</span>
     </header>
 
@@ -58,6 +59,13 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
             <button class="btn btn-secondary" type="button" data-el="voice" aria-pressed="false">Voice: off</button>
         </div>
         <p class="small muted" data-el="share-status" role="status" aria-live="polite"></p>
+
+        <section class="offline-box" aria-labelledby="off-h">
+            <h2 id="off-h" class="offline-title">Use it without signal</h2>
+            <p class="small muted" data-el="offline-status">Download this trail before you leave: the map around the route, directions, compass and progress then work with no signal.</p>
+            <div class="progress" data-el="offline-progress" hidden aria-hidden="true"><span data-el="offline-bar"></span></div>
+            <button class="btn btn-secondary btn-block" type="button" data-el="offline">Download for offline</button>
+        </section>
 
         <details class="hike-legend" open>
             <summary>Trail marks for this route</summary>
