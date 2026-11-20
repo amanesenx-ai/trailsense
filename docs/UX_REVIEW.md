@@ -79,3 +79,4 @@ Kept headline and structure. Added: real app screenshots (risk check, hike GPS, 
 | Hike mode: 4 buttons + offline box + legend + notes | Map, directions, progress, one main button; Voice and Share as small buttons; offline / trail marks / how directions work as dropdowns (offline opens by itself before the hike, all close when the hike starts) |
 | Avatar letter off-centre; avatar only linked to profile | Letter centred (measured 0 px); **account dropdown menu**: profile, saved trails, plans, publish, change password, sign out |
 | Dropdown grid widened the phone page | `min-width: 0` on dropdowns; every screen re-checked at 360 px with all dropdowns open |
+| Light theme (release 6) | Owner did not like the white look | Back to the dark green A1 palette (2026-11-20); kept the dropdown sections, account menu, centred avatar and offline mode. Colours now come from variables (--panel, --track, --hover, --*-ink), so a theme change is one block. |
