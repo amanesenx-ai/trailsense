@@ -268,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const btn = $('offline'); btn.disabled = true;
         try {
             await navigator.serviceWorker.register('sw.js'); await navigator.serviceWorker.ready;
-            const pages = await caches.open('ts-pages'), shell = await caches.open('ts-shell-v1'), tilesC = await caches.open('ts-tiles');
+            const pages = await caches.open('ts-pages'), shell = await caches.open('ts-shell-v2'), tilesC = await caches.open('ts-tiles');
             await pages.put(location.href, await fetch(location.href, { credentials: 'same-origin', cache: 'no-store' }));
             const assets = [...document.querySelectorAll('script[src], link[rel=stylesheet]')].map((el) => el.src || el.href);
             await Promise.all(assets.map((u) => fetch(u, { mode: 'cors' }).then((r) => r.ok && shell.put(u, r)).catch(() => null)));

@@ -80,3 +80,5 @@ Kept headline and structure. Added: real app screenshots (risk check, hike GPS, 
 | Avatar letter off-centre; avatar only linked to profile | Letter centred (measured 0 px); **account dropdown menu**: profile, saved trails, plans, publish, change password, sign out |
 | Dropdown grid widened the phone page | `min-width: 0` on dropdowns; every screen re-checked at 360 px with all dropdowns open |
 | Light theme (release 6) | Owner did not like the white look | Back to the dark green A1 palette (2026-11-20); kept the dropdown sections, account menu, centred avatar and offline mode. Colours now come from variables (--panel, --track, --hover, --*-ink), so a theme change is one block. |
+| Account menu and dropdowns showed unstyled (plain links, no bold) on the owner's browser | Bug: the offline service worker served the old cached app.css first (cache-first) | sw.js now network-first for CSS/JS (cache only offline), cache renamed ts-shell-v2 so the stale copy is deleted |
+| Dropdowns easy to miss | Looked like plain text rows | Yellow left bar, icon, bold 17 px title, one-line preview and a yellow "Show ▾" / outlined "Hide ▴" button |
