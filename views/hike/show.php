@@ -62,7 +62,7 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
 
         <div class="drops">
             <details class="drop" data-el="offline-drop">
-                <summary><span class="drop-title">Use it without signal</span><span class="drop-preview" data-el="offline-preview">Download this trail before you leave</span></summary>
+                <summary class="drop-sum"><?= \TrailSense\Core\Icons::svg('cloud', 'drop-icon') ?><span class="drop-title">Use it without signal</span><span class="drop-preview" data-el="offline-preview">Download this trail before you leave</span></summary>
                 <div class="drop-body offline-box">
                     <p class="small muted" data-el="offline-status">Download this trail before you leave: the map around the route, directions, compass and progress then work with no signal.</p>
                     <div class="progress" data-el="offline-progress" hidden aria-hidden="true"><span data-el="offline-bar"></span></div>
@@ -70,11 +70,11 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
                 </div>
             </details>
             <details class="drop">
-                <summary><span class="drop-title">Trail marks for this route</span><span class="drop-preview"><?= e($waymarks['name']) ?></span></summary>
+                <summary class="drop-sum"><?= \TrailSense\Core\Icons::svg('check', 'drop-icon') ?><span class="drop-title">Trail marks for this route</span><span class="drop-preview"><?= e($waymarks['name']) ?></span></summary>
                 <div class="drop-body"><?= \TrailSense\Core\View::partial('partials/waymarks', ['waymarks' => $waymarks]) ?></div>
             </details>
             <details class="drop">
-                <summary><span class="drop-title">How directions work</span><span class="drop-preview">Follow the route shape · confirm with trail marks</span></summary>
+                <summary class="drop-sum"><?= \TrailSense\Core\Icons::svg('alert', 'drop-icon') ?><span class="drop-title">How directions work</span><span class="drop-preview">Follow the route shape · confirm with trail marks</span></summary>
                 <div class="drop-body"><p class="small muted">Directions follow the shape of the route, not a map of junctions — always confirm with the trail marks. The live map needs mobile data, location permission and the screen on, unless you downloaded the trail for offline use (map up to zoom 16).</p></div>
             </details>
         </div>

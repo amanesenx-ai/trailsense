@@ -1,9 +1,9 @@
 /* TrailSense service worker (ADR-020): offline trail GPS.
-   - ts-shell: app scripts/styles and Leaflet (cache first, refreshed in the background)
+   - ts-shell: app scripts/styles and Leaflet (NETWORK first, cached copy only when offline, so updates show at once)
    - ts-pages: hike pages the user chose to download (network first, cache when offline)
    - ts-tiles: OpenStreetMap tiles saved for those routes (cache first; never fetched in bulk here) */
 'use strict';
-const SHELL = 'ts-shell-v1', PAGES = 'ts-pages', TILES = 'ts-tiles';
+const SHELL = 'ts-shell-v2', PAGES = 'ts-pages', TILES = 'ts-tiles';   // v2: v1 served stale CSS after updates
 const LEAFLET = ['https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'];
 
 self.addEventListener('install', (e) => {
@@ -32,11 +32,9 @@ self.addEventListener('fetch', (e) => {
         return;
     }
     if (LEAFLET.includes(req.url) || (url.origin === self.location.origin && url.pathname.includes('/assets/'))) {
-        e.respondWith(caches.open(SHELL).then(async (c) => {
-            const hit = await c.match(req, { ignoreSearch: true });
-            const net = fetch(req).then((res) => { if (res.ok) c.put(req, res.clone()); return res; }).catch(() => null);
-            return hit || (await net) || Response.error();
-        }));
+        e.respondWith(caches.open(SHELL).then((c) => fetch(req)
+            .then((res) => { if (res.ok) c.put(req, res.clone()); return res; })
+            .catch(() => c.match(req, { ignoreSearch: true }).then((hit) => hit || Response.error()))));
         return;
     }
     if (isHikePage(url)) {                                           // network first; downloaded copy when offline
