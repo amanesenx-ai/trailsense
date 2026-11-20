@@ -253,3 +253,12 @@ New acceptance criteria for the gaps:
 - AC8.5 Change password on the account page (current password required) (items 30, 32, 35).
 - AC8.6 Forms show a busy state while submitting; empty states suggest the next action (items 27, 28).
 Out of scope still: following users (item 21 "if within MVP scope" — likes and comments cover it).
+
+## 12. Release 6 — offline trail GPS (owner request, 2026-11-20)
+- AC13.12 "Download for offline" on the hike screen saves, on the phone: the hike page with the route, turns and elevation,
+  the app scripts and Leaflet, and the OpenStreetMap tiles around the route (zoom 13–16, a corridor of one tile around the line,
+  at most ~600 tiles). Progress and the saved size are shown.
+- AC13.13 Without signal, the hike page opens from the phone; position, turn-by-turn directions, compass, progress, off-route
+  alert, altitude and voice keep working; the map stays at zoom ≤ 16 (what was saved). An "Offline" badge says so.
+- AC13.14 "Finish" while offline keeps the hike (distance, time) on the phone and offers to publish it when back online.
+- AC13.15 Signing out removes the saved pages from the phone (privacy); map tiles may stay (they are public).

@@ -54,6 +54,17 @@ const tests = {
         assert.strictEqual(c.gainM, 100); assert.strictEqual(c.inM, 300); assert.strictEqual(c.grade, 10);
         assert.strictEqual(H.nextClimb(p, 1.6), null);
     },
+    'offline tiles: route corridor at zoom 13-16, no duplicates, capped (AC13.12)': () => {
+        assert.deepStrictEqual(H.tileXY(41.15, -8.61, 13), [3900, 3066]);
+        const r = [[41.18439, -8.48793], [41.17622, -8.49331], [41.17295, -8.47952]];
+        const t = H.tilesForRoute(r);
+        const keys = t.map((k) => k.z + '/' + k.x + '/' + k.y);
+        assert.strictEqual(new Set(keys).size, keys.length);
+        assert.deepStrictEqual([...new Set(t.map((k) => k.z))], [13, 14, 15, 16]);
+        assert(t.length > 20 && t.length <= 600, 'between 20 and 600 tiles, got ' + t.length);
+        assert(t.every((k) => k.z <= 16), 'never zoom 17+ (OSM tile policy)');
+        assert.strictEqual(H.tilesForRoute(r, [13, 14, 15, 16], 1, 30).length, 30);
+    },
 };
 let failed = 0;
 for (const [name, fn] of Object.entries(tests)) {

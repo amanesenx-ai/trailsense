@@ -140,6 +140,19 @@ return [
         $again = $login('miguel@trailsense.pt', 'NewSecret99');
         assertSame(200, $again->get('r=plans')->status);
     },
+    'offline trail GPS: service worker, download button, offline badge, pending hike (AC13.12–13.15, ADR-020)' => function () use ($login, $base) {
+        $b = $login('joana@trailsense.pt')->get('r=hike&id=2');
+        assertContains('Download for offline', $b->body);
+        assertContains('data-el="offline-badge"', $b->body);
+        $sw = (string) file_get_contents($base . '/sw.js');
+        foreach (['ts-pages', 'ts-tiles', 'tile.openstreetmap.org', 'clear-pages'] as $n) {
+            assertContains($n, $sw);
+        }
+        $js = (string) file_get_contents(TS_ROOT . '/public/assets/hike.js');
+        assertContains('tilesForRoute', $js);
+        assertContains('ts-pending-hike', $js);
+        assertContains("serviceWorker.register('sw.js')", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
+    },
     'forms show a busy state while submitting (AC8.6, item 28)' => function () {
         assertContains("aria-busy", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },

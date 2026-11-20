@@ -114,3 +114,9 @@
 - Context: climb notes need altitude along the route; calling an API on every page view is fragile.
 - Decision: sample each route every ~1/80 of its length and query the Open-Meteo Elevation API (Copernicus DEM 90 m) once. Store `[km, m]` pairs in `trail.elevation_profile` (JSONB, migration 004). The climb analysis is pure PHP (`Domain\Climb`), and the same data feeds the hike GPS ("next climb").
 - Consequences: 90 m DEM smooths small bumps, so totals are estimates. The UI says so.
+
+## ADR-020 — Offline trail GPS with a service worker
+- Date: 2026-11-20 · Status: accepted
+- Context: on the trail there is often no signal; the owner wants real directions offline. Geolocation works without internet, but the page, scripts and map tiles do not.
+- Decision: `public/sw.js` caches the app shell (assets + Leaflet), hike pages the user explicitly downloads, and OSM tiles for that route only. Tile list is computed in `hike-core.js` (`tilesForRoute`, tested): zoom 13–16 within a one-tile corridor, max ~600 tiles, fetched 4 at a time. The OSM tile policy forbids bulk downloads and offline caching of large areas or zoom ≥ 17, so we stay small and user-triggered. Signed-out pages clear the page cache.
+- Consequences: works in Chrome/Android and Safari/iOS (service workers + Cache Storage). Offline zoom is capped at 16. Publishing needs a connection; the finished hike waits on the phone.

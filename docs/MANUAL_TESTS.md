@@ -47,3 +47,6 @@ Security checklist (run with the security-reviewer subagent prompt + grep scan):
 | M-R5-1 | Every screen at 360 px for hiker and organizer (home, trails, trail, plans, plan, edit, groups, feed, account, hike) — no horizontal scroll | ✅ (headless Chrome; fixed 2 overflows) |
 | M-R5-2 | Landing page signed out; top bar shows Sign in / Create account | ✅ |
 | M-R5-3 | Live: trail page 7-day forecast from Open-Meteo, "updated" time | to check on the live site |
+| M-R6-1 | Offline (headless Chrome, network cut): download trail → reload with no network → page opens, "Offline" badge, "In 70 m · turn left" still shown; Finish offline → hike kept → "Publish it now" banner when back online | ✅ |
+| M-R6-2 | Real phone: download a trail on Wi-Fi, airplane mode + GPS on, walk 200 m: map tiles shown up to zoom 16, directions update | to do on a walk |
+| M-R6-3 | Avatar letter centred in the circle on desktop and phone | ✅ (measured 0 px offset) |
