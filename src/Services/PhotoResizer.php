@@ -24,6 +24,7 @@ final class PhotoResizer
         if ($src === false) {
             return ['mime' => $mime, 'ext' => $ext, 'bytes' => $bytes];
         }
+        $src = self::upright($src, $bytes, $mime);
         $w = imagesx($src);
         $h = imagesy($src);
         $scale = min(1.0, self::MAX_SIDE / max($w, $h));
@@ -42,5 +43,20 @@ final class PhotoResizer
             return ['mime' => $mime, 'ext' => $ext, 'bytes' => $bytes];
         }
         return ['mime' => 'image/jpeg', 'ext' => 'jpg', 'bytes' => $out];
+    }
+
+    /** iPhone JPEGs are stored sideways with an EXIF "Orientation" tag; turn the pixels the right way up. */
+    private static function upright(\GdImage $img, string $bytes, string $mime): \GdImage
+    {
+        if ($mime !== 'image/jpeg' || !function_exists('exif_read_data')) {
+            return $img;
+        }
+        $exif = @exif_read_data('data://image/jpeg;base64,' . base64_encode($bytes));
+        $angle = [3 => 180, 6 => -90, 8 => 90][(int) ($exif['Orientation'] ?? 1)] ?? 0;
+        if ($angle === 0) {
+            return $img;
+        }
+        $turned = imagerotate($img, $angle, 0);
+        return $turned === false ? $img : $turned;
     }
 }

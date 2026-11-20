@@ -21,7 +21,8 @@
 | AC5.2 | "Start by HH:MM" | Daylight::latestStart, RiskEngine::precaution | Unit: *latest start…*, *placeholder is filled*; Http: *Start by* |
 | AC6.1 | Feed newest first | ActivityRepository::feed | Integration: *publishing… top of the feed*; Http: *publish… top of the feed* |
 | AC7.1 | Publish validation | Domain/ActivityValidator | Unit: *activity in the future*, *distance defaults…* |
-| AC7.2 | Photo checked by content | Domain/PhotoValidator, ActivityController::store | Http: *a fake image is rejected*, *publish a hike with a photo* |
+| AC7.2 | Photo checked by content, ≤ 15 MB, upright | Domain/PhotoValidator, Services/PhotoResizer::upright, ActivityController::store | Http: *a fake image is rejected*, *publish a hike with a photo*; Unit PhotoUploadTest |
+| AC7.5 | Phone photo resized in the browser | public/assets/photo-shrink.js, views/feed/form.php | Unit PhotoUploadTest *publish form loads the browser resizer*; manual M-R7 |
 | AC7.3 | Notes ≤ 1000; plan link | ActivityValidator, ActivityController::store | Unit: *notes over 1000*; Integration: *SET NULL* |
 | AC8.1–8.2 | Registration rules | Domain/UserValidator, AuthController::register | Unit: *registration rules*; Http: *register…*, *duplicate e-mail…* |
 | AC8.3 | Generic login error | AuthController::login | Http: *wrong password…* |

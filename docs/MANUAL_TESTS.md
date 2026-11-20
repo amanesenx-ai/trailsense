@@ -50,3 +50,10 @@ Security checklist (run with the security-reviewer subagent prompt + grep scan):
 | M-R6-1 | Offline (headless Chrome, network cut): download trail → reload with no network → page opens, "Offline" badge, "In 70 m · turn left" still shown; Finish offline → hike kept → "Publish it now" banner when back online | ✅ |
 | M-R6-2 | Real phone: download a trail on Wi-Fi, airplane mode + GPS on, walk 200 m: map tiles shown up to zoom 16, directions update | to do on a walk |
 | M-R6-3 | Avatar letter centred in the circle on desktop and phone | ✅ (measured 0 px offset) |
+
+## M-R7 — iPhone photo (AC7.2 rev, AC7.5) — 20 Nov
+| Step | Expected |
+|---|---|
+| On an iPhone, Feed → Publish a hike → Photo → choose a photo from the library (4–8 MB) | Message "✓ Photo ready (x MB → ~0.4 MB)" |
+| Publish | Hike on top of the feed; photo upright, not sideways |
+| Same on a desktop with a 10 MB JPEG and JavaScript disabled | Accepted; server resizes it |
