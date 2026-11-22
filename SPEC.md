@@ -25,6 +25,14 @@ get **weather warnings explained by explicit rules with a concrete precaution**,
 | F9 | Group plan and copyable briefing | Organizer |
 | K1 | Planning-completeness indicator (A1 organizational KPI made measurable) | Organizer |
 
+## 2a. Core MVP vs extensions
+**Core (A1 Priority 0 — what the MVP is judged on):** F8 sign-in with roles · F1 trail discovery · F2 plan a hike · F3–F5 forecast,
+rule-based risk check and explained precautions · F9 group plan and briefing · K1 planning-completeness indicator · F6–F7 feed and publish.
+**Extensions (added in later releases at the owner's request, after the core worked and was tested):** likes and comments, profiles and
+statistics (release 2), IPMA warnings and fire risk (release 2), community trail reports (release 2), live GPS directions with compass
+(release 3–4), elevation profiles (release 4), favourites, filters and organizer dashboard (release 5), offline use (release 6),
+public read-only API (F12). Every extension has its own section, acceptance criteria and tests; none changed the core flows.
+
 ## 3. Out of scope (do not build)
 Automatic GPS tracking (hikes are entered manually), following users, notifications, challenges and achievements,
 password reset by e-mail, trail CRUD by users (trails are curated data), native mobile app, multiple languages,
