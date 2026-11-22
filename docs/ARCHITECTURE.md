@@ -8,50 +8,58 @@ rule engine, community services) and storage + external services (OpenStreetMap,
 and makes each block an explicit layer:
 
 ```
- Browser (HTML + CSS, phone-first; tiny JS for "copy briefing")
-        │  HTTP GET/POST   (?r=route)
- ┌──────▼─────────────────────────────────────────────────────┐
- │ public/index.php  front controller → src/routes.php         │
- │ Controllers   Auth · Home · Trail · Plan · Group · Feed · Activity
- │      │                     │                                │
- │ Domain (pure PHP)     Weather (adapter)                     │
- │  RiskEngine, Rule,     WeatherProvider ◄─ OpenMeteoProvider ──► api.open-meteo.com
- │  Daylight, Briefing,                 ◄─ DemoWeatherProvider (local/demo only, labelled)
- │  Validators                                                 │
- │      │                                                      │
- │ Repositories (PDO, prepared statements)                     │
- └──────┬─────────────────────────────────────────────────────┘
+ Browser — HTML + one CSS file, phone-first; small vanilla JS: app.js (menus, copy/share, map layers),
+           hike-core.js (route maths, tested with Node) · hike.js · hike-offline.js (GPS directions, offline),
+           photo-shrink.js (resizes phone photos) · sw.js (service worker: offline pages and map tiles)
+        │  HTTP GET/POST (?r=route)                 │  GET /api/v1/… (read-only JSON for other apps)
+ ┌──────▼───────────────────────────────────────────▼──────────────┐
+ │ public/index.php  front controller → src/routes.php · src/Api/Router │
+ │ Controllers  Auth · Home · Trail · Plan · Group(Groups) · Activity(Feed) · Profile · Hike │
+ │      │                                                             │
+ │ Domain (pure PHP, no I/O)          Weather / Alerts (adapters)     │
+ │  RiskEngine · Verdict · Daylight    WeatherProvider ◄─ OpenMeteoProvider ──► api.open-meteo.com
+ │  Briefing · Climb · RouteType        (demo provider only locally/tests) │
+ │  Waymarks · WeatherCode · Sources   OfficialAlertsProvider ◄─ IpmaProvider ──► api.ipma.pt
+ │  Validators (Plan, Activity, User, Photo)                          │
+ │ Services: AssessmentService (weather → engine → storage) · WeatherOutlook (7 days, cached 1 h) · PhotoResizer │
+ │      │                                                             │
+ │ Repositories (the only SQL; PDO prepared statements)               │
+ └──────┬─────────────────────────────────────────────────────────────┘
         │ SQL
- PostgreSQL: app_user, trail, hike_plan, group_plan, risk_rule,
-             weather_snapshot, risk_assessment, assessment_result,
-             activity, activity_photo (photo bytes stored in the DB)
+ PostgreSQL — 17 tables: app_user · trail · trail_photo · trail_report · trail_favourite · hike_plan · group_plan ·
+   hike_participant · risk_rule · weather_snapshot · risk_assessment · assessment_result · activity · activity_photo ·
+   activity_like · activity_comment · schema_migration
+ External (browser side): OpenStreetMap / OpenTopoMap / Waymarked Trails tiles · Wikimedia Commons photos · Leaflet (unpkg, SRI)
 ```
 
-Dependency rule: Controllers → Domain / Weather / Repositories. Domain depends on nothing.
-Repositories depend only on PDO. Views receive plain arrays.
+Dependency rule: Controllers → Services / Domain / Weather / Alerts / Repositories. Domain depends on nothing.
+Repositories depend only on PDO. Views receive plain arrays and print every value with `e()`.
 
 ## Folder structure
 ```
 trailsense/
 ├── CLAUDE.md  AGENTS.md  SPEC.md  README.md
-├── .claude/              agents/ (security-reviewer, ux-reviewer) · commands/ · skills/risk-rules · settings.json (hooks)
-├── bin/                  db-reset.php
+├── .claude/              agents/ (security-reviewer, ux-reviewer) · commands/new-feature · skills/risk-rules · settings.json (hooks)
+├── .github/workflows/    tests.yml (suite on every push) · screenshots.yml (report screenshots)
+├── bin/                  db-reset · db-init · demo-refresh · screenshots.py · gen-trail-data.py · hooks/
 ├── config/               config.example.php (committed) · config.php (secrets, git-ignored)
-├── database/             schema.sql · seed.sql
-├── docs/                 ARCHITECTURE · DATA_MODEL · DECISIONS · TRACEABILITY · MANUAL_TESTS · UX_REVIEW · LESSONS · DEBT · DEMO_SCRIPT · DEPLOY
-├── public/               index.php (only entry) · assets/app.css · assets/app.js
-├── docker/               vhost.conf · php.ini · entrypoint.sh   (+ Dockerfile, render.yaml at the root)
+├── database/             schema.sql · seed.sql · migrations/002–006
+├── docs/                 ARCHITECTURE · DATA_MODEL · DECISIONS (ADR-001…022) · TRACEABILITY · MANUAL_TESTS · UX_REVIEW · JOURNEYS ·
+│                         VALUE_CASE · research/ · API + openapi.yaml · DEPLOY · DEMO_SCRIPT · LESSONS · DEBT · REVIEW_CHECKLIST · screenshots/
+├── public/               index.php (only entry) · sw.js · assets/ (app.css, app.js, hike-core.js, hike.js, hike-offline.js, photo-shrink.js, img/)
 ├── src/
-│   ├── bootstrap.php     autoload, config, session, helpers (e(), url(), csrf)
-│   ├── routes.php        route name → [Controller, method]
-│   ├── Core/             Database · Auth · Csrf · View · Request · Flash · HttpException
-│   ├── Domain/           RiskEngine · Daylight · Briefing · PlanValidator · ActivityValidator · UserValidator
-│   ├── Weather/          WeatherProvider · Forecast · OpenMeteoProvider · DemoWeatherProvider
-│   ├── Repositories/     User · Trail · Plan · Rule · Assessment · Activity
-│   ├── Services/         AssessmentService (orchestrates weather → engine → storage)
+│   ├── bootstrap.php     autoload, config, session, helpers (e(), url(), asset())
+│   ├── routes.php        route name → [method, Controller, action]
+│   ├── Core/             Database · Installer (migrations) · Auth · Csrf · View · Request · Flash · Html · Icons ·
+│   │                     StaticMap · WeatherChart · ElevationChart (server-side SVG) · HttpException
+│   ├── Domain/           see diagram
+│   ├── Weather/ Alerts/  adapters behind interfaces
+│   ├── Services/         AssessmentService · WeatherOutlook · PhotoResizer
+│   ├── Repositories/     User · Trail · Plan · Participant · Favourite · Rule · Assessment · Activity · Social · Profile · TrailReport
+│   ├── Api/              Router · Endpoints · ApiError (read-only JSON, no personal data)
 │   └── Controllers/      one per area
-├── views/                layout.php · partials/ · auth/ · home/ · trails/ · plans/ · feed/ · errors/
-└── tests/                run.php · Unit/ · Integration/ · Http/ · fixtures/
+├── views/                layout.php · partials/ · auth/ · home/ · trails/ · plans/ · groups/ · hike/ · feed/ · profile/ · errors/
+└── tests/                run.php · Unit/ · Integration/ · Http/ · js/ (Node) · fixtures/
 ```
 
 ## Main flow: plan → check → advise (F2–F5)
@@ -60,7 +68,12 @@ trailsense/
    stores a `weather_snapshot`, runs `RiskEngine` with the rules from `risk_rule`, stores `risk_assessment` + one
    `assessment_result` per rule.
 3. `plans/show` renders each factor with level badge (text + colour), rule condition, observed value and precaution.
-4. Organizer: `Briefing::build()` renders the same data as plain text for "Copy briefing".
+4. Organizer: `Briefing::build()` renders the same data as plain text; the organizer can edit it and copy it or send it on WhatsApp.
+
+## On the trail (F13, ADR-015/020)
+`HikeController` serves the route; everything else happens in the browser: position (Geolocation), progress and turn-by-turn
+directions (`hike-core.js`), compass, voice, wake lock. Nothing is sent to the server until the hiker publishes. A trail can be
+downloaded for offline use (service worker caches the page and the map tiles near the route).
 
 ## Deployment (ADR-009)
 alwaysdata (free, always on): Apache + PHP 8.3 + PostgreSQL, document root `public/`, auto-deploy from GitHub every 5 min.

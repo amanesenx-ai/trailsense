@@ -17,3 +17,12 @@
 - A reference document beats memory: the waymark drawings changed after reading the Rota Vicentina manual (PL is white over green, not green over white).
 - A 90 m terrain model gives false steep steps, and our first ascent numbers were inflated by noise. Smoothing plus a fixed window gave believable ratings; the numbers are labelled as estimates.
 - Data from an external API is fetched once and stored (migration), so pages never depend on it at view time.
+
+## Releases 5–8 (19–22 Nov)
+- A service worker that serves CSS "cache first" hid every style update from returning users. Network first for the app shell, cache only as the offline fallback.
+- Changing the colour scheme without showing a preview first cost a full round-trip ("why is it white?"). Show a screenshot before switching a visual style.
+- A YAML error (an unquoted `:` in a step name) made GitHub reject the workflow file silently: every commit showed a red ✗ with no job and no warning. Validate workflow files locally (`yaml.safe_load`) and check that CI really runs.
+- A comment pasted into the middle of a JavaScript line broke the whole hike page, and the PHP suite did not notice. Now every script in `public/` is checked with `node --check` in the suite.
+- GPS progress must only count after "Start" and while on the route; for loops the start and the end are the same place, so the last known progress decides which one the hiker is at.
+- A report generated from `information_schema` marked each column of a composite UNIQUE as UNIQUE on its own, which reads as a modelling error. Show composite keys as one key.
+- Feedback from users is cheapest when acted on the same day (editable briefing, "Send on WhatsApp"); record what was asked in docs/research and the acceptance criterion in SPEC.md.

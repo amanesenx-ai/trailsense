@@ -57,3 +57,14 @@ Security checklist (run with the security-reviewer subagent prompt + grep scan):
 | On an iPhone, Feed → Publish a hike → Photo → choose a photo from the library (4–8 MB) | Message "✓ Photo ready (x MB → ~0.4 MB)" |
 | Publish | Hike on top of the feed; photo upright, not sideways |
 | Same on a desktop with a 10 MB JPEG and JavaScript disabled | Accepted; server resizes it |
+
+## M-R8 — releases 7–8 (22 Nov), checked on the live site and in a browser
+| Step | Expected | Result |
+|---|---|---|
+| Home (signed out) → section menu → "Trails" | Page scrolls to the section; the menu marks it | ✅ |
+| Header at 360 px | "Sign in" and "Create account" on one line; dark text on yellow | ✅ |
+| Footer → Sources and credits (signed out) | 22 sources with links in 4 groups | ✅ live |
+| Organizer → event → edit the briefing → "Send on WhatsApp" | WhatsApp opens with the edited text | ✅ |
+| Hike mode at home, before Start | Done 0.00 km, Left = whole trail | ✅ |
+| Start at the trail start, walk a third, step off the route | 0.00 → ~1.4 km; numbers stop while off the route | ✅ |
+| GitHub Actions | tests and screenshots workflows green | ✅ |

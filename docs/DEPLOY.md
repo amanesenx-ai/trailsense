@@ -16,7 +16,9 @@ Only `public/` is web-reachable; `src/`, `config/`, `database/`, `tests/`, `docs
 
 ## Operations
 - **Deploy a change:** commit + push to `main`; wait ≤ 5 min. Task log: alwaysdata admin → Advanced → Scheduled tasks → Logs.
+- **Keep the demo plans upcoming:** migration 006 already ran on the live database (ADR-021); to repeat, run `php bin/demo-refresh.php` over SSH.
 - **Reset the demo data:** in phpPgAdmin (alwaysdata → Databases → PostgreSQL) run `database/schema.sql` then `database/seed.sql`.
+- **CI:** `.github/workflows/tests.yml` runs the whole suite on every push; `screenshots.yml` captures the report screenshots (ADR-022).
 - **Debug:** temporarily set `APP_DEBUG=1` in the site environment; PHP errors are in alwaysdata → Advanced → Logs.
 
 ## Alternative path (not in use)

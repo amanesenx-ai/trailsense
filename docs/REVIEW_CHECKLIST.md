@@ -39,7 +39,7 @@ Status: ✅ done (code + automated test) · ✅M done, checked by hand · ➖ co
 | 33 | DB structure: tables, PK, FK, relationships | ✅ | 17 tables, docs/DATA_MODEL.md, er-diagram, migrations 002–005 |
 | 34 | Access permissions | ✅ | ownership checks before writes · Release5Flows *nobody else can edit…* |
 | 35 | No public demo credentials; fictional demo data | ✅ | removed from login page and README; seed people are fictional |
-| 36 | Automated tests for main logic and critical flows | ✅ | `php tests/run.php` → 158 tests (unit, integration, HTTP, JS) |
+| 36 | Automated tests for main logic and critical flows | ✅ | `php tests/run.php` → 158 tests at release 5 (171 now: unit, integration, HTTP, JS) |
 | 37 | Manual testing of every screen | ✅M | docs/MANUAL_TESTS.md |
 | 38 | Full journeys for both profiles | ✅ / ✅M | HTTP flow tests per role + docs/DEMO_SCRIPT.md |
 | 39 | Architecture and folder structure documented | ✅ | docs/ARCHITECTURE.md, ADR-001…019 |

@@ -69,7 +69,7 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 See docs/REVIEW_CHECKLIST.md for every item. Main UX changes: public landing page with the value proposition; separate, richer dashboards (hiker: saved / recently viewed / own hikes; organizer: events table with sign-up bars and status); weather on every trail page; save + share; region and duration filters; edit/cancel events; change password; busy state on submit; error messages announced (role=alert); two 360 px overflows fixed (screen-reader labels inside scroll strips; long names in dashboard boxes).
 
 ## Landing page v2 (2026-11-20) — reviewer's 5 final points
-Kept headline and structure. Added: real app screenshots (risk check, hike GPS, organizer dashboard, labelled as demo data); "Where the information comes from — and its limits" (Open-Meteo, IPMA publication windows, calculated sunset, OSM routes, 90 m DEM; guidance not a guarantee, not a replacement for official alerts, directions follow the route shape, needs data + screen on, no offline maps); organizer 4-step flow + dashboard screenshot; trail cards with PR code, loop/one way, distance, duration, ascent, difficulty and climb rating. The same limits are now stated inside the app (risk check and hike mode), so the app does not promise more than it does.
+Kept headline and structure. Added: real app screenshots (risk check, hike GPS, organizer dashboard, labelled as demo data); "Where the information comes from — and its limits" (Open-Meteo, IPMA publication windows, calculated sunset, OSM routes, 90 m DEM; guidance not a guarantee, not a replacement for official alerts, directions follow the route shape, needs data + screen on, no offline maps — offline use was added in release 6); organizer 4-step flow + dashboard screenshot; trail cards with PR code, loop/one way, distance, duration, ascent, difficulty and climb rating. The same limits are now stated inside the app (risk check and hike mode), so the app does not promise more than it does.
 
 ## Release 6 (2026-11-20) — "everything feels visually confusing"; owner chose: trail page + hike mode, new visual style, dropdowns
 | Before | After |
@@ -96,3 +96,11 @@ Kept headline and structure. Added: real app screenshots (risk check, hike GPS, 
 | Many sections, hard to jump between them | Sticky section menu (Features · See it · Why · For clubs · Trails · Sources), smooth scroll, current section highlighted | `[data-lp-nav]`, app.js |
 | "Too much information before creating an account" | Shorter texts (pillars 1 sentence, 4 short bullets), profiles merged into "For clubs", sources as 4 tiles with the details in a dropdown | landing.php |
 Checked at 360 px, 390 px and 1280 px: no horizontal scroll; header 65 px, menu sticks right under it.
+
+## Release 8 — user interviews and owner report (22 Nov)
+| Source | Change |
+|---|---|
+| Organizer interviews (2 of 3) | Briefing editable before copying (AC9.10) and "Send on WhatsApp" button (AC9.11) |
+| Owner: hike mode showed km done before starting | Done/Left only move after Start and on the route; loops start at the start (AC13.16) |
+| Reviewer: show where the information comes from | Footer on every page + public "Sources and credits" page (AC0.2) |
+Checked at 360 px and 1280 px with screenshots.

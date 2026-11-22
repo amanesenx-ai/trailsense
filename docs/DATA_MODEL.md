@@ -1,6 +1,6 @@
 # DATA_MODEL.md — data tables
 
-Authoritative SQL: `database/schema.sql` (+ `database/migrations/`). Diagram: `er-diagram.svg`. 16 tables, PostgreSQL 16/17.
+Authoritative SQL: `database/schema.sql` (+ `database/migrations/`). Diagram: `er-diagram.svg`. 17 tables, PostgreSQL 16/17.
 
 | Table | Primary key | Foreign keys (on delete) | Main constraints | Why it exists |
 |---|---|---|---|---|

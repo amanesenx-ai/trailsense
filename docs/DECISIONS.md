@@ -120,3 +120,15 @@
 - Context: on the trail there is often no signal; the owner wants real directions offline. Geolocation works without internet, but the page, scripts and map tiles do not.
 - Decision: `public/sw.js` caches the app shell (assets + Leaflet), hike pages the user explicitly downloads, and OSM tiles for that route only. Tile list is computed in `hike-core.js` (`tilesForRoute`, tested): zoom 13–16 within a one-tile corridor, max ~600 tiles, fetched 4 at a time. The OSM tile policy forbids bulk downloads and offline caching of large areas or zoom ≥ 17, so we stay small and user-triggered. Signed-out pages clear the page cache.
 - Consequences: works in Chrome/Android and Safari/iOS (service workers + Cache Storage). Offline zoom is capped at 16. Publishing needs a connection; the finished hike waits on the phone.
+
+## ADR-021 — Keep the demo data in the future with a data-only migration
+- Date: 2026-11-22 · Status: accepted
+- Context: the seed creates plans relative to the day the database was filled; on the live site they slid into the past and the organizer dashboard emptied before the demo.
+- Decision: migration `006_refresh_demo_dates.sql` moves past, never-hiked plans of the four demo accounts forward by whole weeks (same weekday) and drops their old weather check; `bin/demo-refresh.php` runs the same SQL again before a demo. Real users' data is never touched.
+- Consequences: no schema change (version row only); tested in `tests/Integration/DemoRefreshTest.php`.
+
+## ADR-022 — Report screenshots are captured on CI
+- Date: 2026-11-22 · Status: accepted
+- Context: the development sandbox cannot reach the live site or the external photos, maps and weather, so local screenshots showed demo weather and no images.
+- Decision: `.github/workflows/screenshots.yml` starts the app on a GitHub runner (throwaway database from `seed.sql`, real Open-Meteo/IPMA, real tiles and photos) and `bin/screenshots.py` captures every screen; the images are committed to the `screenshots` branch and copied to `docs/screenshots/a2/`.
+- Consequences: screenshots are reproducible and show real data sources; no live credentials are used.
