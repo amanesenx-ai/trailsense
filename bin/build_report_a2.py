@@ -40,6 +40,7 @@ doc = f"""<!DOCTYPE html><html><head><meta charset=utf-8><style>{style}
 </section>
 <section class="page">
 <h2>How I worked with the LLM — where to find the evidence</h2>
+<div class="box" style="margin:0 0 10px;border-color:#f4c430;background:#fffbea"><p style="margin:0"><b>Roles.</b> Every decision about scope, features, design and priorities was mine: I wrote and changed SPEC.md, and the agent implemented against it. I reviewed every change before accepting it — the test results (<code>FAILED: 0</code>) and the result on the live site — and asked for corrections when something was wrong or did not match what I wanted.</p></div>
 <p class="small">Everything below is in the repository <b>https://github.com/amanesenx-ai/trailsense</b>. This page is only a map to it.</p>
 <table class="vt">
 <tr><th style="width:28%">Good practice (brief)</th><th>Evidence in the repository</th></tr>
