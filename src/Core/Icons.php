@@ -24,6 +24,8 @@ final class Icons
         'snow' => '<path d="M7 14a4 4 0 0 1 .5-8A5.5 5.5 0 0 1 18 7.5a3.5 3.5 0 0 1-.5 6.5z"/><path d="M8 18h.01M12 20h.01M16 18h.01M10 22h.01M14 22h.01"/>',
         'storm' => '<path d="M7 14a4 4 0 0 1 .5-8A5.5 5.5 0 0 1 18 7.5a3.5 3.5 0 0 1-.5 6.5"/><path d="m13 11-3 5h4l-3 5"/>',
         'check' => '<path d="m5 12.5 4.5 4.5L19 7.5"/>',
+        'search' => '<circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/>',
+        'group' => '<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.6c2.9 0 5 1.9 5 4.9"/>',
         'alert' => '<circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5m0 3v.5"/>',
         'clock' => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
         'external' => '<path d="M14 4h6v6m0-6-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',

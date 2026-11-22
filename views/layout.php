@@ -58,7 +58,7 @@ $icons = [
         </details>
     <?php else: ?>
         <nav class="topnav topnav-out" aria-label="Account">
-            <a href="<?= e(url('login')) ?>">Sign in</a>
+            <a class="signin-link" href="<?= e(url('login')) ?>">Sign in</a>
             <a class="btn btn-primary btn-sm" href="<?= e(url('register')) ?>">Create account</a>
         </nav>
     <?php endif; ?>

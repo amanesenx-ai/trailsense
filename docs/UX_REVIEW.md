@@ -82,3 +82,17 @@ Kept headline and structure. Added: real app screenshots (risk check, hike GPS, 
 | Light theme (release 6) | Owner did not like the white look | Back to the dark green A1 palette (2026-11-20); kept the dropdown sections, account menu, centred avatar and offline mode. Colours now come from variables (--panel, --track, --hover, --*-ink), so a theme change is one block. |
 | Account menu and dropdowns showed unstyled (plain links, no bold) on the owner's browser | Bug: the offline service worker served the old cached app.css first (cache-first) | sw.js now network-first for CSS/JS (cache only offline), cache renamed ts-shell-v2 so the stale copy is deleted |
 | Dropdowns easy to miss | Looked like plain text rows | Yellow left bar, icon, bold 17 px title, one-line preview and a yellow "Show ▾" / outlined "Hide ▴" button |
+
+## Release 7 — user feedback on the landing and sign-in pages (22 Nov)
+| Feedback (2 users) | Change | Where |
+|---|---|---|
+| "Create account" white on yellow is hard to read | Dark text on yellow, like the other primary buttons | app.css `.topnav-out a.btn-primary` |
+| "Sign in" does not look like a button | Outlined pill; on hover it lifts 1 px and underlines | layout.php `.signin-link` |
+| Route icon for "Discover and plan" is not obvious | Magnifying glass; people icon for "hike together" | landing.php, Icons |
+| Sections feel crowded | 44 px (phone) / 72 px (desktop) between sections | `.lp-section` |
+| TrailSense column on the right is read last | TrailSense first, typical app second | landing.php `#why` |
+| Trail cards: difficulty and climbs not aligned; text hard to read on light photos | Difficulty and climbs each on their own line; darker gradient + text shadow | `.lp-trail .disc-text` |
+| Sign-in / sign-up: sentence and form too close | Wider layout, 96 px gap, larger heading | `.auth` |
+| Many sections, hard to jump between them | Sticky section menu (Features · See it · Why · For clubs · Trails · Sources), smooth scroll, current section highlighted | `[data-lp-nav]`, app.js |
+| "Too much information before creating an account" | Shorter texts (pillars 1 sentence, 4 short bullets), profiles merged into "For clubs", sources as 4 tiles with the details in a dropdown | landing.php |
+Checked at 360 px, 390 px and 1280 px: no horizontal scroll; header 65 px, menu sticks right under it.

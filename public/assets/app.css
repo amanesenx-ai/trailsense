@@ -744,3 +744,48 @@ button[aria-busy="true"] { opacity: .7; cursor: progress; }
 .hike-panel .drops { margin: 4px 0 0; }
 .hike-panel .offline-box { background: none; padding: 14px 16px; box-shadow: none; }
 .drops > *, .drop > *, .drop .card { min-width: 0; } .drop { overflow: hidden; }
+
+/* ---- 22 Nov: owner + user feedback on the landing and sign-in pages ---- */
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.lp-section[id] { scroll-margin-top: 130px; }
+/* header: "Create account" text dark on yellow (was light grey, hard to read); "Sign in" looks like a button */
+.topnav-out a.btn-primary { color: var(--accent-ink); font-weight: 800; }
+.topnav-out a.btn-primary:hover { background: #ffd34d; color: var(--accent-ink); }
+.topnav-out a.signin-link { color: var(--text); padding: 7px 14px; border: 1.5px solid rgba(255,255,255,.35); border-radius: 999px;
+    transition: border-color .15s, background .15s, transform .15s; }
+.topnav-out a.signin-link:hover, .topnav-out a.signin-link:focus-visible { border-color: var(--accent); background: rgba(244,196,48,.08); text-decoration: underline; text-underline-offset: 3px; transform: translateY(-1px); }
+.btn { transition: transform .15s, background .15s, box-shadow .15s; }
+.btn:hover { transform: translateY(-1px); }
+/* section menu: sticky under the header, scrolls sideways on phones */
+.lp-nav { position: sticky; top: 64px; z-index: 900; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+    margin: 0 calc(var(--space) * -1); padding: 10px var(--space); background: rgba(15,42,31,.95); backdrop-filter: blur(6px); border-bottom: 1px solid var(--line); }
+.lp-nav::-webkit-scrollbar { display: none; }
+.lp-nav a { flex: none; color: var(--muted); font-weight: 700; font-size: 14px; text-decoration: none; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); transition: color .15s, border-color .15s, background .15s; }
+.lp-nav a:hover { color: var(--text); border-color: var(--accent); }
+.lp-nav a[aria-current="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+/* more air between sections */
+.lp-section { margin: 44px 0; }
+.lp-section h2 { margin-bottom: 16px; }
+.lp-sub { margin: -8px 0 16px; }
+@media (min-width: 900px) { .lp-section { margin: 72px 0; } .lp-nav { justify-content: center; } }
+/* trail cards: stronger contrast, each fact on its own line */
+.lp-trail .disc-text { padding: 70px 12px 12px; gap: 4px; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.55) 30%, rgba(0,0,0,.92)); text-shadow: 0 1px 3px rgba(0,0,0,.8); }
+.lp-trail .disc-text strong { font-size: 16px; line-height: 1.25; }
+.lp-diff-row { display: block; }
+.lp-climb { display: block; font-size: 13px; }
+/* sources: one strip; the details live in a dropdown */
+.src-strip { list-style: none; margin: 0 0 14px; padding: 0; display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.src-strip li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; color: var(--muted); }
+.src-strip strong { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.drop-body ul { margin: 0; padding-left: 20px; display: grid; gap: 8px; }
+/* sign-in / create-account: more space between the sentence and the form */
+.auth { gap: 28px; padding: 16px 0 32px; }
+.auth-hero .lead { color: var(--muted); font-size: 17px; max-width: 440px; }
+@media (min-width: 900px) {
+    .auth { max-width: 1100px; grid-template-columns: 1fr minmax(380px, 440px); gap: 96px; padding: 48px 0; }
+    .auth-hero h1 { font-size: 3rem; line-height: 1.1; }
+}
+.topnav-out a { white-space: nowrap; }
+@media (max-width: 420px) { .topnav-out { gap: 6px; } .topnav-out a.signin-link, .topnav-out a.btn-sm { padding: 7px 11px; font-size: 14px; } .topbar { gap: 8px; } }
+@media (max-width: 899px) { .org-steps { grid-template-columns: 1fr 1fr; gap: 10px; } .org-steps li { padding: 12px; } }

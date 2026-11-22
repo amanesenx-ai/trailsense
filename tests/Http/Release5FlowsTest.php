@@ -25,9 +25,16 @@ return [
         $b = (new Browser($base))->get('r=home');
         assertSame(200, $b->status);
         foreach (['Hike smarter. Explore safer. Share the experience.', 'Discover and plan', 'Decide with the weather', 'Share and hike together',
-            'Why TrailSense and not just another trails app?', 'Run safer group hikes', 'Create a free account', 'class="disc-card',
+            'Why TrailSense and not just another trails app?', 'Run safer group hikes in four steps', 'Create a free account', 'class="disc-card',
             'See it in the app', 'img/shot-risk.jpg', 'img/shot-gps.jpg', 'img/shot-organizer.jpg', 'For club organizers: from invite to briefing',
-            'Where the information comes from', 'What TrailSense cannot do', 'not published yet', 'class="lp-facts"', 'chip chip-', 'climbs</span>'] as $n) {
+            'Where the information comes from', 'What TrailSense cannot do', 'not published yet', 'class="lp-facts"', 'chip chip-', 'climbs</span>',
+            'data-lp-nav', 'href="#features"', 'id="features"', 'href="#sources"', 'id="sources"', 'class="signin-link"'] as $n) {
+            assertContains($n, $b->body);
+        }
+        // 22 Nov: lighter page — TrailSense column first, no outdated 'no offline maps' claim, search icon for Discover
+        assertTrue(strpos($b->body, 'diff-us') < strpos($b->body, 'diff-them'), 'TrailSense column first');
+        assertTrue(!str_contains($b->body, 'no offline maps'), 'outdated limit removed');
+        foreach ([] as $n) {
             assertContains($n, $b->body);
         }
     },
