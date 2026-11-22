@@ -109,6 +109,7 @@ return [
         // AC9.10: the organizer can edit the text before copying; participants get it read-only
         assertContains('rows="11" data-editable>', $b->body);
         assertContains('add your own notes', $b->body);
+        assertContains('data-share-wa="#briefing-text"', $b->body);   // AC9.11
         $j = $login('joana@trailsense.pt')->get('r=plan&id=3');
         assertContains('rows="11" readonly>', $j->body);
     },

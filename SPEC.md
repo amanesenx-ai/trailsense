@@ -288,4 +288,4 @@ Out of scope still: following users (item 21 "if within MVP scope" — likes and
 
 ## 13. Release 8 — user research (2026-11-22)
 - AC9.10 *As a club organizer I want to edit the briefing before I copy it **so that** I can add notes for my group without retyping everything.* The organizer's briefing box is editable (participants see it read-only); "Copy briefing" copies the edited text; edits are not stored. (Interview: organizer, 22 Nov — docs/research.)
-
+- AC9.11 *As an organizer I want to send the briefing straight to WhatsApp **so that** I do not have to copy and paste it.* "Send on WhatsApp" opens WhatsApp with the briefing text (including any edits). (Interviews: 2 organizers, 22 Nov.)

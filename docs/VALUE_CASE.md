@@ -24,9 +24,9 @@ What the evidence does **not** show (and we do not claim): how many accidents we
 
 | # | Assumption | Why we believe it | How we validate it | Status |
 |---|---|---|---|---|
-| A1 | Beginners do not combine the forecast, IPMA warnings, fire risk and sunset before a hike | E3, E6: advice exists, sources are separate | 5 short interviews with beginner hikers (guide in §6) + in-app: share of plans whose user opens the risk check | **Supported (3/5 interviews)** — the experienced hiker and the beginner checked only the forecast; the beginner was caught by rain and by darkness, the two things the check covers |
-| A2 | A clear verdict + precaution changes behaviour (bring X, start earlier, change day) | Rules + precautions are concrete | Interview question "what would you do with this screen?"; in-app: plans edited after a CAUTION/WARNING | **Stated, not observed** — the beginner would postpone or pick another trail; in-app measure still to do |
-| A3 | Club organizers spend time rewriting weather info for the group | Common practice in chats (to confirm) | Ask 2 club organizers how they brief today and how long it takes; time them with the briefing button | **1/2** — one organizer estimates 20–30 min per event on WhatsApp (his estimate, not a measurement); asked to edit the briefing → built (AC9.10) |
+| A1 | Beginners do not combine the forecast, IPMA warnings, fire risk and sunset before a hike | E3, E6: advice exists, sources are separate | 5 short interviews with beginner hikers (guide in §6) + in-app: share of plans whose user opens the risk check | **Supported (4 hikers interviewed)** — all 3 beginners and the experienced hiker checked only the forecast; none looked at fire risk, official warnings or sunset; 2 of 3 beginners were caught by rain mid-hike and finished almost in the dark |
+| A2 | A clear verdict + precaution changes behaviour (bring X, start earlier, change day) | Rules + precautions are concrete | Interview question "what would you do with this screen?"; in-app: plans edited after a CAUTION/WARNING | **Stated, not observed** — all 3 beginners said they would postpone or change trail after a weather or fire warning; in-app measure still to do |
+| A3 | Club organizers spend time rewriting weather info for the group | Common practice in chats (to confirm) | Ask 2 club organizers how they brief today and how long it takes; time them with the briefing button | **Supported (3 organizers)** — their own estimates: 20–30, 30–40 and 10–15 min per event plus answering questions (not measured). Requests built: edit the briefing (AC9.10), send it on WhatsApp (AC9.11) |
 | A4 | Organizers want every group hike checked before it goes ahead (K1) | Duty of care for groups | K1 indicator in the app: % of upcoming group hikes with a complete, current check. Baseline = first month of real use; no target is claimed before that | To do |
 | A5 | Municipalities / promoters would read community trail reports | E9 shows a public proposal for such a platform | Contact 1 promoter (e.g. a municipality with PRs) and show the reports + the public API | To do |
 
@@ -81,7 +81,11 @@ Goal: 5 conversations (3 beginner/occasional hikers, 2 club organizers), 15 minu
 6. Organizers: how do you brief your group today, and how long does it take? (then show the briefing)
 7. What would make you not use TrailSense?
 
-**Done:** 3/5 — `docs/research/2026-11-20-hiker-1.md`, `2026-11-22-beginner-1.md`, `2026-11-22-organizer-1.md`. Still to do: 1 beginner, 1 organizer. Finding outside our assumptions: an experienced hiker builds the difficulty picture herself (Google + elevation) and would value points of interest along the trail (caves, fossils) — logged as backlog, not MVP scope.
+**Done:** 7 interviews (target was 5) — 1 experienced hiker, 3 beginners, 3 organizers (2 clubs of 15–30 people, 1 informal group of 8–12); notes in `docs/research/`.
+
+**Repeated requests not in the MVP (backlog):** participants can see the event without an account (2 organizers); waiting list (2 organizers); points of interest along the trail (1 hiker); clearer physical-effort information (1 beginner — partly covered by climbs and the elevation profile).
+
+**What could make them stop using it (all 7):** data that is not up to date or not reliable; too much information or jargon; too much to fill in. Finding outside our assumptions: an experienced hiker builds the difficulty picture herself (Google + elevation) and would value points of interest along the trail (caves, fossils) — logged as backlog, not MVP scope.
 
 Record for each person: profile, answers, the one thing that surprised you. Update §2 "Status" with what you learned —
 including when an assumption turns out to be wrong.

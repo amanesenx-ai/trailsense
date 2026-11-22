@@ -168,3 +168,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { rootMargin: '-35% 0px -60% 0px' });
   Object.keys(links).forEach(function (id) { var s = document.getElementById(id); if (s) io.observe(s); });
 })();
+
+/* AC9.11: send the (possibly edited) briefing straight to WhatsApp — interviews 22 Nov. */
+document.querySelectorAll('[data-share-wa]').forEach(function (a) {
+  a.addEventListener('click', function () {
+    var t = document.querySelector(a.getAttribute('data-share-wa'));
+    if (t) a.href = 'https://wa.me/?text=' + encodeURIComponent(t.value);
+  });
+});

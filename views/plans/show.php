@@ -47,7 +47,10 @@ $p = $plan; $isGroup = $p['group_size'] !== null; $left = $isGroup ? max(0, (int
 <section class="card briefing" aria-labelledby="brief-h">
     <div class="section-head">
         <h2 id="brief-h">Group briefing</h2>
-        <button class="btn btn-primary btn-sm" type="button" data-copy="#briefing-text">Copy briefing</button>
+        <span class="brief-actions">
+            <button class="btn btn-primary btn-sm" type="button" data-copy="#briefing-text">Copy briefing</button>
+            <a class="btn btn-sm btn-wa" href="https://wa.me/" target="_blank" rel="noopener" data-share-wa="#briefing-text">Send on WhatsApp</a>
+        </span>
     </div>
     <p class="muted small">Meet at <?= e(Html::time($p['meeting_time'])) ?>, <?= e($p['meeting_point']) ?>. Paste this into your group chat.<?php if ($isOwner): ?> <strong>You can add your own notes to the text before copying</strong> (they are not saved).<?php endif; ?></p>
     <label class="sr-only" for="briefing-text">Briefing text</label>

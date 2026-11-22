@@ -789,3 +789,8 @@ html { scroll-behavior: smooth; }
 .topnav-out a { white-space: nowrap; }
 @media (max-width: 420px) { .topnav-out { gap: 6px; } .topnav-out a.signin-link, .topnav-out a.btn-sm { padding: 7px 11px; font-size: 14px; } .topbar { gap: 8px; } }
 @media (max-width: 899px) { .org-steps { grid-template-columns: 1fr 1fr; gap: 10px; } .org-steps li { padding: 12px; } }
+.brief-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-wa { background: #25d366; color: #0b2219; font-weight: 800; }
+.btn-wa:hover { background: #3ee07a; }
+.briefing .section-head { flex-wrap: wrap; gap: 10px; }
+@media (max-width: 520px) { .brief-actions { width: 100%; } .brief-actions .btn { flex: 1; } }
