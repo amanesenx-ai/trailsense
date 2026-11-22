@@ -142,13 +142,20 @@ document.addEventListener('DOMContentLoaded', () => {
             showHeading();
             if (state.startedAt) trail.setLatLngs(state.track);
         }
-        const pr = H.progress(route, pos, cum, data.pace);
-        const n = pr.nearest;
+        // Progress counts only after "Start hike" and only while on the route (AC13.16): standing at home, or at the
+        // start of a loop, must not show the hike as almost done. The last accepted position is the hint for loops.
+        const raw = H.progress(route, pos, cum, data.pace, state.alongM || 0);
+        const n = raw.nearest, total = raw.totalM;
+        const onRoute = n.offRouteM <= 60 + Math.min(accuracy || 0, 30);
+        if (state.startedAt && onRoute) { state.alongM = raw.doneM; }
+        const doneM = state.startedAt ? (state.alongM || 0) : 0, leftM = Math.max(0, total - doneM);
+        const pr = { doneM, leftM, totalM: total, percent: total ? Math.round(100 * doneM / total) : 0,
+            etaMin: data.pace > 0 ? Math.round(leftM / 1000 / data.pace * 60) : null, nearest: n };
         if (state.startedAt) {
             const last = state.track[state.track.length - 1];
-            if (!last || H.distance(last, pos) >= 5) { state.track.push([+pos[0].toFixed(6), +pos[1].toFixed(6)]); store.save(state); }
+            if (!last || H.distance(last, pos) >= Math.max(5, Math.min(accuracy || 0, 30))) { state.track.push([+pos[0].toFixed(6), +pos[1].toFixed(6)]); store.save(state); }   // ignore GPS wobble when standing still
         }
-        if (walked && state.startedAt) walked.setLatLngs(route.slice(0, n.segment + 1).concat([n.point]));
+        if (walked && state.startedAt && onRoute) walked.setLatLngs(route.slice(0, n.segment + 1).concat([n.point]));
         $('done').textContent = H.formatKm(pr.doneM);
         $('left').textContent = H.formatKm(pr.leftM);
         $('pct').textContent = pr.percent + '%';
@@ -203,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
         keepAwake(); watch();
         root.querySelectorAll('.drop').forEach((d) => { d.open = false; });   // on the trail: only map, directions and progress
     }
-    $('start').addEventListener('click', () => { state = { startedAt: Date.now(), track: pos ? [pos] : [] }; store.save(state); enableCompass(); started(); });
+    $('start').addEventListener('click', () => { state = { startedAt: Date.now(), track: pos ? [pos] : [], alongM: 0 }; store.save(state); enableCompass(); started(); });
     $('finish').addEventListener('click', () => {
         if (!window.confirm('Finish this hike?')) return;
         const minutes = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));

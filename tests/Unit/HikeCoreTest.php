@@ -13,4 +13,17 @@ return [
         assertSame(0, $code, implode("\n", $out));
         assertTrue(count(array_filter($out, fn ($l) => str_starts_with($l, 'ok '))) >= 6);
     },
+    'every JavaScript file in public/ is valid syntax (a broken script breaks the whole page)' => function () {
+        $node = trim((string) shell_exec('command -v node 2>/dev/null'));
+        if ($node === '') {
+            echo "    (node not installed — check skipped)\n";
+            return;
+        }
+        $files = array_merge(glob(__DIR__ . '/../../public/assets/*.js') ?: [], [__DIR__ . '/../../public/sw.js']);
+        foreach ($files as $f) {
+            exec(escapeshellarg($node) . ' --check ' . escapeshellarg($f) . ' 2>&1', $out, $code);
+            assertSame(0, $code, basename($f) . ': ' . implode("\n", $out));
+        }
+        assertTrue(count($files) >= 6, 'found the scripts');
+    },
 ];

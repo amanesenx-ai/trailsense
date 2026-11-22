@@ -169,6 +169,7 @@ return [
         assertContains('tilesForRoute', $off);
         assertContains('window.HikeOffline(', $js);
         assertContains('ts-pending-hike', $js);
+        assertContains('state.startedAt && onRoute', $js);   // AC13.16: progress only after Start and on the route
         assertContains('hike-offline.js', $b->body ?? (string) file_get_contents(TS_ROOT . '/src/Controllers/HikeController.php'));
         assertContains("serviceWorker.register('sw.js')", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },

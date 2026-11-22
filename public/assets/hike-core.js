@@ -33,9 +33,11 @@
     }
 
     /** Nearest point on the route polyline: {point, offRouteM, alongM, segment}. Local equirectangular projection per segment. */
-    function nearest(route, pos, cum) {
+    /** Nearest point on the route. Where the route passes close to the same place twice (a loop's start and end,
+        an out-and-back), `hintM` — how far along the hiker already was — picks the right pass (default: the start). */
+    function nearest(route, pos, cum, hintM) {
         cum = cum || cumulative(route);
-        let best = null;
+        const all = [];
         const kx = Math.cos(rad(pos[0])) * R * Math.PI / 180, ky = R * Math.PI / 180;
         for (let i = 0; i < route.length - 1; i++) {
             const a = route[i], b = route[i + 1];
@@ -44,18 +46,22 @@
             let t = len2 === 0 ? 0 : -(ax * dx + ay * dy) / len2;
             t = Math.max(0, Math.min(1, t));
             const px = ax + t * dx, py = ay + t * dy, d = Math.hypot(px, py);
-            if (best === null || d < best.offRouteM) {
-                best = { offRouteM: d, segment: i, point: [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])],
-                    alongM: cum[i] + t * (cum[i + 1] - cum[i]) };
-            }
+            all.push({ offRouteM: d, segment: i, point: [a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1])],
+                alongM: cum[i] + t * (cum[i + 1] - cum[i]) });
         }
-        return best;
+        if (!all.length) return null;
+        const min = Math.min(...all.map((c) => c.offRouteM));
+        const hint = typeof hintM === 'number' ? hintM : 0;
+        // among the points (almost) as close as the closest one, take the one nearest to where the hiker was
+        const close = all.filter((c) => c.offRouteM <= min + 40);
+        close.sort((x, y) => Math.abs(x.alongM - hint) - Math.abs(y.alongM - hint) || x.offRouteM - y.offRouteM);
+        return close[0];
     }
 
     /** Progress for a position: done/left metres, percent, ETA in minutes at the given pace (km/h). */
-    function progress(route, pos, cum, paceKmh) {
+    function progress(route, pos, cum, paceKmh, hintM) {
         cum = cum || cumulative(route);
-        const n = nearest(route, pos, cum), total = cum[cum.length - 1];
+        const n = nearest(route, pos, cum, hintM), total = cum[cum.length - 1];
         const left = Math.max(0, total - n.alongM);
         return { doneM: n.alongM, leftM: left, totalM: total, percent: total ? Math.round(100 * n.alongM / total) : 0,
             etaMin: paceKmh > 0 ? Math.round(left / 1000 / paceKmh * 60) : null, nearest: n };

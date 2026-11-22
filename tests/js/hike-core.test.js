@@ -22,6 +22,18 @@ const tests = {
         assert.strictEqual(p.etaMin, Math.round((total - first) / 1000 / 4 * 60));
         assert.strictEqual(H.progress(route, route[2], null, 4).percent, 100);
     },
+    'loop: standing at the start counts as the start, not the end (AC13.16)': () => {
+        const loop = [[41.0, -8.0], [41.0, -7.99], [41.008, -7.995], [41.0001, -8.0001]];   // ends 14 m from the start
+        const total = H.cumulative(loop).slice(-1)[0];
+        const atStart = H.progress(loop, [41.0, -8.0], null, 4, 0);
+        assert(atStart.doneM < 20, 'done near 0, got ' + atStart.doneM);
+        assert(atStart.leftM > total - 20, 'left is almost the whole loop');
+        const atEnd = H.progress(loop, [41.0, -8.0], null, 4, total - 30);           // came all the way round
+        assert(atEnd.doneM > total - 40, 'done near the total when the hiker was already near the end');
+    },
+    'nearest without a hint behaves as before on simple routes': () => {
+        assert.strictEqual(H.nearest(route, [41.0003, -7.995]).segment, 0);
+    },
     'off route only after two consecutive fixes beyond 50 m; back on at once (AC13.5)': () => {
         let s = H.offRouteState({}, 80, 5); assert.strictEqual(s.off, false);
         s = H.offRouteState(s, 90, 5); assert.strictEqual(s.off, true);
