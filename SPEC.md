@@ -29,7 +29,9 @@ get **weather warnings explained by explicit rules with a concrete precaution**,
 Automatic GPS tracking (hikes are entered manually), following users, notifications, challenges and achievements,
 password reset by e-mail, trail CRUD by users (trails are curated data), native mobile app, multiple languages,
 write access through the public API.
-(Release 2 moved these into scope: likes and comments, profiles and statistics, interactive map — see §8.)
+(Release 2 moved these into scope: likes and comments, profiles and statistics, interactive map — see §8.
+Release 3 moved live trail GPS into scope — directions on the phone, nothing tracked on the server, ADR-015 — see §9;
+release 6 added offline use of downloaded trails, §12. Recording a GPS track to the server stays out of scope.)
 
 ## 4. Entities (see database/schema.sql — the schema is authoritative)
 - **app_user** — a person with one role: `hiker` or `organizer`.

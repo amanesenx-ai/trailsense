@@ -9,3 +9,7 @@
 - Elevation profile chart per trail (data is already sampled in the generator).
 - Coastal trail: the Matosinhos–Vila Chã relation is a super-relation; support nested relations in the generator.
 - API keys + rate limiting if the API gets external traffic.
+
+## D-? public/assets/hike.js is 307 lines (rule: ~250) — 22 Nov
+The pure route maths already lives in hike-core.js (tested). The rest is screen wiring (map, banner, voice, offline download).
+Plan: move the offline download into `hike-offline.js` when that part is next changed. app.css is one file by design (stack rule: "one CSS file").
