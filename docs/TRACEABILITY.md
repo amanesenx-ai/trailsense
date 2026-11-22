@@ -90,3 +90,4 @@ Item-by-item mapping: docs/REVIEW_CHECKLIST.md. New ACs: AC0.1, AC1.16–1.19, A
 | AC13.13 works without signal | sw.js (network-first hike pages, cached tiles/assets), hike.js `setOffline` | M-R6-1 |
 | AC13.14 finish offline → publish later | hike.js finish, app.js pending-hike banner | M-R6-1 |
 | AC13.15 sign-out clears saved pages | app.js → sw.js `clear-pages` | Release5Flows (sw contains clear-pages) |
+| AC9.10 | Organizer edits the briefing before copying | views/plans/show.php (`data-editable`), app.js copy | Http FlowsTest *organizer group plan produces a copyable briefing* |

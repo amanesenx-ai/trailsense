@@ -285,3 +285,7 @@ Out of scope still: following users (item 21 "if within MVP scope" — likes and
   alert, altitude and voice keep working; the map stays at zoom ≤ 16 (what was saved). An "Offline" badge says so.
 - AC13.14 "Finish" while offline keeps the hike (distance, time) on the phone and offers to publish it when back online.
 - AC13.15 Signing out removes the saved pages from the phone (privacy); map tiles may stay (they are public).
+
+## 13. Release 8 — user research (2026-11-22)
+- AC9.10 *As a club organizer I want to edit the briefing before I copy it **so that** I can add notes for my group without retyping everything.* The organizer's briefing box is editable (participants see it read-only); "Copy briefing" copies the edited text; edits are not stored. (Interview: organizer, 22 Nov — docs/research.)
+

@@ -49,9 +49,9 @@ $p = $plan; $isGroup = $p['group_size'] !== null; $left = $isGroup ? max(0, (int
         <h2 id="brief-h">Group briefing</h2>
         <button class="btn btn-primary btn-sm" type="button" data-copy="#briefing-text">Copy briefing</button>
     </div>
-    <p class="muted small">Meet at <?= e(Html::time($p['meeting_time'])) ?>, <?= e($p['meeting_point']) ?>. Paste this into your group chat.</p>
+    <p class="muted small">Meet at <?= e(Html::time($p['meeting_time'])) ?>, <?= e($p['meeting_point']) ?>. Paste this into your group chat.<?php if ($isOwner): ?> <strong>You can add your own notes to the text before copying</strong> (they are not saved).<?php endif; ?></p>
     <label class="sr-only" for="briefing-text">Briefing text</label>
-    <textarea id="briefing-text" class="briefing-text" readonly rows="11"><?= e($briefing) ?></textarea>
+    <textarea id="briefing-text" class="briefing-text" rows="11"<?= $isOwner ? ' data-editable' : ' readonly' ?>><?= e($briefing) ?></textarea>
     <p class="copy-status small" role="status" aria-live="polite"></p>
 </section>
 <?php endif; ?>

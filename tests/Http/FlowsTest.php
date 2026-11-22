@@ -106,6 +106,11 @@ return [
         assertContains('Group briefing', $b->body);
         assertContains('Meet: 09:00 at Valongo station', $b->body);
         assertContains('data-copy="#briefing-text"', $b->body);
+        // AC9.10: the organizer can edit the text before copying; participants get it read-only
+        assertContains('rows="11" data-editable>', $b->body);
+        assertContains('add your own notes', $b->body);
+        $j = $login('joana@trailsense.pt')->get('r=plan&id=3');
+        assertContains('rows="11" readonly>', $j->body);
     },
     'a hiker cannot open another user\'s personal plan or delete any foreign plan (AC2.4, AC9.7)' => function () use ($login) {
         $b = $login('rita@trailsense.pt');
