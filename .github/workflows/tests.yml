@@ -19,7 +19,7 @@ jobs:
         with:
           php-version: '8.3'
           extensions: pdo_pgsql, gd, curl, mbstring, fileinfo
-      - name: Test configuration (no secrets: throwaway CI database)
+      - name: "Test configuration (no secrets: throwaway CI database)"
         run: |
           cat > config/config.php <<'PHP'
           <?php
