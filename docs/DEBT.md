@@ -10,6 +10,8 @@
 - Coastal trail: the Matosinhos–Vila Chã relation is a super-relation; support nested relations in the generator.
 - API keys + rate limiting if the API gets external traffic.
 
-## D-? public/assets/hike.js is 307 lines (rule: ~250) — 22 Nov
-The pure route maths already lives in hike-core.js (tested). The rest is screen wiring (map, banner, voice, offline download).
-Plan: move the offline download into `hike-offline.js` when that part is next changed. app.css is one file by design (stack rule: "one CSS file").
+## (resolved 22 Nov) hike.js was 307 lines — offline download moved to hike-offline.js (70 lines); hike.js is now 245.
+
+## D-? Demo accounts share the seed password with the public test suite — 22 Nov
+The tests (public repo) log in with the seed password, so anyone could sign in to the demo accounts on the live site.
+Action for the owner: change the demo accounts' passwords on the live site (Profile → Change password). Tests keep using the local seed.

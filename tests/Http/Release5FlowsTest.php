@@ -156,8 +156,11 @@ return [
             assertContains($n, $sw);
         }
         $js = (string) file_get_contents(TS_ROOT . '/public/assets/hike.js');
-        assertContains('tilesForRoute', $js);
+        $off = (string) file_get_contents(TS_ROOT . '/public/assets/hike-offline.js');
+        assertContains('tilesForRoute', $off);
+        assertContains('window.HikeOffline(', $js);
         assertContains('ts-pending-hike', $js);
+        assertContains('hike-offline.js', $b->body ?? (string) file_get_contents(TS_ROOT . '/src/Controllers/HikeController.php'));
         assertContains("serviceWorker.register('sw.js')", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },
     'cleaner screens: trail page sections and hike tools in dropdowns; account dropdown menu (release 6)' => function () use ($login) {

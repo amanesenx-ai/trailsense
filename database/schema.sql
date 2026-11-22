@@ -207,4 +207,4 @@ CREATE TABLE trail_favourite (
 );
 CREATE INDEX trail_favourite_trail ON trail_favourite (trail_id);
 
-INSERT INTO schema_migration (version) VALUES (1), (2), (3), (4), (5);
+INSERT INTO schema_migration (version) VALUES (1), (2), (3), (4), (5), (6);

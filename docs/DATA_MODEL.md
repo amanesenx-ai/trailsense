@@ -47,3 +47,8 @@ Elevation gain: 100 samples from the Open-Meteo Elevation API. Duration: Naismit
 **Release 4 (migration 004):** `trail.elevation_profile JSONB NOT NULL DEFAULT '[]'` = 81 `[km, m]` samples from the Open-Meteo Elevation API (ADR-019); `trail.elevation_gain_m` recomputed from that profile so lists and climb notes agree.
 
 **Release 5 (migration 005):** `trail_favourite (user_id FK→app_user ON DELETE CASCADE, trail_id FK→trail ON DELETE CASCADE, created_at, PRIMARY KEY (user_id, trail_id))` — saved trails, a many-to-many between users and trails. Total: **17 tables**.
+
+## Migration 006 (22 Nov) — data only, no schema change
+`006_refresh_demo_dates.sql` moves past, never-hiked plans of the four demo accounts forward by whole weeks and drops their
+old weather check (the plan page then fetches a new one). Real users' data is never touched. Re-run before a demo with
+`php bin/demo-refresh.php`. Tested in tests/Integration/DemoRefreshTest.php.

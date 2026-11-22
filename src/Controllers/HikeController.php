@@ -32,7 +32,7 @@ final class HikeController
             'paceKmh' => round((float) $trail['distance_km'] / ($minutes / 60), 2),
             'withMap' => true,
             'bodyClass' => 'hike-mode',
-            'scripts' => ['hike-core.js', 'hike.js'],
+            'scripts' => ['hike-core.js', 'hike-offline.js', 'hike.js'],
         ]);
     }
 }
