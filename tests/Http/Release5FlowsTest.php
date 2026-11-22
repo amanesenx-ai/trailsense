@@ -38,6 +38,15 @@ return [
             assertContains($n, $b->body);
         }
     },
+    'sources page is public and every page links to it in the footer (AC0.2)' => function () use ($base) {
+        $b = (new Browser($base))->get('r=sources');
+        assertSame(200, $b->status);
+        foreach (['Sources and credits', 'Open-Meteo', 'IPMA', 'Rota Vicentina', 'Decreto-Lei n.º 82/2021', 'AllTrails', 'rel="noopener"'] as $n) {
+            assertContains($n, $b->body);
+        }
+        assertContains('class="site-foot"', (new Browser($base))->get('r=home')->body);
+        assertContains('r=sources', (new Browser($base))->get('r=login')->body);
+    },
     'the app states its limits where users decide (risk check and hike mode)' => function () use ($login) {
         $b = $login('joana@trailsense.pt');
         assertContains('Guidance, not a guarantee', $b->get('r=plan&id=1')->body);

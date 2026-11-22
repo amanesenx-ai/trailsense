@@ -70,6 +70,10 @@ $icons = [
     <?php endif; ?>
     <?= $content ?>
 </main>
+<footer class="site-foot">
+    <p><a href="<?= e(url('sources')) ?>">Sources and credits</a> · Weather: Open-Meteo · Warnings and fire risk: IPMA · Maps: © OpenStreetMap contributors · <a href="api/v1">Public API</a></p>
+    <p class="muted">Guidance, not a guarantee — check again before you leave.</p>
+</footer>
 
 <?php if ($user): ?>
 <nav class="tabbar" aria-label="Main (mobile)">

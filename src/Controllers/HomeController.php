@@ -75,4 +75,10 @@ final class HomeController
         usort($rows, fn ($a, $b) => ($pos[(int) $a['id']] ?? 99) <=> ($pos[(int) $b['id']] ?? 99));
         return $rows;
     }
+
+    /** Public page listing data sources, rules, evidence and the apps we compared with. */
+    public function sources(): void
+    {
+        View::render('home/sources', ['title' => 'Sources and credits', 'active' => '']);
+    }
 }

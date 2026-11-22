@@ -794,3 +794,16 @@ html { scroll-behavior: smooth; }
 .btn-wa:hover { background: #3ee07a; }
 .briefing .section-head { flex-wrap: wrap; gap: 10px; }
 @media (max-width: 520px) { .brief-actions { width: 100%; } .brief-actions .btn { flex: 1; } }
+/* footer + sources page (22 Nov) */
+.site-foot { max-width: 1100px; margin: 40px auto 0; padding: 20px var(--space) 28px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); text-align: center; }
+.site-foot p { margin: 4px 0; }
+.site-foot a { color: var(--text); }
+.signed-in .site-foot { padding-bottom: 96px; }
+@media (min-width: 900px) { .signed-in .site-foot { padding-bottom: 28px; } }
+.sources-page { max-width: 820px; margin: 24px auto; }
+.src-group { margin: 28px 0; }
+.src-group h2 { margin-bottom: 4px; }
+.src-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+.src-list li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; }
+.src-list a { font-weight: 800; }
+.src-list span { color: var(--muted); font-size: 14px; }

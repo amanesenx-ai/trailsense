@@ -289,3 +289,5 @@ Out of scope still: following users (item 21 "if within MVP scope" — likes and
 ## 13. Release 8 — user research (2026-11-22)
 - AC9.10 *As a club organizer I want to edit the briefing before I copy it **so that** I can add notes for my group without retyping everything.* The organizer's briefing box is editable (participants see it read-only); "Copy briefing" copies the edited text; edits are not stored. (Interview: organizer, 22 Nov — docs/research.)
 - AC9.11 *As an organizer I want to send the briefing straight to WhatsApp **so that** I do not have to copy and paste it.* "Send on WhatsApp" opens WhatsApp with the briefing text (including any edits). (Interviews: 2 organizers, 22 Nov.)
+- AC0.2 *As a visitor I want to see where TrailSense's information comes from **so that** I can judge how much to trust it.* A public page "Sources and credits" (r=sources) lists the data services, the trail-mark and legal sources, the evidence for the problem and the apps compared, each with a link; every page has a footer linking to it.
+

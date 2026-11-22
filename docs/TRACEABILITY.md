@@ -92,3 +92,4 @@ Item-by-item mapping: docs/REVIEW_CHECKLIST.md. New ACs: AC0.1, AC1.16–1.19, A
 | AC13.15 sign-out clears saved pages | app.js → sw.js `clear-pages` | Release5Flows (sw contains clear-pages) |
 | AC9.10 | Organizer edits the briefing before copying | views/plans/show.php (`data-editable`), app.js copy | Http FlowsTest *organizer group plan produces a copyable briefing* |
 | AC9.11 | Send the briefing on WhatsApp | views/plans/show.php, app.js `data-share-wa` | Http FlowsTest *organizer group plan produces a copyable briefing* |
+| AC0.2 | Public sources page + footer | Domain/Sources, HomeController::sources, views/home/sources.php, layout footer | Unit SourcesTest; Http Release5FlowsTest *sources page is public* |

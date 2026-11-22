@@ -123,6 +123,7 @@ $sections = ['features' => 'Features', 'see' => 'See it', 'why' => 'Why TrailSen
         <li><strong>Trails and maps</strong> OpenStreetMap</li>
         <li><strong>Sunset</strong> calculated for each trail</li>
     </ul>
+    <p class="small"><a href="<?= e(url('sources')) ?>">See all sources and credits →</a></p>
     <details class="drop">
         <summary class="drop-sum"><?= Icons::svg('alert', 'drop-icon') ?><span class="drop-title">What TrailSense cannot do</span>
             <span class="drop-preview">Guidance, not a guarantee — and how each source works</span></summary>

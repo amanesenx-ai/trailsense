@@ -13,6 +13,7 @@ use TrailSense\Controllers\TrailController;
 // route name => [HTTP method, controller, action]
 return [
     'home'            => ['GET',  HomeController::class, 'index'],
+    'sources'         => ['GET',  HomeController::class, 'sources'],
     'login'           => ['GET',  AuthController::class, 'showLogin'],
     'login.submit'    => ['POST', AuthController::class, 'login'],
     'register'        => ['GET',  AuthController::class, 'showRegister'],
