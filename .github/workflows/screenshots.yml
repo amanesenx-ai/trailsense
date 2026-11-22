@@ -1,0 +1,55 @@
+# Takes the report screenshots on a machine with internet (real weather, maps and photos) and commits them to the
+# "screenshots" branch. Runs when that branch is pushed. Uses a throwaway database filled from seed.sql — no live data.
+name: screenshots
+on:
+  push:
+    branches: [screenshots]
+permissions:
+  contents: write
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: trailsense
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: pdo_pgsql, gd, curl, mbstring, fileinfo, exif
+      - name: "Configuration (throwaway database, real weather)"
+        run: |
+          cat > config/config.php <<'PHP'
+          <?php
+          $db = ['dsn' => 'pgsql:host=127.0.0.1;port=5432;dbname=trailsense', 'user' => 'postgres', 'password' => 'postgres', 'schema' => 'public'];
+          return ['db' => $db, 'db_test' => $db, 'base_url' => '/', 'weather_provider' => 'open-meteo', 'debug' => false, 'timezone' => 'Europe/Lisbon'];
+          PHP
+      - name: Database with demo data
+        run: php bin/db-reset.php
+      - name: Start the app
+        run: |
+          php -S 127.0.0.1:8000 -t public > /tmp/server.log 2>&1 &
+          sleep 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Playwright
+        run: |
+          pip install playwright==1.48.0
+          python -m playwright install --with-deps chromium
+      - name: Capture
+        run: python bin/screenshots.py http://127.0.0.1:8000 docs/screenshots/a2
+      - name: Commit screenshots
+        run: |
+          git config user.name "screenshots-bot"
+          git config user.email "screenshots-bot@users.noreply.github.com"
+          git add docs/screenshots/a2
+          git commit -m "screenshots for the A2 report (captured on CI)" || echo "nothing to commit"
+          git push origin HEAD:screenshots
