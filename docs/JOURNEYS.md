@@ -26,4 +26,4 @@
 | 7 | Event page | Copies the briefing to the club chat | Trail, meeting, timing, warnings and precautions in one text | AC9.2–9.3 |
 | 8 | (If needed) Cancel | Cancels the event | Participants no longer see it | AC9.9 |
 
-Screenshots of each step: docs/screenshots/ and the report PDF.
+Screenshots of each step: docs/screenshots/a2/ and the report PDF.

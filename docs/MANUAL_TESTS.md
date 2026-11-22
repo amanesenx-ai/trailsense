@@ -1,6 +1,6 @@
 # MANUAL_TESTS.md — screen-by-screen check before submission
 
-Checked on 2026-11-17 at 390×844 (phone) and 1280×800 (desktop), Chrome. Screenshots in `docs/screenshots/`.
+Checked on 2026-11-17 at 390×844 (phone) and 1280×800 (desktop), Chrome. Screenshots of that release in `docs/screenshots/archive/`; current screens in `docs/screenshots/a2/`.
 Scripted extra checks at 360 px: no horizontal scroll on any of 15 pages, every input has a label, touch targets ≥ 44 px.
 
 | # | Screen / flow | Steps | Expected | Result |

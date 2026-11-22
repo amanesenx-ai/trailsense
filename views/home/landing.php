@@ -47,7 +47,7 @@ $sections = ['features' => 'Features', 'see' => 'See it', 'why' => 'Why TrailSen
             <figcaption><strong>The risk check</strong> — a verdict with its reason, the forecast for your hike hours and what to bring.</figcaption>
         </figure>
         <figure>
-            <img src="<?= e(asset('img/shot-gps.jpg')) ?>" alt="Hike mode on a phone: green banner 'In 70 m · turn left' with an arrow, progress bar at 5%, next climb +151 m over 1.2 km, and distance done, left, altitude and finish time." loading="lazy" width="780" height="598">
+            <img src="<?= e(asset('img/shot-gps.jpg')) ?>" alt="Hike mode on a phone: green banner 'In 270 m · turn left' with an arrow and 'look for the turn-left mark', the route on the map and a compass." loading="lazy" width="780" height="598">
             <figcaption><strong>On the trail</strong> — turn-by-turn directions, progress and the next climb.</figcaption>
         </figure>
     </div>

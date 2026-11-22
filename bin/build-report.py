@@ -1,5 +1,5 @@
 import html, collections, re
-S="/home/claude/trailsense/docs/screenshots/"
+S="/home/claude/trailsense/docs/screenshots/archive/"
 cols=collections.OrderedDict()
 for line in open('/home/claude/report/cols.tsv'):
     t,c,ty,nul,keys,fk=line.rstrip('\n').split('\t'); cols.setdefault(t,[]).append((c,ty,nul,keys,fk))
