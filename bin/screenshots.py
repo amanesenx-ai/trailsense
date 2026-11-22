@@ -22,6 +22,7 @@ async def login(ctx, email):
 
 async def go(pg, route):
     await pg.goto(BASE + '/?' + route, wait_until='networkidle')
+    await pg.add_style_tag(content='html{scroll-behavior:auto !important}')   # instant scrolling for the captures
 
 async def main():
     async with async_playwright() as p:
@@ -30,7 +31,7 @@ async def main():
         # public pages
         c = await b.new_context(**desk); pg = await c.new_page()
         await go(pg, 'r=home'); await shot(pg, '01-landing.png')
-        await pg.click('a[href="#why"]'); await shot(pg, '02-landing-why.png')
+        await pg.evaluate("document.getElementById('why').scrollIntoView({block:'start'}); window.scrollBy(0,-130)"); await pg.wait_for_timeout(600); await shot(pg, '02-landing-why.png')
         await go(pg, 'r=register'); await shot(pg, '03-register.png')
         await go(pg, 'r=sources'); await shot(pg, '04-sources.png')
         await c.close()
