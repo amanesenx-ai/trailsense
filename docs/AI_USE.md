@@ -48,7 +48,7 @@
   word-for-word (docs/research/README.md).
 
 ## How I checked the output
-- **Tests:** every change was accepted only with `php tests/run.php` → `FAILED: 0` (174 automated tests, also run on
+- **Tests:** every change was accepted only with `php tests/run.php` → `FAILED: 0` (175 automated tests, also run on
   GitHub Actions on every push).
 - **By hand:** screens checked at 360 px and on desktop (docs/MANUAL_TESTS.md, docs/UX_REVIEW.md).
 - **Sources:** facts in VALUE_CASE.md and on the "Sources and credits" page have a link to the original source.

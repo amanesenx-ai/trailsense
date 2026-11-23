@@ -8,8 +8,9 @@
 <?php if ($p['photo']): ?>
     <figure class="photo"><img src="<?= e(photo_url($p['photo'])) ?>" alt="<?= e($p['photo_alt'] ?: 'Photo from the hike on ' . $p['trail_name']) ?>"></figure>
 <?php endif; ?>
-<div class="card share-route">
-    <?= Html::route($p['route_points'], 'Route of ' . $p['trail_name'], 'route route-large') ?>
+<div class="card share-route map-card">
+    <?= Html::map($p['route_points'], Html::isTrue($p['is_loop'] ?? false), $p['trail_name']) ?>
+    <p class="muted small">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors</p>
     <dl class="stat-grid">
         <div><dt>Distance</dt><dd><?= e(Html::km($p['distance_km'])) ?></dd></div>
         <div><dt>Moving time</dt><dd><?= e(Html::duration((int) $p['duration_min'])) ?></dd></div>

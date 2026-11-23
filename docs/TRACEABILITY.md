@@ -23,6 +23,7 @@
 | AC7.1 | Publish validation | Domain/ActivityValidator | Unit: *activity in the future*, *distance defaults…* |
 | AC7.2 | Photo checked by content, ≤ 15 MB, upright | Domain/PhotoValidator, Services/PhotoResizer::upright, ActivityController::store | Http: *a fake image is rejected*, *publish a hike with a photo*; Unit PhotoUploadTest |
 | AC7.5 | Phone photo resized in the browser | public/assets/photo-shrink.js, views/feed/form.php | Unit PhotoUploadTest *publish form loads the browser resizer*; manual M-R7 |
+| AC7.6 | Community post route on a real map | views/feed/show.php (Html::map), public/assets/app.js | Http Release5FlowsTest *community post shows the route on a real map* |
 | AC7.3 | Notes ≤ 1000; plan link | ActivityValidator, ActivityController::store | Unit: *notes over 1000*; Integration: *SET NULL* |
 | AC8.1–8.2 | Registration rules | Domain/UserValidator, AuthController::register | Unit: *registration rules*; Http: *register…*, *duplicate e-mail…* |
 | AC8.3 | Generic login error | AuthController::login | Http: *wrong password…* |
@@ -81,7 +82,7 @@ Run: `php tests/run.php` (see totals at the end of this file).
 Run: `php tests/run.php` → 143 tests (release 3: 132).
 
 ## Release 5 (2026-11-19) — reviewer's 45 improvements
-Item-by-item mapping: docs/REVIEW_CHECKLIST.md. New ACs: AC0.1, AC1.16–1.19, AC2.5, AC8.5–8.6, AC9.8–9.9 (SPEC §11). Tests: Release5FlowsTest (12), Unit Release5Test (3), InstallerTest (migration 005). Run: `php tests/run.php` → 158 tests at release 5 (174 now). CI: `.github/workflows/tests.yml` runs them on every push.
+Item-by-item mapping: docs/REVIEW_CHECKLIST.md. New ACs: AC0.1, AC1.16–1.19, AC2.5, AC8.5–8.6, AC9.8–9.9 (SPEC §11). Tests: Release5FlowsTest (12), Unit Release5Test (3), InstallerTest (migration 005). Run: `php tests/run.php` → 158 tests at release 5 (175 now). CI: `.github/workflows/tests.yml` runs them on every push.
 
 ## Release 6 (2026-11-20) — offline trail GPS
 | Requirement | Code | Tests |

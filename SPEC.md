@@ -120,6 +120,7 @@ release 6 added offline use of downloaded trails, §12. Recording a GPS track to
 - AC7.5 *As a hiker I want to add a photo straight from my phone **so that** I do not have to shrink it myself first.* The browser resizes photos over 600 KB to ≤ 1600 px JPEG before upload and shows "Photo ready (6.2 MB → 0.4 MB)"; if it cannot, the original is sent and the server resizes it.
 - AC7.3 Notes max 1000 chars. When published from a plan, the plan is linked.
 - AC7.4 After publishing, the hike appears at the top of the feed.
+- AC7.6 A community post shows its route on the same interactive map as the trail page (OpenStreetMap tiles, start/finish pins); if the tiles cannot load, the route drawing stays visible.
 
 ### K1 — Planning completeness (organizational KPI from A1)
 *As a club organizer, I want to see how many of my upcoming hikes have a complete, current check **so that** no group hike goes ahead unchecked.*

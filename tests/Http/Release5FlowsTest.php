@@ -203,4 +203,9 @@ return [
     'forms show a busy state while submitting (AC8.6, item 28)' => function () {
         assertContains("aria-busy", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },
+    'community post shows the route on a real map, not only the drawing (AC7.6)' => function () use ($login) {
+        $body = $login('joana@trailsense.pt')->get('r=activity&id=1')->body;
+        assertContains('data-map=', $body);
+        assertContains('OpenStreetMap</a> contributors', $body);
+    },
 ];

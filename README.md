@@ -29,7 +29,7 @@ Hosted on alwaysdata (auto-deploy from GitHub). No AI is used inside the product
 cp config/config.example.php config/config.php   # set DB credentials, base_url '/', weather_provider
 php bin/db-reset.php                             # schema + demo data (seed.sql)
 php -S localhost:8000 -t public                  # open http://localhost:8000
-php tests/run.php                                # 174 tests: unit (incl. JavaScript with Node), integration, HTTP — must print FAILED: 0
+php tests/run.php                                # 175 tests: unit (incl. JavaScript with Node), integration, HTTP — must print FAILED: 0
 ```
 The same suite runs on GitHub Actions on every push ([.github/workflows/tests.yml](.github/workflows/tests.yml)).
 
@@ -38,7 +38,7 @@ The same suite runs on GitHub Actions on every push ([.github/workflows/tests.ym
 |---|---|
 | Core features end to end | [SPEC.md](SPEC.md) (stories with “so that” + acceptance criteria) · [docs/JOURNEYS.md](docs/JOURNEYS.md) · tests/Http/ |
 | Data tables | [database/schema.sql](database/schema.sql) + [database/migrations/](database/migrations/) · [docs/DATA_MODEL.md](docs/DATA_MODEL.md) · [docs/er-diagram.svg](docs/er-diagram.svg) |
-| Testing | tests/ (174 automated) · [docs/MANUAL_TESTS.md](docs/MANUAL_TESTS.md) · [docs/TRACEABILITY.md](docs/TRACEABILITY.md) · GitHub Actions |
+| Testing | tests/ (175 automated) · [docs/MANUAL_TESTS.md](docs/MANUAL_TESTS.md) · [docs/TRACEABILITY.md](docs/TRACEABILITY.md) · GitHub Actions |
 | LLM good practices | [docs/AI_USE.md](docs/AI_USE.md) (how I used AI and how I checked it), [CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md), [SPEC.md](SPEC.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DECISIONS.md](docs/DECISIONS.md) (22 ADRs), .claude/ (subagents, command, skill, hooks), [docs/LESSONS.md](docs/LESSONS.md), [docs/DEBT.md](docs/DEBT.md) |
 | UX/UI | [docs/UX_REVIEW.md](docs/UX_REVIEW.md) (7 review rounds) · [docs/screenshots/a2/](docs/screenshots/a2/) |
 | Online and reachable by other apps | [docs/DEPLOY.md](docs/DEPLOY.md) · [docs/API.md](docs/API.md) + [docs/openapi.yaml](docs/openapi.yaml) |

@@ -8,7 +8,7 @@ use PDO;
 final class ActivityRepository
 {
     private const SELECT = 'SELECT a.*, u.name AS author, u.role AS author_role,
-            t.name AS trail_name, t.region, t.difficulty, t.route_points,
+            t.name AS trail_name, t.region, t.difficulty, t.route_points, t.is_loop,
             (SELECT file_name FROM activity_photo ph WHERE ph.activity_id = a.id ORDER BY ph.id LIMIT 1) AS photo,
             (SELECT alt_text FROM activity_photo ph WHERE ph.activity_id = a.id ORDER BY ph.id LIMIT 1) AS photo_alt,
             (SELECT COUNT(*) FROM activity_like l WHERE l.activity_id = a.id) AS likes,
