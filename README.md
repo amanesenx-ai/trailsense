@@ -1,4 +1,4 @@
-# TrailSense — MVP (ASI Assignment 2)
+# TrailSense — MVP
 
 Hikers and club organizers in Portugal find a marked trail, plan a hike, and get **a clear verdict for their hike hours**:
 forecast, daylight, official IPMA warnings and fire risk, each warning **explained by an explicit rule with a precaution**.

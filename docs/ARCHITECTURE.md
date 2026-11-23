@@ -1,6 +1,6 @@
 # ARCHITECTURE.md — current state of the system
 
-Defined before the first prompt (Assignment 2 rule). Describes *what is*, not history — history lives in DECISIONS.md.
+Defined before the first prompt. Describes *what is*, not history — history lives in DECISIONS.md.
 
 ## Style: layered monolith (client · server · database)
 The A1 diagram had three blocks: web application, application backend (auth, business logic, API integration,

@@ -1,6 +1,6 @@
 # TrailSense — MVP Specification (SPEC.md)
 
-Source of truth for Assignment 2. Derived from the Assignment 1 user stories (F1–F9).
+Source of truth for the MVP. Derived from the Assignment 1 user stories (F1–F9).
 The agent implements this spec; it does not change it. Changes to scope are made here first, by me.
 
 ## 0. Evidence, assumptions and external parties
@@ -194,7 +194,7 @@ journeys or Priority 1 list).
 - AC11.1 Each user has a profile page: role, number of hikes, total km, total elevation gain, total time, hikes per month (last 6 months), published hikes.
 - AC11.2 Authors in the feed link to their profile. E-mail addresses are never shown on profiles.
 
-### F12 Public REST API (Assignment 2 §3: "reachable by other applications")
+### F12 Public REST API (reachable by other applications)
 *As another application (e.g. a club or municipality website), I want to read trails and their current conditions as JSON **so that** I can show TrailSense information without copying it by hand.*
 - AC12.1 Read-only JSON API under `/api/v1`: `GET /trails` (filters q, difficulty, max_km), `GET /trails/{id}`,
   `GET /trails/{id}/conditions?date=YYYY-MM-DD&start=HH:MM&duration=MIN` (forecast + IPMA + daylight + rule results, nothing stored),
