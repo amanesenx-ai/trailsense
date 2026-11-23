@@ -43,11 +43,11 @@ $sections = ['features' => 'Features', 'see' => 'See it', 'why' => 'Why TrailSen
     <h2 id="see-h">See it in the app</h2>
     <div class="showcase">
         <figure class="show-main">
-            <img src="<?= e(asset('img/shot-risk.jpg')) ?>" alt="Risk check screen: a yellow 'Go prepared' verdict with the reason 'Finishing close to sunset', then hour-by-hour charts of temperature, rain and gusts with the hike window shaded and the sunset marked, and hourly weather cards." loading="lazy" width="1200" height="896">
+            <img src="<?= e(asset('img/shot-risk.jpg')) ?>" alt="Risk check screen: a yellow 'Go prepared' verdict with the reason 'Finishing close to sunset', then hour-by-hour charts of temperature, rain and gusts with the hike window shaded and the sunset marked, and hourly weather cards." loading="lazy" width="1200" height="950">
             <figcaption><strong>The risk check</strong> — a verdict with its reason, the forecast for your hike hours and what to bring.</figcaption>
         </figure>
         <figure>
-            <img src="<?= e(asset('img/shot-gps.jpg')) ?>" alt="Hike mode on a phone: green banner 'In 270 m · turn left' with an arrow and 'look for the turn-left mark', the route on the map and a compass." loading="lazy" width="780" height="598">
+            <img src="<?= e(asset('img/shot-gps.jpg')) ?>" alt="Hike mode on a phone: green banner 'In 270 m · turn left' with an arrow and 'look for the turn-left mark', the route on the map and a compass." loading="lazy" width="780" height="975">
             <figcaption><strong>On the trail</strong> — turn-by-turn directions, progress and the next climb.</figcaption>
         </figure>
     </div>

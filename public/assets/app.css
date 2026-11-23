@@ -664,7 +664,10 @@ button[aria-busy="true"] { opacity: .7; cursor: progress; }
 .dash-grid > *, .tile-list > li { min-width: 0; }
 /* landing v2: showcase, organizer steps, sources & limits, richer trail cards */
 .showcase { display: grid; gap: 12px; grid-template-columns: 1fr; }
-@media (min-width: 820px) { .showcase { grid-template-columns: 1.6fr 1fr; align-items: start; } }
+@media (min-width: 820px) { .showcase { grid-template-columns: 1.6fr 1fr; align-items: stretch; } }
+.showcase figure { display: flex; flex-direction: column; }
+.showcase figure img { border-bottom: 1px solid var(--line); }
+.showcase figcaption { flex: 1; }
 .showcase figure, .show-wide { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .showcase img, .show-wide img { display: block; width: 100%; height: auto; }
 .showcase figcaption, .show-wide figcaption { padding: 10px 14px; font-size: 14.5px; color: var(--muted); }
