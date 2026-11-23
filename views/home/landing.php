@@ -6,7 +6,7 @@ $sections = ['features' => 'Features', 'see' => 'See it', 'why' => 'Why TrailSen
     <div class="hero-inner">
         <p class="hero-kicker">TrailSense · hiking in Portugal</p>
         <h1 id="lp-h">Hike smarter. Explore safer. Share the experience.</h1>
-        <p class="hero-meta lp-lead">A clear go / no-go for <em>your</em> hike — weather, daylight, IPMA warnings and fire risk in one verdict.</p>
+        <p class="hero-meta lp-lead">From “is it safe today?” to “which way now?” — TrailSense helps you plan, follow and share every hike.</p>
         <ul class="hero-chips" aria-label="What TrailSense does">
             <li>Trail marks decoded</li>
             <li>Turn-by-turn on the trail</li>
