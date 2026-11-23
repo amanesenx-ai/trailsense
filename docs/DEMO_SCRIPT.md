@@ -15,7 +15,5 @@ Use two browser windows: a hiker account and an organizer account (demo accounts
 ## Before the demo (checklist)
 - **Fresh data.** Migration 006 moved the demo plans that had slid into the past to upcoming dates (22 Nov). Before a later
   demo, run `php bin/demo-refresh.php` or simply create one plan and one group hike a few days ahead; `/api/v1/group-hikes` shows what is upcoming.
-- **GPS step at home.** Away from the trail the banner says "Go to the start: 35 km", not "In 70 m · turn left". Either say so
-  ("it first guides you to the start"), or in Chrome DevTools → ⋮ → More tools → Sensors → Location, set the trail start
-  (e.g. 41.16761, -8.05072 for Trilho dos Dólmens) to show the real directions. Keep the GPS screenshot on the landing as a backup.
+- **GPS step at home.** Away from a trail the banner says "Go to the start: … km". To show the turn-by-turn directions anywhere, use **Trails → Try the GPS here**: a 600 m practice square starts at your position (labelled as practice, nothing saved).
 - Hard refresh (Ctrl+Shift+R) once so the browser has the latest CSS.

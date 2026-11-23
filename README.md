@@ -16,7 +16,7 @@ Demo accounts (fictional people) are shared privately, not published.
   forecast for the hike hours → rule-based risk check with rule and precaution · group hike with briefing ·
   planning-completeness indicator (K1) · community feed and publish a hike.
 - **Extensions** (added after the core worked, each with its own acceptance criteria and tests): likes and comments, profiles,
-  IPMA warnings and fire risk, trail condition reports, GPS directions with compass, offline use, favourites, read-only public API.
+  IPMA warnings and fire risk, trail condition reports, GPS directions with compass (and a practice mode to try it anywhere), offline use, favourites, read-only public API.
 - Details: [SPEC.md](SPEC.md) §2 and §2a.
 
 ## Stack

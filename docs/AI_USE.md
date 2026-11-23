@@ -63,6 +63,7 @@
 - Old styles served from the offline cache, so menus looked broken — found by me, fixed.
 - Hike mode counted kilometres before the hike started — found by me on my phone, fixed with tests (AC13.16).
 - A broken JavaScript line that stopped the GPS page — found in a browser check; a syntax test was added for all scripts.
+- On a straight stretch the "Done" distance could lag up to 40 m behind — found in a browser check of the practice route, fixed with a test.
 - The report marked each column of a combined key as UNIQUE — found in a review, fixed.
 - A YAML error that silently stopped GitHub Actions — found when checking the repository, fixed.
 

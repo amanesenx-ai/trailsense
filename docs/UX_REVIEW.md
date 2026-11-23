@@ -104,3 +104,6 @@ Checked at 360 px, 390 px and 1280 px: no horizontal scroll; header 65 px, menu 
 | Me: hike mode showed km done before starting | Done/Left only move after Start and on the route; loops start at the start (AC13.16) |
 | Reviewer: show where the information comes from | Footer on every page + public "Sources and credits" page (AC0.2) |
 Checked at 360 px and 1280 px with screenshots.
+| Me: the GPS cannot be shown working away from a trail (e.g. at the university) | "Try the GPS here" on Trails: 600 m practice square around the current position, labelled as practice (AC13.19) |
+| Me: the clock did not start counting at Start; Finish forced publishing | Clock counts seconds from Start (AC13.17); Finish offers publish / finish without publishing / keep hiking (AC13.18) |
+

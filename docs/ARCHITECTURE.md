@@ -73,7 +73,8 @@ trailsense/
 ## On the trail (F13, ADR-015/020)
 `HikeController` serves the route; everything else happens in the browser: position (Geolocation), progress and turn-by-turn
 directions (`hike-core.js`), compass, voice, wake lock. Nothing is sent to the server until the hiker publishes. A trail can be
-downloaded for offline use (service worker caches the page and the map tiles near the route).
+downloaded for offline use (service worker caches the page and the map tiles near the route). "Try the GPS here" builds a
+600 m practice square around the current position (`Domain/PracticeRoute`, route `practice`) so the GPS can be tried away from any trail; it is labelled as practice and never stored.
 
 ## Cross-cutting concerns
 **Security**
