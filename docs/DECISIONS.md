@@ -2,7 +2,7 @@
 
 ## ADR-001 — Stack: plain PHP 8 + PostgreSQL, no framework
 - Date: 2026-11-17 · Status: accepted
-- Context: FEUP hosting runs Apache with PHP and PostgreSQL; the course teaches PHP + PDO + PostgreSQL; the app must be reachable online for later assignments. Frameworks (Laravel) need Composer and a console on the server.
+- Context: the course teaches PHP + PDO + PostgreSQL and the brief names that stack; the app must be online and reachable by other applications for the later assignments, on a simple free host (Apache + PHP + PostgreSQL). Frameworks (Laravel) need Composer and a console on the server.
 - Decision: plain PHP 8 with PDO (pgsql), a single front controller, no runtime dependencies.
 - Consequences: deploys by copying files; well represented in training data so agent output is reliable. We write our own small router, CSRF and auth helpers (kept in `src/Core`, each < 100 lines).
 
@@ -38,7 +38,7 @@
 
 ## ADR-007 — Own minimal test runner instead of PHPUnit
 - Date: 2026-11-17 · Status: accepted
-- Context: no Composer on FEUP; tests must run with one command anywhere PHP runs.
+- Context: no Composer at runtime on the host; tests must run with one command anywhere PHP runs.
 - Decision: `tests/run.php` with `assertSame/assertTrue/assertThrows`; three suites: unit (domain), integration (repositories on `trailsense_test`), http (real requests to `php -S`).
 - Consequences: zero setup; fewer features than PHPUnit (no coverage report) — accepted for MVP.
 
@@ -50,7 +50,7 @@
 
 ## ADR-009 — Cloud hosting: Docker on Render + Neon PostgreSQL; photos in the database
 - Date: 2026-11-17 · Status: accepted
-- Context: I chose not to use the FEUP servers. The app must stay online and reachable for the next assignments, at no cost. Free container hosts have an ephemeral disk (files written at runtime are lost on each deploy/restart).
+- Context: the app must stay online and reachable by other applications for the next assignments, always on and at no cost. Free container hosts have an ephemeral disk (files written at runtime are lost on each deploy/restart).
 - Decision: one Docker image (php:8.3-apache + pdo_pgsql, document root `public/`) on a Render free web service; database on Neon's free plan (permanent, not a trial). Configuration comes from environment variables (`DATABASE_URL`, `WEATHER_PROVIDER`, `APP_DEBUG`) when `config/config.php` is absent. Uploaded photos are stored as BYTEA in `activity_photo` and served by the `photo` route (login required). `bin/db-init.php` creates tables and demo data on first boot only.
 - Consequences: no secrets in the repository; photos survive redeploys. Render's free service sleeps after 15 min idle and needs about a minute to wake — open the app before a demo. Neon free storage (1 GB) is far above our needs (photos ≤ 3 MB each).
 - Update (2026-11-17, alwaysdata): hosting moved to **alwaysdata** (free plan: always on, PHP + PostgreSQL in one account, no Docker needed) because Render's free service sleeps after 15 minutes. The database quota on the free plan is about 1/10 of the 1 GB disk, so uploaded photos are shrunk to ≤ 1600 px JPEG before storing (`Services/PhotoResizer`, also strips EXIF/GPS metadata). The Dockerfile and render.yaml stay as an alternative deployment path.

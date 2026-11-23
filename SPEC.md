@@ -131,7 +131,7 @@ release 6 added offline use of downloaded trails, §12. Recording a GPS track to
 - NFR2 Accessibility: text contrast ≥ 4.5:1, labels on every input, visible focus, levels not conveyed by colour only (text badge).
 - NFR3 Security: prepared statements only; all output escaped with `e()`; CSRF on POST; server-side validation; secrets only in `config/config.php` (not committed).
 - NFR4 Performance: a page renders in < 1 s locally; external forecast call has a 6 s timeout.
-- NFR5 Runs on the FEUP stack: Apache + PHP 8 + PostgreSQL, no Composer dependencies at runtime.
+- NFR5 Runs on a standard Apache + PHP 8 + PostgreSQL host (alwaysdata), no Composer dependencies at runtime.
 
 ## 7. Default risk rules (seed; editable in `risk_rule`)
 | Code | Factor | Condition | Level | Precaution |
