@@ -10,7 +10,7 @@ Use two browser windows: a hiker account and an organizer account (demo accounts
 | 2:30–3:00 | Hiker | Home | Next hike hero with countdown, saved trails, recently viewed, group hikes to join → Join. |
 | 3:00–4:15 | Organizer | Dashboard → event → Edit → Share invite link | Sign-ups 2/8, places left, status, weather per event, briefing to copy; edit time → weather re-checked; cannot shrink below people joined. |
 | 4:15–4:45 | Hiker | Start hike (phone) | GPS banner "In 70 m · turn left", compass, progress; Finish → publish pre-filled → feed. |
-| 4:45–5:00 | — | Repo | SPEC.md, CLAUDE.md, 17 tables, 171 tests passing, app online + public API. |
+| 4:45–5:00 | — | Repo | SPEC.md, CLAUDE.md, 17 tables, 174 tests passing, app online + public API. |
 
 ## Before the demo (checklist)
 - **Fresh data.** Migration 006 moved the demo plans that had slid into the past to upcoming dates (22 Nov). Before a later
