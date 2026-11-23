@@ -1,6 +1,6 @@
 # TrailSense public API (v1)
 
-Read-only JSON API so other applications can reuse TrailSense data and its risk check (Assignment 2 §3, ADR-013).
+Read-only JSON API so other applications can reuse TrailSense data and its risk check (ADR-013).
 Base URL: `https://amanesenx.alwaysdata.net/api/v1` · Machine-readable spec: [openapi.yaml](openapi.yaml)
 
 - No authentication, CORS open (`Access-Control-Allow-Origin: *`), GET only (other methods → 405).
