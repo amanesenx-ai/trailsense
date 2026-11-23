@@ -67,6 +67,12 @@
             etaMin: paceKmh > 0 ? Math.round(left / 1000 / paceKmh * 60) : null, nearest: n };
     }
 
+    /** Elapsed time for the hike clock: "0:07" (m:ss) under an hour, "1:02:05" (h:mm:ss) after (AC13.17). */
+    function formatElapsed(ms) {
+        const t = Math.max(0, Math.floor((ms || 0) / 1000)), h = Math.floor(t / 3600), m = Math.floor((t % 3600) / 60), sec = t % 60;
+        return h > 0 ? h + ':' + String(m).padStart(2, '0') + ':' + String(sec).padStart(2, '0') : m + ':' + String(sec).padStart(2, '0');
+    }
+
     /** Off-route state machine (AC13.5): off after `needed` consecutive fixes beyond the limit, back on at once. */
     function offRouteState(prev, offRouteM, accuracyM, limitM, needed) {
         limitM = limitM || 50; needed = needed || 2;
@@ -185,6 +191,6 @@
         return out;
     }
 
-    return { distance, bearing, compassName, cumulative, nearest, progress, offRouteState, trackLength, formatKm, tileXY, tilesForRoute,
+    return { distance, bearing, compassName, cumulative, nearest, progress, formatElapsed, offRouteState, trackLength, formatKm, tileXY, tilesForRoute,
         pointAt, turns, instruction, altitudeAt, nextClimb };
 }));

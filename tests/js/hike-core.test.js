@@ -34,6 +34,12 @@ const tests = {
     'nearest without a hint behaves as before on simple routes': () => {
         assert.strictEqual(H.nearest(route, [41.0003, -7.995]).segment, 0);
     },
+    'hike clock counts seconds from Start (AC13.17)': () => {
+        assert.strictEqual(H.formatElapsed(0), '0:00');
+        assert.strictEqual(H.formatElapsed(7000), '0:07');
+        assert.strictEqual(H.formatElapsed(65000), '1:05');
+        assert.strictEqual(H.formatElapsed(3725000), '1:02:05');
+    },
     'off route only after two consecutive fixes beyond 50 m; back on at once (AC13.5)': () => {
         let s = H.offRouteState({}, 80, 5); assert.strictEqual(s.off, false);
         s = H.offRouteState(s, 90, 5); assert.strictEqual(s.off, true);

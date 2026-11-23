@@ -199,14 +199,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---- start / finish (AC13.1, 13.8) ----
     let ticker = null;
-    function tick() {
-        const m = Math.floor((Date.now() - state.startedAt) / 60000);
-        $('clock').textContent = Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
-    }
+    function tick() { $('clock').textContent = H.formatElapsed(Date.now() - state.startedAt); }   // counts from Start, every second
     function started() {
         $('start').hidden = true; $('finish').hidden = false;
         root.classList.add('is-hiking');
-        tick(); ticker = setInterval(tick, 15000);
+        tick(); ticker = setInterval(tick, 1000);
         keepAwake(); watch();
         root.querySelectorAll('.drop').forEach((d) => { d.open = false; });   // on the trail: only map, directions and progress
     }
