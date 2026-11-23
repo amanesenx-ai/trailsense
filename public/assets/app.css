@@ -817,3 +817,7 @@ html { scroll-behavior: smooth; }
 /* practice mode (AC13.19) */
 .trails-head { align-items: center; }
 .practice-note { margin: 0 0 10px; padding: 10px 12px; border-radius: var(--radius); border: 1px dashed var(--accent); background: rgba(244,196,48,.08); font-size: 14px; }
+
+/* landing hero: value proposition chips (rev. 23 Nov) */
+.hero-chips { list-style: none; margin: 4px 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.hero-chips li { padding: 6px 12px; border-radius: 999px; background: rgba(9, 26, 19, .62); border: 1px solid rgba(255, 255, 255, .28); color: #fff; font-size: 14.5px; font-weight: 600; }
