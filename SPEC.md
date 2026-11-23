@@ -1,7 +1,7 @@
 # TrailSense — MVP Specification (SPEC.md)
 
 Source of truth for Assignment 2. Derived from the Assignment 1 user stories (F1–F9).
-The agent implements this spec; it does not change it. Changes to scope are made here first, by the owner.
+The agent implements this spec; it does not change it. Changes to scope are made here first, by me.
 
 ## 0. Evidence, assumptions and external parties
 The problem evidence (with sources), the assumptions still to validate, the comparison with existing apps and the list of
