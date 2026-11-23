@@ -39,7 +39,7 @@ The same suite runs on GitHub Actions on every push ([.github/workflows/tests.ym
 | Core features end to end | [SPEC.md](SPEC.md) (stories with “so that” + acceptance criteria) · [docs/JOURNEYS.md](docs/JOURNEYS.md) · tests/Http/ |
 | Data tables | [database/schema.sql](database/schema.sql) + [database/migrations/](database/migrations/) · [docs/DATA_MODEL.md](docs/DATA_MODEL.md) · [docs/er-diagram.svg](docs/er-diagram.svg) |
 | Testing | tests/ (171 automated) · [docs/MANUAL_TESTS.md](docs/MANUAL_TESTS.md) · [docs/TRACEABILITY.md](docs/TRACEABILITY.md) · GitHub Actions |
-| LLM good practices | [CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md), [SPEC.md](SPEC.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DECISIONS.md](docs/DECISIONS.md) (22 ADRs), .claude/ (subagents, command, skill, hooks), [docs/LESSONS.md](docs/LESSONS.md), [docs/DEBT.md](docs/DEBT.md) |
+| LLM good practices | [docs/AI_USE.md](docs/AI_USE.md) (how I used AI and how I checked it), [CLAUDE.md](CLAUDE.md), [AGENTS.md](AGENTS.md), [SPEC.md](SPEC.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/DECISIONS.md](docs/DECISIONS.md) (22 ADRs), .claude/ (subagents, command, skill, hooks), [docs/LESSONS.md](docs/LESSONS.md), [docs/DEBT.md](docs/DEBT.md) |
 | UX/UI | [docs/UX_REVIEW.md](docs/UX_REVIEW.md) (7 review rounds) · [docs/screenshots/a2/](docs/screenshots/a2/) |
 | Online and reachable by other apps | [docs/DEPLOY.md](docs/DEPLOY.md) · [docs/API.md](docs/API.md) + [docs/openapi.yaml](docs/openapi.yaml) |
 | Evidence, users, external parties | [docs/VALUE_CASE.md](docs/VALUE_CASE.md) · [docs/research/](docs/research/) (7 interviews) · in the app: footer → “Sources and credits” |
