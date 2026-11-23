@@ -44,9 +44,9 @@ doc = f"""<!DOCTYPE html><html><head><meta charset=utf-8><style>{style}
   <h1>TrailSense — MVP</h1>
   <div class="sub">Assignment 2 · Minimum Viable Product · Ana Celonenco</div>
   <div class="kv">
-    <b>Live app</b><span><b style='color:#fff'>https://amanesenx.alwaysdata.net</b></span>
-    <b>Repository</b><span style='color:#fff'>https://github.com/amanesenx-ai/trailsense</span>
-    <b>Public API</b><span style='color:#fff'>https://amanesenx.alwaysdata.net/api/v1</span>
+    <b>Live app</b><span><a href='https://amanesenx.alwaysdata.net' style='color:#fff;text-decoration:none'><b>https://amanesenx.alwaysdata.net</b></a></span>
+    <b>Repository</b><span><a href='https://github.com/amanesenx-ai/trailsense' style='color:#fff;text-decoration:none'>https://github.com/amanesenx-ai/trailsense</a></span>
+    <b>Public API</b><span><a href='https://amanesenx.alwaysdata.net/api/v1' style='color:#fff;text-decoration:none'>https://amanesenx.alwaysdata.net/api/v1</a></span>
     <b>Demo accounts</b><span>one hiker and one club organizer (fictional) — credentials sent privately</span>
   </div>
 </div>
@@ -60,7 +60,7 @@ doc = f"""<!DOCTYPE html><html><head><meta charset=utf-8><style>{style}
 </section>
 <section class="page">
 <h2>How I worked with the LLM — where to find the evidence</h2>
-<p class="small">Everything below is in the repository <b>https://github.com/amanesenx-ai/trailsense</b>. This page is only a map to it.</p>
+<p class="small">Everything below is in the repository <a href='https://github.com/amanesenx-ai/trailsense' style='color:inherit'><b>https://github.com/amanesenx-ai/trailsense</b></a>. This page is only a map to it.</p>
 <table class="vt">
 <tr><th style="width:28%">Good practice (brief)</th><th>Evidence in the repository</th></tr>
 <tr><td><b>Architecture and folder structure defined before prompting</b></td><td>The <b>first commit</b> (“docs: spec, project rules, architecture and ADRs before code”) contains only documents and agent rules — no code: <code>docs/ARCHITECTURE.md</code> (layers: Controllers → Domain → Repositories → Views, folder structure), <code>docs/DECISIONS.md</code> (22 architecture decisions, ADR-001 to ADR-022).</td></tr>
