@@ -207,5 +207,6 @@ return [
         $body = $login('joana@trailsense.pt')->get('r=activity&id=1')->body;
         assertContains('data-map=', $body);
         assertContains('OpenStreetMap</a> contributors', $body);
+        assertContains('leaflet@1.9.4/dist/leaflet.js', $body);   // the map library is loaded on this page too
     },
 ];

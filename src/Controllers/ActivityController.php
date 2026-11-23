@@ -44,7 +44,7 @@ final class ActivityController
         $post = $this->postOr404();
         $social = new SocialRepository(Database::connection());
         View::render('feed/show', [
-            'title' => $post['trail_name'], 'active' => 'feed', 'post' => $post,
+            'title' => $post['trail_name'], 'active' => 'feed', 'post' => $post, 'withMap' => true,
             'liked' => $social->likedBy((int) $post['id'], $user['id']),
             'comments' => $social->comments((int) $post['id']),
             'errors' => $errors, 'draft' => $draft,
