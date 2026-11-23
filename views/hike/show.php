@@ -5,7 +5,8 @@ $publish = ['from' => 'hike', 'trail_id' => $t['id']] + ($planId ? ['plan_id' =>
 $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $paceKmh, 'trailId' => (int) $t['id'],
     'profile' => $t['elevation_profile'] ?? [],
     'directions' => Html::directionsUrl($pts[0]),
-    'publish' => url('publish', $publish)]; ?>
+    'publish' => url('publish', $publish)];
+$back = $planId ? url('plan', ['id' => $planId]) : url('trail', ['id' => $t['id']]); ?>
 <div class="hike" data-hike="<?= e((string) json_encode($data, JSON_UNESCAPED_UNICODE)) ?>">
     <header class="hike-bar">
         <a class="back" href="<?= e(url('trail', ['id' => $t['id']])) ?>" aria-label="Leave hike mode">←</a>
@@ -54,6 +55,16 @@ $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $pace
         <p class="hike-climb" data-el="climb"></p>
         <button class="btn btn-primary btn-block hike-main" type="button" data-el="start">Start hike</button>
         <button class="btn btn-secondary btn-block hike-main" type="button" data-el="finish" hidden>Finish</button>
+        <div class="finish-box" data-el="finish-box" role="group" aria-labelledby="fin-h" hidden>
+            <h2 id="fin-h">Finish this hike?</h2>
+            <p class="small muted" data-el="finish-summary"></p>
+            <button class="btn btn-primary btn-block" type="button" data-el="finish-publish">Finish and publish</button>
+            <button class="btn btn-secondary btn-block" type="button" data-el="finish-only">Finish without publishing</button>
+            <button class="btn-link" type="button" data-el="finish-cancel">Keep hiking</button>
+        </div>
+        <div class="finish-box" data-el="done-box" hidden>
+            <a class="btn btn-secondary btn-block" href="<?= e($back) ?>"><?= $planId ? 'Back to my plan' : 'Back to the trail' ?></a>
+        </div>
         <div class="hike-tools">
             <button class="btn btn-sm btn-secondary" type="button" data-el="voice" aria-pressed="false">Voice: off</button>
             <button class="btn btn-sm btn-secondary" type="button" data-el="share">Share my position</button>

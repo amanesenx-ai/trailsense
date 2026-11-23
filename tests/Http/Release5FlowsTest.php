@@ -168,8 +168,14 @@ return [
         $off = (string) file_get_contents(TS_ROOT . '/public/assets/hike-offline.js');
         assertContains('tilesForRoute', $off);
         assertContains('window.HikeOffline(', $js);
-        assertContains('ts-pending-hike', $js);
         assertContains('state.startedAt && onRoute', $js);   // AC13.16: progress only after Start and on the route
+        // AC13.18: Finish offers publish / finish without publishing / keep hiking, and no browser confirm() dialog
+        $fin = (string) file_get_contents(TS_ROOT . '/public/assets/hike-finish.js');
+        assertContains("'finish-only'", $fin);
+        assertContains('ts-pending-hike', $fin);   // AC13.14 offline finish still kept on the phone
+        assertTrue(!str_contains($js . $fin, 'window.confirm('), 'no blocking confirm dialog');
+        $page = $login('joana@trailsense.pt')->get('r=hike&id=1&plan_id=1')->body;
+        foreach (['data-el="finish-publish"', 'data-el="finish-only"', 'data-el="finish-cancel"', 'Back to my plan', 'hike-finish.js'] as $n) { assertContains($n, $page); }
         assertContains('hike-offline.js', $b->body ?? (string) file_get_contents(TS_ROOT . '/src/Controllers/HikeController.php'));
         assertContains("serviceWorker.register('sw.js')", (string) file_get_contents(TS_ROOT . '/public/assets/app.js'));
     },

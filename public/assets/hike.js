@@ -208,26 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
         root.querySelectorAll('.drop').forEach((d) => { d.open = false; });   // on the trail: only map, directions and progress
     }
     $('start').addEventListener('click', () => { state = { startedAt: Date.now(), track: pos ? [pos] : [], alongM: 0 }; store.save(state); enableCompass(); started(); });
-    $('finish').addEventListener('click', () => {
-        if (!window.confirm('Finish this hike?')) return;
-        const minutes = Math.max(1, Math.round((Date.now() - state.startedAt) / 60000));
-        const km = H.trackLength(state.track) / 1000;
-        if (watchId !== null) navigator.geolocation.clearWatch(watchId);
-        clearInterval(ticker); if (wakeLock) wakeLock.release().catch(() => {});
-        store.clear();
-        const url = new URL(data.publish, location.href);
-        if (!navigator.onLine) {                                       // AC13.14 keep the hike until there is signal
-            url.searchParams.set('duration_min', String(minutes));
-            if (km >= 0.1) url.searchParams.set('distance_km', km.toFixed(1));
-            try { localStorage.setItem('ts-pending-hike', JSON.stringify({ url: url.toString(), name: data.name, km: km.toFixed(1), minutes, at: Date.now() })); } catch (e) { /* ignore */ }
-            status('<strong>Hike finished: ' + km.toFixed(1) + ' km in ' + minutes + ' min.</strong> Saved on this phone — open TrailSense when you have signal to publish it.');
-            $('finish').hidden = true; $('start').hidden = false; root.classList.remove('is-hiking');
-            return;
-        }
-        url.searchParams.set('duration_min', String(minutes));
-        if (km >= 0.1) url.searchParams.set('distance_km', km.toFixed(1));
-        location.href = url.toString();
-    });
+    // Finish: publish, finish without publishing, or keep hiking — in hike-finish.js (AC13.18)
+    function stopHike() { if (watchId !== null) navigator.geolocation.clearWatch(watchId); clearInterval(ticker); if (wakeLock) wakeLock.release().catch(() => {}); }
+    window.HikeFinish({ $, data, H, root, store, status, getState: () => state, stop: stopHike });
 
     // ---- safety: share my position (AC13.7) ----
     $('share').addEventListener('click', async () => {

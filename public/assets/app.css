@@ -807,3 +807,7 @@ html { scroll-behavior: smooth; }
 .src-list li { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: flex; flex-direction: column; gap: 3px; }
 .src-list a { font-weight: 800; }
 .src-list span { color: var(--muted); font-size: 14px; }
+/* hike: finish choices (AC13.18) */
+.finish-box { display: grid; gap: 10px; margin: 10px 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.finish-box h2 { margin: 0; font-size: 18px; }
+.finish-box .btn-link { background: none; border: 0; color: var(--text); text-decoration: underline; font: inherit; font-weight: 700; padding: 8px; cursor: pointer; min-height: 44px; }

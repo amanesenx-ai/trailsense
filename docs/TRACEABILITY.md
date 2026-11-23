@@ -95,3 +95,4 @@ Item-by-item mapping: docs/REVIEW_CHECKLIST.md. New ACs: AC0.1, AC1.16–1.19, A
 | AC0.2 | Public sources page + footer | Domain/Sources, HomeController::sources, views/home/sources.php, layout footer | Unit SourcesTest; Http Release5FlowsTest *sources page is public* |
 | AC13.16 | Progress only after Start and on the route; loop start ≠ end | hike-core.js `nearest(…, hintM)`, hike.js onPosition | JS test *loop: standing at the start…*; Http Release5FlowsTest offline/hike test |
 | AC13.17 | Hike clock counts seconds from Start | hike-core.js `formatElapsed`, hike.js tick | JS test *hike clock counts seconds from Start* |
+| AC13.18 | Finish without publishing | public/assets/hike-finish.js, views/hike/show.php | Http Release5FlowsTest offline/hike test; browser check |
