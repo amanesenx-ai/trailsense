@@ -31,6 +31,14 @@ const tests = {
         const atEnd = H.progress(loop, [41.0, -8.0], null, 4, total - 30);           // came all the way round
         assert(atEnd.doneM > total - 40, 'done near the total when the hiker was already near the end');
     },
+    'on a straight stretch, done is the real distance from the start, whatever the hint (AC13.16)': () => {
+        const line = [[41.0, -8.0], [41.0009, -8.0], [41.0018, -8.0], [41.0027, -8.0]];   // ~300 m north
+        const at = [41.0009, -8.0];                                                       // ~100 m along
+        for (const hint of [0, 50, 250]) {
+            const p = H.progress(line, at, null, 4, hint);
+            assert(Math.abs(p.doneM - H.distance(line[0], at)) < 2, 'hint ' + hint + ' gave ' + p.doneM);
+        }
+    },
     'nearest without a hint behaves as before on simple routes': () => {
         assert.strictEqual(H.nearest(route, [41.0003, -7.995]).segment, 0);
     },

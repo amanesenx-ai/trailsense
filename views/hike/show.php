@@ -1,18 +1,18 @@
 <?php use TrailSense\Core\Html;
 /** F13 hike mode. Everything live happens in hike.js; this page works as a map + legend without it. */
-$t = $trail; $pts = $t['route_points']; $loop = Html::isTrue($t['is_loop']);
+$t = $trail; $pts = $t['route_points']; $loop = Html::isTrue($t['is_loop']); $practice = !empty($practice);
 $publish = ['from' => 'hike', 'trail_id' => $t['id']] + ($planId ? ['plan_id' => $planId] : []);
 $data = ['route' => $pts, 'loop' => $loop, 'name' => $t['name'], 'pace' => $paceKmh, 'trailId' => (int) $t['id'],
     'profile' => $t['elevation_profile'] ?? [],
     'directions' => Html::directionsUrl($pts[0]),
     'publish' => url('publish', $publish)];
-$back = $planId ? url('plan', ['id' => $planId]) : url('trail', ['id' => $t['id']]); ?>
+$back = $practice ? url('trails') : ($planId ? url('plan', ['id' => $planId]) : url('trail', ['id' => $t['id']])); ?>
 <div class="hike" data-hike="<?= e((string) json_encode($data, JSON_UNESCAPED_UNICODE)) ?>">
     <header class="hike-bar">
-        <a class="back" href="<?= e(url('trail', ['id' => $t['id']])) ?>" aria-label="Leave hike mode">←</a>
+        <a class="back" href="<?= e($practice ? url('trails') : url('trail', ['id' => $t['id']])) ?>" aria-label="Leave hike mode">←</a>
         <div class="hike-title">
             <strong><?= e($t['name']) ?></strong>
-            <span class="small muted"><?php if ($t['ref'] !== ''): ?><?= e($t['ref']) ?> · <?php endif; ?><?= e(Html::km($t['distance_km'])) ?> · <?= $loop ? 'loop' : 'one way' ?></span>
+            <span class="small muted"><?php if ($practice): ?>Practice · 600 m square around you<?php else: ?><?php if ($t['ref'] !== ''): ?><?= e($t['ref']) ?> · <?php endif; ?><?= e(Html::km($t['distance_km'])) ?> · <?= $loop ? 'loop' : 'one way' ?><?php endif; ?></span>
         </div>
         <span class="offline-badge" data-el="offline-badge" hidden>Offline</span>
         <span class="hike-clock" data-el="clock" aria-label="Elapsed time">0:00</span>
@@ -44,6 +44,9 @@ $back = $planId ? url('plan', ['id' => $planId]) : url('trail', ['id' => $t['id'
     <div class="off-route" data-el="offroute" role="alert" hidden></div>
 
     <section class="hike-panel" aria-label="Hike status">
+        <?php if ($practice): ?>
+        <p class="practice-note" role="note"><strong>Practice mode — not a trail.</strong> A 600 m square that starts where you are, so you can try the directions, compass and progress anywhere. It can cross buildings or roads: follow it loosely and stay safe. Nothing is saved or published.</p>
+        <?php endif; ?>
         <p class="hike-status" data-el="status" role="status" aria-live="polite">Press <strong>Start hike</strong> when you are at the start. Your position stays on this phone.</p>
         <div class="progress-row"><div class="progress" aria-hidden="true"><span data-el="bar"></span></div><span class="small" data-el="pct">0%</span></div>
         <dl class="hike-stats">
@@ -58,12 +61,12 @@ $back = $planId ? url('plan', ['id' => $planId]) : url('trail', ['id' => $t['id'
         <div class="finish-box" data-el="finish-box" role="group" aria-labelledby="fin-h" hidden>
             <h2 id="fin-h">Finish this hike?</h2>
             <p class="small muted" data-el="finish-summary"></p>
-            <button class="btn btn-primary btn-block" type="button" data-el="finish-publish">Finish and publish</button>
+            <button class="btn btn-primary btn-block" type="button" data-el="finish-publish"<?= $practice ? ' hidden' : '' ?>>Finish and publish</button>
             <button class="btn btn-secondary btn-block" type="button" data-el="finish-only">Finish without publishing</button>
             <button class="btn-link" type="button" data-el="finish-cancel">Keep hiking</button>
         </div>
         <div class="finish-box" data-el="done-box" hidden>
-            <a class="btn btn-secondary btn-block" href="<?= e($back) ?>"><?= $planId ? 'Back to my plan' : 'Back to the trail' ?></a>
+            <a class="btn btn-secondary btn-block" href="<?= e($back) ?>"><?= $practice ? 'Back to trails' : ($planId ? 'Back to my plan' : 'Back to the trail') ?></a>
         </div>
         <div class="hike-tools">
             <button class="btn btn-sm btn-secondary" type="button" data-el="voice" aria-pressed="false">Voice: off</button>
@@ -72,7 +75,7 @@ $back = $planId ? url('plan', ['id' => $planId]) : url('trail', ['id' => $t['id'
         <p class="small muted" data-el="share-status" role="status" aria-live="polite"></p>
 
         <div class="drops">
-            <details class="drop" data-el="offline-drop">
+            <details class="drop" data-el="offline-drop"<?= $practice ? ' hidden' : '' ?>>
                 <summary class="drop-sum"><?= \TrailSense\Core\Icons::svg('cloud', 'drop-icon') ?><span class="drop-title">Use it without signal</span><span class="drop-preview" data-el="offline-preview">Download this trail before you leave</span></summary>
                 <div class="drop-body offline-box">
                     <p class="small muted" data-el="offline-status">Download this trail before you leave: the map around the route, directions, compass and progress then work with no signal.</p>

@@ -176,3 +176,22 @@ document.querySelectorAll('[data-share-wa]').forEach(function (a) {
     if (t) a.href = 'https://wa.me/?text=' + encodeURIComponent(t.value);
   });
 });
+
+/* AC13.19: "Try the GPS here" — practice route around the current position (no trail needed). */
+document.querySelectorAll('[data-practice]').forEach(function (a) {
+  a.addEventListener('click', function (ev) {
+    ev.preventDefault();
+    var out = document.querySelector('[data-practice-status]');
+    var say = function (t) { if (out) out.textContent = t; };
+    if (!navigator.geolocation) { say('This browser cannot share your location.'); return; }
+    say('Finding your position…');
+    navigator.geolocation.getCurrentPosition(function (p) {
+      var u = new URL(a.href, location.href);
+      u.searchParams.set('lat', p.coords.latitude.toFixed(6));
+      u.searchParams.set('lon', p.coords.longitude.toFixed(6));
+      location.href = u.toString();
+    }, function (e) {
+      say(e.code === 1 ? 'Location is blocked: allow location for this site to practise the GPS.' : 'Could not get your position — try again in the open.');
+    }, { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 });
+  });
+});

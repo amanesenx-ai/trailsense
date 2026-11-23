@@ -47,6 +47,15 @@ return [
         assertContains('class="site-foot"', (new Browser($base))->get('r=home')->body);
         assertContains('r=sources', (new Browser($base))->get('r=login')->body);
     },
+    'practice mode: GPS around the current position, labelled, nothing to publish (AC13.19)' => function () use ($login) {
+        $b = $login('joana@trailsense.pt');
+        assertContains('data-practice', $b->get('r=trails')->body);
+        $p = $b->get('r=practice&lat=41.178&lon=-8.598');
+        assertSame(200, $p->status);
+        foreach (['Practice mode — not a trail', 'Practice route around you', 'data-el="finish-only"'] as $n) { assertContains($n, $p->body); }
+        assertTrue((bool) preg_match('/data-el="finish-publish" hidden/', $p->body), 'publish hidden in practice');
+        assertSame(404, $b->get('r=practice&lat=abc&lon=1')->status);
+    },
     'the app states its limits where users decide (risk check and hike mode)' => function () use ($login) {
         $b = $login('joana@trailsense.pt');
         assertContains('Guidance, not a guarantee', $b->get('r=plan&id=1')->body);

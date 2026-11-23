@@ -811,3 +811,6 @@ html { scroll-behavior: smooth; }
 .finish-box { display: grid; gap: 10px; margin: 10px 0; padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
 .finish-box h2 { margin: 0; font-size: 18px; }
 .finish-box .btn-link { background: none; border: 0; color: var(--text); text-decoration: underline; font: inherit; font-weight: 700; padding: 8px; cursor: pointer; min-height: 44px; }
+/* practice mode (AC13.19) */
+.trails-head { align-items: center; }
+.practice-note { margin: 0 0 10px; padding: 10px 12px; border-radius: var(--radius); border: 1px dashed var(--accent); background: rgba(244,196,48,.08); font-size: 14px; }

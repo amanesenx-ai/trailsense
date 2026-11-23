@@ -1,5 +1,9 @@
 <?php use TrailSense\Core\Html; $f = $filters; ?>
-<h1>Find a trail</h1>
+<div class="section-head trails-head">
+    <h1>Find a trail</h1>
+    <a class="btn btn-sm btn-secondary" href="<?= e(url('practice')) ?>" data-practice>Try the GPS here</a>
+</div>
+<p class="small muted" data-practice-status role="status" aria-live="polite"></p>
 <form class="filters card" method="get" action="<?= e(url('trails')) ?>" role="search">
     <input type="hidden" name="r" value="trails">
     <div class="field-grow">

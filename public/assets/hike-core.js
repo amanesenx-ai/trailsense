@@ -50,12 +50,18 @@
                 alongM: cum[i] + t * (cum[i + 1] - cum[i]) });
         }
         if (!all.length) return null;
-        const min = Math.min(...all.map((c) => c.offRouteM));
         const hint = typeof hintM === 'number' ? hintM : 0;
-        // among the points (almost) as close as the closest one, take the one nearest to where the hiker was
-        const close = all.filter((c) => c.offRouteM <= min + 40);
-        close.sort((x, y) => Math.abs(x.alongM - hint) - Math.abs(y.alongM - hint) || x.offRouteM - y.offRouteM);
-        return close[0];
+        // One candidate per pass of the route near the hiker: the closest point, plus the closest point of any other
+        // pass (more than 100 m further along the route) that is almost as close. Then take the pass nearest to
+        // where the hiker already was. On a simple stretch there is one pass, so the closest point always wins.
+        const byDist = all.slice().sort((x, y) => x.offRouteM - y.offRouteM);
+        const passes = [byDist[0]];
+        for (const c of byDist) {
+            if (c.offRouteM > byDist[0].offRouteM + 40) break;
+            if (passes.every((q) => Math.abs(q.alongM - c.alongM) > 100)) passes.push(c);
+        }
+        passes.sort((x, y) => Math.abs(x.alongM - hint) - Math.abs(y.alongM - hint));
+        return passes[0];
     }
 
     /** Progress for a position: done/left metres, percent, ETA in minutes at the given pace (km/h). */

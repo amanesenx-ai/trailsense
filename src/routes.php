@@ -24,6 +24,7 @@ return [
 
     'trails'          => ['GET',  TrailController::class, 'index'],
     'trail'           => ['GET',  TrailController::class, 'show'],
+    'practice'        => ['GET',  HikeController::class, 'practice'],
     'trail.report'    => ['POST', TrailController::class, 'report'],
     'trail.save'      => ['POST', TrailController::class, 'save'],
     'hike'            => ['GET',  HikeController::class, 'show'],
