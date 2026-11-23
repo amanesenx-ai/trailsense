@@ -28,7 +28,7 @@ get **weather warnings explained by explicit rules with a concrete precaution**,
 ## 2a. Core MVP vs extensions
 **Core (A1 Priority 0 — what the MVP is judged on):** F8 sign-in with roles · F1 trail discovery · F2 plan a hike · F3–F5 forecast,
 rule-based risk check and explained precautions · F9 group plan and briefing · K1 planning-completeness indicator · F6–F7 feed and publish.
-**Extensions (added in later releases at the owner's request, after the core worked and was tested):** likes and comments, profiles and
+**Extensions (added in later releases at my request, after the core worked and was tested):** likes and comments, profiles and
 statistics (release 2), IPMA warnings and fire risk (release 2), community trail reports (release 2), live GPS directions with compass
 (release 3–4), elevation profiles (release 4), favourites, filters and organizer dashboard (release 5), offline use (release 6),
 public read-only API (F12). Every extension has its own section, acceptance criteria and tests; none changed the core flows.
@@ -145,8 +145,8 @@ release 6 added offline use of downloaded trails, §12. Recording a GPS track to
 | DAY_C | daylight | minutes between planned end and sunset < 60 | CAUTION | Bring a head torch and keep a steady pace. |
 | DAY_W | daylight | minutes between planned end and sunset < 30 | WARNING | Start by HH:MM or choose a shorter trail. |
 
-## 8. Release 2 — improvements on the Assignment 1 proposals (owner request, 2026-11-17)
-Owner feedback on release 1: the map link only showed the start point; trails need real pictures; plans were invisible
+## 8. Release 2 — improvements on the Assignment 1 proposals (my request, 2026-11-17)
+My feedback on release 1: the map link only showed the start point; trails need real pictures; plans were invisible
 to others; only one weather source; the app felt basic. Each item below comes from the A1 deck (problem, opportunity,
 journeys or Priority 1 list).
 
@@ -202,10 +202,10 @@ journeys or Priority 1 list).
 - AC12.2 JSON with correct status codes (200, 400 with an error message, 404); CORS enabled; no personal data (no e-mails).
 - AC12.3 Documented in docs/API.md and docs/openapi.yaml; covered by HTTP tests.
 
-## 9. Release 3 — on the trail, and a visual risk check (owner request, 2026-11-18)
-Owner feedback on release 2: the map showed "Access blocked" (fixed: Referer policy); "after starting the trail there should be
+## 9. Release 3 — on the trail, and a visual risk check (my request, 2026-11-18)
+My feedback on release 2: the map showed "Access blocked" (fixed: Referer policy); "after starting the trail there should be
 feedback: the legend of that trail's waymarks, a map with a compass — it is too basic"; "the risk assessment layout should be
-more visual, with a direct link to a weather API". Scope change approved by the owner: live GPS navigation moves into scope
+more visual, with a direct link to a weather API". Scope change I approved: live GPS navigation moves into scope
 (it was A1 Priority 1 "Automatic GPS tracking"); recording stays on the device until the hiker publishes.
 
 ### F13 Hike mode — navigation on the trail
@@ -240,15 +240,15 @@ more visual, with a direct link to a weather API". Scope change approved by the 
 - AC4.15 Direct links: the exact Open-Meteo API request used (JSON), the Open-Meteo page for this location, and the IPMA
   warnings page for the trail's district.
 
-## 10. Release 4 — trail GPS, "is this route for me?", richer screens (owner request, 2026-11-18)
-Owner feedback: the waymarks are drawn wrong (reference: Rota Vicentina manual "Marcação, Sinalética e Manutenção", FCMP marks p. 13);
+## 10. Release 4 — trail GPS, "is this route for me?", richer screens (my request, 2026-11-18)
+My feedback: the waymarks are drawn wrong (reference: Rota Vicentina manual "Marcação, Sinalética e Manutenção", FCMP marks p. 13);
 explain whether a route is a Pequena or Grande Rota for first-timers; notes on the climbs; remove 112; hike mode should work like a
 trail GPS; home page too basic (photos, more content); a map image on every card (trails, plans, groups, feed); plans layout confusing.
 
 - AC13.6 (revised) FCMP marks exactly as the manual: caminho certo = two horizontal stripes (GR white over red, PR yellow over red,
   PL white over green); caminho errado = the two colours crossed; turn left / right = upper stripe straight, lower stripe bent down at
   the turning side. Placement facts: a mark at most every 250 m, turn marks up to 30 m before the junction, confirmation within 50 m after.
-- AC13.7 (revised) The 112 button is removed (owner decision); "Share my position" stays.
+- AC13.7 (revised) The 112 button is removed (my decision); "Share my position" stays.
 *Story (AC13.11): As a hiker on the trail, I want spoken and written turn-by-turn directions **so that** I can keep my eyes on the path and still take the right turn.*
 - AC13.11 Trail GPS: instruction banner "In 120 m turn left / Continue 600 m / Arrive", arrow pointing the way, distance to the next
   turn, the route already walked drawn behind you, map follows at street zoom, optional voice prompts, next climb ahead.
@@ -262,8 +262,8 @@ trail GPS; home page too basic (photos, more content); a map image on every card
 - AC2.5 Plans as an agenda: one row per hike with date block | map | trail and time | risk verdict | group info; tabs Upcoming / Joined / Past.
 - AC8.3 Home: photo hero with the next hike and its verdict and countdown, your stats, trail photos to discover, group hikes, community with photos.
 
-## 11. Release 5 — reviewer's list of 45 improvements (owner request, 2026-11-19)
-Source: "TrailSense – Final List of Recommended Improvements" (owner upload). Items already met are mapped in docs/TRACEABILITY.md.
+## 11. Release 5 — reviewer's list of 45 improvements (my request, 2026-11-19)
+Source: "TrailSense – Final List of Recommended Improvements" (I uploaded it). Items already met are mapped in docs/TRACEABILITY.md.
 New acceptance criteria for the gaps:
 *Story (AC0.1): As a visitor who does not know TrailSense, I want to understand in one screen what it does and how it differs **so that** I can decide whether to create an account.*
 - AC0.1 Public landing page (signed-out home): headline "Hike smarter. Explore safer. Share the experience.", the three pillars
@@ -284,7 +284,7 @@ New acceptance criteria for the gaps:
 - AC8.6 Forms show a busy state while submitting; empty states suggest the next action (items 27, 28).
 Out of scope still: following users (item 21 "if within MVP scope" — likes and comments cover it).
 
-## 12. Release 6 — offline trail GPS (owner request, 2026-11-20)
+## 12. Release 6 — offline trail GPS (my request, 2026-11-20)
 *Story (AC13.12–13.15): As a hiker going where there is no signal, I want to download the trail before I leave **so that** the map and directions keep working on the trail.*
 - AC13.12 "Download for offline" on the hike screen saves, on the phone: the hike page with the route, turns and elevation,
   the app scripts and Leaflet, and the OpenStreetMap tiles around the route (zoom 13–16, a corridor of one tile around the line,
@@ -298,5 +298,5 @@ Out of scope still: following users (item 21 "if within MVP scope" — likes and
 - AC9.10 *As a club organizer I want to edit the briefing before I copy it **so that** I can add notes for my group without retyping everything.* The organizer's briefing box is editable (participants see it read-only); "Copy briefing" copies the edited text; edits are not stored. (Interview: organizer, 22 Nov — docs/research.)
 - AC9.11 *As an organizer I want to send the briefing straight to WhatsApp **so that** I do not have to copy and paste it.* "Send on WhatsApp" opens WhatsApp with the briefing text (including any edits). (Interviews: 2 organizers, 22 Nov.)
 - AC0.2 *As a visitor I want to see where TrailSense's information comes from **so that** I can judge how much to trust it.* A public page "Sources and credits" (r=sources) lists the data services, the trail-mark and legal sources, the evidence for the problem and the apps compared, each with a link; every page has a footer linking to it.
-- AC13.16 *As a hiker I want Done and Left to show 0 km and the whole trail until I press Start **so that** the numbers mean what I have really walked.* Before "Start hike" Done = 0 and Left = the trail length; after Start, progress only moves while I am on the route (within 60 m + GPS accuracy); at the start of a loop the app counts the start, not the end; GPS wobble while standing still adds nothing to the track. (Owner report, 22 Nov.)
+- AC13.16 *As a hiker I want Done and Left to show 0 km and the whole trail until I press Start **so that** the numbers mean what I have really walked.* Before "Start hike" Done = 0 and Left = the trail length; after Start, progress only moves while I am on the route (within 60 m + GPS accuracy); at the start of a loop the app counts the start, not the end; GPS wobble while standing still adds nothing to the track. (I reported it, 22 Nov.)
 

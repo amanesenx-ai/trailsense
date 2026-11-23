@@ -21,7 +21,7 @@ for t, cl in cols.items():
     note = ''.join(f"<li>{'Composite primary key' if ty=='PRIMARY KEY' else 'Unique together'}: <code>({', '.join(cs)})</code>" + (" — each column alone can repeat" if ty=='UNIQUE' else '') + "</li>" for ty, cs in comp[t])
     tables += f"<div class='tbl'><h3>{t}</h3><p class='purpose'>{purpose[t]}</p><table><tr><th>Attribute</th><th>Type</th><th>Null</th><th>Keys</th></tr>{rows}</table>{('<ul class=checks>'+note+ck+'</ul>') if (ck or note) else ''}</div>"
 style = re.search(r'<style>(.*?)</style>', src, re.S).group(1).replace('{{', '{').replace('}}', '}')
-SHOTS = '/home/claude/report/shots/'            # the owner's screenshots of the live site
+SHOTS = '/home/claude/report/shots/'            # screenshots captured on CI (bin/screenshots.py)
 order = json.load(open('/home/claude/tools/shots.json'))
 pages_html = ''
 groups = collections.OrderedDict()

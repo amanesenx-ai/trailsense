@@ -29,7 +29,7 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | Share route with distance, time, pace | Post page with route, distance, moving time, avg pace, date | likes/comments are P1 |
 | Map tiles | Simplified SVG route + "Open in OpenStreetMap" | ADR-006 |
 
-## Release 2 review (owner feedback: "too basic", map showed only the start)
+## Release 2 review (my feedback: "too basic", map showed only the start)
 | Finding | Change |
 |---|---|
 | OSM link showed only the start point | Interactive map with the real OSM route, labelled **Start** and **End** markers (one "Start / finish" for loops), "Directions to the start", "View route on OpenStreetMap", attribution; SVG fallback without JS |
@@ -41,7 +41,7 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | Group hikes and home showed "NOT CHECKED" until opened | Upcoming unchecked hikes are assessed automatically when listed |
 | Map layers covered sticky button (found live) | CSS isolation |
 
-## Release 3 review (2026-11-18) — owner feedback "too basic", "risk layout should be more visual"
+## Release 3 review (2026-11-18) — my feedback "too basic", "risk layout should be more visual"
 | Before | Problem | After |
 |---|---|---|
 | Risk assessment = 8 equal rows with a badge each | Reader must scan everything to know "can I go?"; same weight for OK and CAUTION | **Verdict card** first (colour + icon + sentence + reason), then hour by hour, then a checklist, then factor **tiles** (icon, value, status in words). Rules table kept one tap away |
@@ -51,18 +51,18 @@ Contrast (WCAG): text/bg 14.1 · text/card 11.5 · muted/card 7.8 · muted/facto
 | 360 px: chart text ~5 px; tiles in one long column | Unreadable / long scroll | Chart keeps 560 px and scrolls sideways; tiles in 2 columns |
 | "Finish" visible before starting | `.btn{display}` overrode `[hidden]` | Global `[hidden]{display:none!important}` |
 
-## Release 4 review (2026-11-18) — owner feedback
+## Release 4 review (2026-11-18) — my feedback
 | Before | Problem | After |
 |---|---|---|
 | Marks drawn with bent diagonal stripes; PL green over white | Did not match the FCMP marks (Rota Vicentina manual p. 13) | Right way = two horizontal stripes; wrong way = the colours crossed; turn = top stripe straight, bottom stripe bent down on the turning side; PL white over green; placement rules (≤ 250 m, 30 m before junctions, 50 m confirmation) |
 | Only "PR2 VLG" and a difficulty word | A first-timer does not know what PR/GR means or how hard the climbs are | "Is this route for me?": type in plain words, distance/time class, climb rating with advice, elevation profile, longest and steepest climb with km and % |
 | Hike mode = map + stats | Not like a GPS | Banner "In 70 m · turn left" with an arrow, "Turn left now", walked part greyed, own track, turn dots on the map, voice prompts, altitude, next climb |
-| 112 button | Owner decision | Removed; share position kept |
-| Cards with a small route drawing | Owner wants the real map on every card | Static OSM map + trail photo on trail, plan, group and feed cards |
+| 112 button | My decision | Removed; share position kept |
+| Cards with a small route drawing | I want the real map on every card | Static OSM map + trail photo on trail, plan, group and feed cards |
 | Plans: 2-column card grid with sections | Confusing | Agenda: date block · map · trail and time · verdict; tabs Upcoming / Joined / Past; summary numbers |
 | Home: "Hi" + list | Too basic | Photo hero with the next hike, countdown, verdict and Start hike; stats; "Discover trails" photo strip; community posts with photos |
 | 360 px: elevation chart scrolled sideways, peak label clipped; tab label cut | Hidden information | Chart redrawn at a narrower size; labels kept inside; tab "Joined" |
-| Turn-left and turn-right marks drawn the wrong way round (owner check) | Hiker would turn the wrong way | Swapped: the horizontal part of the corner points the way to turn |
+| Turn-left and turn-right marks drawn the wrong way round (my check) | Hiker would turn the wrong way | Swapped: the horizontal part of the corner points the way to turn |
 | Banner said "Directions appear here, like a GPS" every time | Placeholder noise | Banner hidden until the first GPS fix; far away → "Go to the start: 10.9 km to the E" + road directions; on the trail → turn-by-turn straight away, Start only records |
 
 ## Release 5 review (2026-11-19) — reviewer's list of 45 improvements
@@ -71,7 +71,7 @@ See docs/REVIEW_CHECKLIST.md for every item. Main UX changes: public landing pag
 ## Landing page v2 (2026-11-20) — reviewer's 5 final points
 Kept headline and structure. Added: real app screenshots (risk check, hike GPS, organizer dashboard, labelled as demo data); "Where the information comes from — and its limits" (Open-Meteo, IPMA publication windows, calculated sunset, OSM routes, 90 m DEM; guidance not a guarantee, not a replacement for official alerts, directions follow the route shape, needs data + screen on, no offline maps — offline use was added in release 6); organizer 4-step flow + dashboard screenshot; trail cards with PR code, loop/one way, distance, duration, ascent, difficulty and climb rating. The same limits are now stated inside the app (risk check and hike mode), so the app does not promise more than it does.
 
-## Release 6 (2026-11-20) — "everything feels visually confusing"; owner chose: trail page + hike mode, new visual style, dropdowns
+## Release 6 (2026-11-20) — "everything feels visually confusing"; I chose: trail page + hike mode, new visual style, dropdowns
 | Before | After |
 |---|---|
 | Dark green theme, many dark panels inside dark cards | Calm light theme: off-white page, white cards with soft shadows, forest-green primary, yellow kept only for highlights; status colours have dark "ink" versions for text (contrast ≥ 4.5:1) |
@@ -79,8 +79,8 @@ Kept headline and structure. Added: real app screenshots (risk check, hike GPS, 
 | Hike mode: 4 buttons + offline box + legend + notes | Map, directions, progress, one main button; Voice and Share as small buttons; offline / trail marks / how directions work as dropdowns (offline opens by itself before the hike, all close when the hike starts) |
 | Avatar letter off-centre; avatar only linked to profile | Letter centred (measured 0 px); **account dropdown menu**: profile, saved trails, plans, publish, change password, sign out |
 | Dropdown grid widened the phone page | `min-width: 0` on dropdowns; every screen re-checked at 360 px with all dropdowns open |
-| Light theme (release 6) | Owner did not like the white look | Back to the dark green A1 palette (2026-11-20); kept the dropdown sections, account menu, centred avatar and offline mode. Colours now come from variables (--panel, --track, --hover, --*-ink), so a theme change is one block. |
-| Account menu and dropdowns showed unstyled (plain links, no bold) on the owner's browser | Bug: the offline service worker served the old cached app.css first (cache-first) | sw.js now network-first for CSS/JS (cache only offline), cache renamed ts-shell-v2 so the stale copy is deleted |
+| Light theme (release 6) | I did not like the white look | Back to the dark green A1 palette (2026-11-20); kept the dropdown sections, account menu, centred avatar and offline mode. Colours now come from variables (--panel, --track, --hover, --*-ink), so a theme change is one block. |
+| Account menu and dropdowns showed unstyled (plain links, no bold) on my browser | Bug: the offline service worker served the old cached app.css first (cache-first) | sw.js now network-first for CSS/JS (cache only offline), cache renamed ts-shell-v2 so the stale copy is deleted |
 | Dropdowns easy to miss | Looked like plain text rows | Yellow left bar, icon, bold 17 px title, one-line preview and a yellow "Show ▾" / outlined "Hide ▴" button |
 
 ## Release 7 — user feedback on the landing and sign-in pages (22 Nov)
@@ -97,10 +97,10 @@ Kept headline and structure. Added: real app screenshots (risk check, hike GPS, 
 | "Too much information before creating an account" | Shorter texts (pillars 1 sentence, 4 short bullets), profiles merged into "For clubs", sources as 4 tiles with the details in a dropdown | landing.php |
 Checked at 360 px, 390 px and 1280 px: no horizontal scroll; header 65 px, menu sticks right under it.
 
-## Release 8 — user interviews and owner report (22 Nov)
+## Release 8 — user interviews and my report (22 Nov)
 | Source | Change |
 |---|---|
 | Organizer interviews (2 of 3) | Briefing editable before copying (AC9.10) and "Send on WhatsApp" button (AC9.11) |
-| Owner: hike mode showed km done before starting | Done/Left only move after Start and on the route; loops start at the start (AC13.16) |
+| Me: hike mode showed km done before starting | Done/Left only move after Start and on the route; loops start at the start (AC13.16) |
 | Reviewer: show where the information comes from | Footer on every page + public "Sources and credits" page (AC0.2) |
 Checked at 360 px and 1280 px with screenshots.

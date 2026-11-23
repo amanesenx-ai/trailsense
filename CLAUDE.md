@@ -1,7 +1,7 @@
 # CLAUDE.md — TrailSense project rules
 
 Read SPEC.md (what to build) and docs/ARCHITECTURE.md (where code goes) before changing anything.
-The owner decides scope and architecture; you implement against them. If a request conflicts with SPEC.md, stop and ask.
+I decide scope and architecture; you implement against them. If a request conflicts with SPEC.md, stop and ask.
 
 ## Stack (fixed — see docs/DECISIONS.md ADR-001)
 PHP 8.x (no framework, no Composer at runtime) · PostgreSQL 16/17 · HTML + one CSS file + minimal vanilla JS · Apache (alwaysdata) · Leaflet 1.9.4 via CDN with SRI (ADR-010).

@@ -50,14 +50,14 @@
 
 ## ADR-009 — Cloud hosting: Docker on Render + Neon PostgreSQL; photos in the database
 - Date: 2026-11-17 · Status: accepted
-- Context: the owner chose not to use the FEUP servers. The app must stay online and reachable for the next assignments, at no cost. Free container hosts have an ephemeral disk (files written at runtime are lost on each deploy/restart).
+- Context: I chose not to use the FEUP servers. The app must stay online and reachable for the next assignments, at no cost. Free container hosts have an ephemeral disk (files written at runtime are lost on each deploy/restart).
 - Decision: one Docker image (php:8.3-apache + pdo_pgsql, document root `public/`) on a Render free web service; database on Neon's free plan (permanent, not a trial). Configuration comes from environment variables (`DATABASE_URL`, `WEATHER_PROVIDER`, `APP_DEBUG`) when `config/config.php` is absent. Uploaded photos are stored as BYTEA in `activity_photo` and served by the `photo` route (login required). `bin/db-init.php` creates tables and demo data on first boot only.
 - Consequences: no secrets in the repository; photos survive redeploys. Render's free service sleeps after 15 min idle and needs about a minute to wake — open the app before a demo. Neon free storage (1 GB) is far above our needs (photos ≤ 3 MB each).
 - Update (2026-11-17, alwaysdata): hosting moved to **alwaysdata** (free plan: always on, PHP + PostgreSQL in one account, no Docker needed) because Render's free service sleeps after 15 minutes. The database quota on the free plan is about 1/10 of the 1 GB disk, so uploaded photos are shrunk to ≤ 1600 px JPEG before storing (`Services/PhotoResizer`, also strips EXIF/GPS metadata). The Dockerfile and render.yaml stay as an alternative deployment path.
 
 ## ADR-010 — Interactive map with Leaflet + OpenStreetMap tiles (supersedes ADR-006 for the trail page)
 - Date: 2026-11-17 · Status: accepted
-- Context: owner feedback — the "Open in OpenStreetMap" link showed only the start point; A1 mockups show a route map with start and end.
+- Context: my feedback — the "Open in OpenStreetMap" link showed only the start point; A1 mockups show a route map with start and end.
 - Decision: Leaflet 1.9.4 loaded from unpkg with Subresource Integrity hashes, only on pages that show a map; OSM standard tiles with the required attribution. Route geometry is real OpenStreetMap data (hiking route relations) stored in `trail.route_points`. The SVG drawing stays as the no-JS / tile-failure fallback.
 - Consequences: one CDN dependency (pinned version + SRI, so a tampered file is refused by the browser). Tile usage follows the OSM tile policy (low traffic, attribution, no bulk download).
 
@@ -69,7 +69,7 @@
 
 ## ADR-012 — IPMA official warnings and fire risk as advisory rules
 - Date: 2026-11-17 · Status: accepted
-- Context: owner asked for a second API; A1 promised trustworthy risk advice. IPMA (Portuguese met office) publishes district warnings (~3 days ahead) and municipal rural fire risk RCM 1–5 (today and tomorrow) as open JSON.
+- Context: I asked for a second API; A1 promised trustworthy risk advice. IPMA (Portuguese met office) publishes district warnings (~3 days ahead) and municipal rural fire risk RCM 1–5 (today and tomorrow) as open JSON.
 - Decision: `IpmaProvider` behind an interface, called with a 6 s timeout and cached per request; new metrics `ipma_warning_level` (0 none, 1 yellow, 2 orange, 3 red) and `fire_risk` (1–5) evaluated by rows in `risk_rule`. A new column `risk_rule.required` marks rules whose missing data makes the check incomplete; IPMA rules are `required = false` because the data is legitimately not published yet for later dates.
 - Consequences: two independent sources (Open-Meteo forecast, IPMA official); failure of one degrades gracefully.
 
@@ -87,7 +87,7 @@
 
 ## ADR-015 — Hike mode runs in the browser; nothing tracked on the server
 - Date: 2026-11-18 · Status: accepted
-- Context: owner asked for on-trail feedback (map, compass, waymark legend). GPS tracking was A1 Priority 1.
+- Context: I asked for on-trail feedback (map, compass, waymark legend). GPS tracking was A1 Priority 1.
 - Decision: a dedicated page `?r=hike&id=` using the Geolocation API (watchPosition), DeviceOrientation (compass, iOS permission), Vibration and Screen Wake Lock. Route maths in `public/assets/hike-core.js` (pure functions, tested with Node). The track lives in memory; "Finish" passes only distance and duration to the publish form.
 - Consequences: privacy by design (no location history stored); needs HTTPS (we have it) and permission prompts; accuracy depends on the phone.
 
@@ -99,13 +99,13 @@
 
 ## ADR-017 — Store hourly forecast with the snapshot; visual risk check
 - Date: 2026-11-18 · Status: accepted
-- Context: the owner wants a visual check and a direct weather link; aggregates alone cannot draw an hour-by-hour view.
+- Context: I want a visual check and a direct weather link; aggregates alone cannot draw an hour-by-hour view.
 - Decision: Open-Meteo request adds `weather_code`; the provider returns hourly rows for the hike window ± 2 h, stored in `weather_snapshot.hourly` (JSONB, migration 003). Charts are server-side SVG (no chart library, works without JS). Links point to the exact API request, the Open-Meteo page for the location, and the IPMA district warnings page.
 - Consequences: snapshots are ~1 KB larger; old snapshots without hourly data simply show no chart.
 
 ## ADR-018 — Static map thumbnails built on the server
 - Date: 2026-11-18 · Status: accepted
-- Context: the owner wants a real map image on every card; one Leaflet map per card would be heavy.
+- Context: I want a real map image on every card; one Leaflet map per card would be heavy.
 - Decision: `Core\StaticMap` picks the zoom that fits the route, and outputs an SVG with the needed OSM tiles (`<image>`) and the route on top. It needs no JS and scales with the card. The tiles are the same public tiles the browser caches.
 - Consequences: about 4–6 tiles per card. Lists are short (≤ 20 cards), within the OSM tile policy for light use. If tiles fail, the route drawing still shows on a plain background.
 
@@ -117,7 +117,7 @@
 
 ## ADR-020 — Offline trail GPS with a service worker
 - Date: 2026-11-20 · Status: accepted
-- Context: on the trail there is often no signal; the owner wants real directions offline. Geolocation works without internet, but the page, scripts and map tiles do not.
+- Context: on the trail there is often no signal; I want real directions offline. Geolocation works without internet, but the page, scripts and map tiles do not.
 - Decision: `public/sw.js` caches the app shell (assets + Leaflet), hike pages the user explicitly downloads, and OSM tiles for that route only. Tile list is computed in `hike-core.js` (`tilesForRoute`, tested): zoom 13–16 within a one-tile corridor, max ~600 tiles, fetched 4 at a time. The OSM tile policy forbids bulk downloads and offline caching of large areas or zoom ≥ 17, so we stay small and user-triggered. Signed-out pages clear the page cache.
 - Consequences: works in Chrome/Android and Safari/iOS (service workers + Cache Storage). Offline zoom is capped at 16. Publishing needs a connection; the finished hike waits on the phone.
 

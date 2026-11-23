@@ -14,7 +14,7 @@
 
 ## D-? Demo accounts share the seed password with the public test suite — 22 Nov
 The tests (public repo) log in with the seed password, so anyone could sign in to the demo accounts on the live site.
-Action for the owner: change the demo accounts' passwords on the live site (Profile → Change password). Tests keep using the local seed.
+Action for me: change the demo accounts' passwords on the live site (Profile → Change password). Tests keep using the local seed.
 
 ## Backlog from user interviews (22 Nov)
 - Event page visible to participants without an account (2 organizers).

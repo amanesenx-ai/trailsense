@@ -35,7 +35,7 @@ Security checklist (run with the security-reviewer subagent prompt + grep scan):
 | L4 | Same check 10 days ahead: IPMA rules "pending", assessment still complete (AC4.9) | ✅ |
 | L5 | Trail page on a phone: Leaflet loads (SRI accepted), OSM tiles load, Start + End markers, photos with author/licence | ✅ |
 | L6 | Sticky "Plan this hike" button was covered by the map layers | ❌ → fixed (CSS isolation), re-checked ✅ |
-| L7 | Owner report: OSM tiles show "403 Access blocked" | ❌ cause: `Referrer-Policy: same-origin` sent no Referer → fixed (strict-origin-when-cross-origin). From the live origin a tile returns the real 18 KB image; with no Referer, the 6.7 KB "blocked" image ✅ |
+| L7 | My report: OSM tiles show "403 Access blocked" | ❌ cause: `Referrer-Policy: same-origin` sent no Referer → fixed (strict-origin-when-cross-origin). From the live origin a tile returns the real 18 KB image; with no Referer, the 6.7 KB "blocked" image ✅ |
 | M-R3-1 | Phone outdoors: Start hike → allow location → blue dot + accuracy circle, Follow me, km done/left update while walking | to do on a walk |
 | M-R3-2 | iPhone: tap the compass → permission prompt → rose turns with the phone; Android: turns without a tap | to do on phones |
 | M-R3-3 | Walk > 50 m away from the route → red banner, vibration, dashed line back to the route; back on route → banner clears | to do on a walk |
