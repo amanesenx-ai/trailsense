@@ -2,7 +2,7 @@ openapi: 3.0.3
 info:
   title: TrailSense API
   version: "1.0"
-  description: Read-only API of TrailSense (ASI Assignment 2). Routes © OpenStreetMap contributors; forecast Open-Meteo; warnings IPMA.
+  description: Read-only API of TrailSense. Routes © OpenStreetMap contributors; forecast Open-Meteo; warnings IPMA.
 servers:
   - url: https://amanesenx.alwaysdata.net/api/v1
 paths:
