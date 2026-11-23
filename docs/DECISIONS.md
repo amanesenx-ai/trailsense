@@ -1,8 +1,10 @@
 # Architecture Decision Records
 
+Each decision: the context, what I decided and the consequences. Later decisions that replace an earlier one say so in its status line.
+
 ## ADR-001 — Stack: plain PHP 8 + PostgreSQL, no framework
 - Date: 2026-11-17 · Status: accepted
-- Context: the course teaches PHP + PDO + PostgreSQL and the brief names that stack; the app must be online and reachable by other applications for the later assignments, on a simple free host (Apache + PHP + PostgreSQL). Frameworks (Laravel) need Composer and a console on the server.
+- Context: I work with PHP + PDO + PostgreSQL; the app must be online, always on and reachable by other applications, on a simple free host (Apache + PHP + PostgreSQL). Frameworks (Laravel) need Composer and a console on the server.
 - Decision: plain PHP 8 with PDO (pgsql), a single front controller, no runtime dependencies.
 - Consequences: deploys by copying files; well represented in training data so agent output is reliable. We write our own small router, CSRF and auth helpers (kept in `src/Core`, each < 100 lines).
 
@@ -31,10 +33,10 @@
 - Consequences: small extra table; enables the K1 KPI and audit.
 
 ## ADR-006 — Route drawn as inline SVG, not a tile map
-- Date: 2026-11-17 · Status: accepted
+- Date: 2026-11-17 · Status: superseded — trail page by ADR-010 (interactive map), cards by ADR-018 (static map); the SVG drawing stays as the fallback when the map cannot load
 - Context: the A1 mockups show a route map. A tile map (Leaflet + OSM tiles) adds a CDN dependency and is heavy on phones.
 - Decision: store the route as a list of lat/lon points and render a scaled SVG line with start/end markers, plus an "Open in OpenStreetMap" link.
-- Consequences: works offline and on slow networks; interactive map moved to DEBT.md.
+- Consequences: works offline and on slow networks; interactive map left for later (done in ADR-010).
 
 ## ADR-007 — Own minimal test runner instead of PHPUnit
 - Date: 2026-11-17 · Status: accepted
@@ -48,12 +50,11 @@
 - Decision: `group_plan(plan_id PK/FK → hike_plan ON DELETE CASCADE)` instead of nullable columns in hike_plan.
 - Consequences: no NULL-heavy rows; the relationship type (one-to-one partial) is explicit in the schema.
 
-## ADR-009 — Cloud hosting: Docker on Render + Neon PostgreSQL; photos in the database
+## ADR-009 — Hosting on alwaysdata (Apache + PHP + PostgreSQL); photos in the database
 - Date: 2026-11-17 · Status: accepted
-- Context: the app must stay online and reachable by other applications for the next assignments, always on and at no cost. Free container hosts have an ephemeral disk (files written at runtime are lost on each deploy/restart).
-- Decision: one Docker image (php:8.3-apache + pdo_pgsql, document root `public/`) on a Render free web service; database on Neon's free plan (permanent, not a trial). Configuration comes from environment variables (`DATABASE_URL`, `WEATHER_PROVIDER`, `APP_DEBUG`) when `config/config.php` is absent. Uploaded photos are stored as BYTEA in `activity_photo` and served by the `photo` route (login required). `bin/db-init.php` creates tables and demo data on first boot only.
-- Consequences: no secrets in the repository; photos survive redeploys. Render's free service sleeps after 15 min idle and needs about a minute to wake — open the app before a demo. Neon free storage (1 GB) is far above our needs (photos ≤ 3 MB each).
-- Update (2026-11-17, alwaysdata): hosting moved to **alwaysdata** (free plan: always on, PHP + PostgreSQL in one account, no Docker needed) because Render's free service sleeps after 15 minutes. The database quota on the free plan is about 1/10 of the 1 GB disk, so uploaded photos are shrunk to ≤ 1600 px JPEG before storing (`Services/PhotoResizer`, also strips EXIF/GPS metadata). The Dockerfile and render.yaml stay as an alternative deployment path.
+- Context: the app must stay online, always on and reachable by other applications, at no cost. Free hosts often sleep when idle or have a disk that is wiped on every deploy.
+- Decision: alwaysdata free plan — Apache + PHP 8.3 + PostgreSQL in one account, HTTPS, always on, document root `public/`, deployed from GitHub by a scheduled `git pull` every 5 minutes. Configuration from environment variables (`DATABASE_URL`, `DB_PASSWORD`, `WEATHER_PROVIDER`, `APP_DEBUG`), so no secrets in the repository. Uploaded photos are stored as BYTEA in `activity_photo` and served by the `photo` route (login required), shrunk to ≤ 1600 px JPEG first (`Services/PhotoResizer`, which also strips EXIF/GPS metadata) because the free database quota is about 100 MB.
+- Consequences: one place for code and data; photos survive redeploys. My first attempt (Docker on Render + Neon PostgreSQL) works but Render's free service sleeps after 15 minutes, so it was dropped; `Dockerfile` and `render.yaml` stay as an alternative deployment path (docs/DEPLOY.md).
 
 ## ADR-010 — Interactive map with Leaflet + OpenStreetMap tiles (supersedes ADR-006 for the trail page)
 - Date: 2026-11-17 · Status: accepted
@@ -75,7 +76,7 @@
 
 ## ADR-013 — Public read-only REST API `/api/v1`
 - Date: 2026-11-17 · Status: accepted
-- Context: Assignment 2 §3 — the app must be reachable by other applications in the next assignments.
+- Context: the app must be reachable by other applications, so that other services (a club or municipality site, future integrations) can reuse trails and the risk check.
 - Decision: JSON endpoints in `src/Api/` dispatched by the same front controller (`/api/v1/...` via `.htaccess` rewrite, `?r=api&path=` fallback). Read-only, no authentication, CORS `*`, no personal data. The conditions endpoint runs the same AssessmentService logic without storing anything. Documented in `docs/API.md` + `docs/openapi.yaml`.
 - Consequences: other systems can reuse TrailSense's risk check; write operations stay in the web UI where CSRF and sessions protect them.
 

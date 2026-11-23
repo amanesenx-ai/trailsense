@@ -1,6 +1,6 @@
 # 5-minute live demo — both journeys (updated 22 Nov, release 7)
 
-Use two browser windows: a hiker account and an organizer account (demo accounts are given to the teachers privately).
+Use two browser windows: a hiker account and an organizer account (demo accounts are shared privately).
 
 | Time | Who | What to show | What to say |
 |---|---|---|---|

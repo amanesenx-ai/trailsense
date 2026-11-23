@@ -1,6 +1,6 @@
 # TrailSense — value case: evidence, assumptions, comparison, external parties
 
-Written in response to the teachers' general feedback on Assignment 1 (2026-11-20). Rule used in this document:
+Rule used in this document:
 **every number has a source; anything without a source is labelled ASSUMPTION, with how we would validate it.**
 
 ## 1. The problem, with evidence

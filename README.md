@@ -7,7 +7,7 @@ workflow: architecture and spec written first, rules in CLAUDE.md, every change 
 
 **Live app:** https://amanesenx.alwaysdata.net · **Public API:** https://amanesenx.alwaysdata.net/api/v1 ·
 **Report (PDF):** [docs/TrailSense_A2_MVP_report.pdf](docs/TrailSense_A2_MVP_report.pdf) ·
-Demo accounts (fictional people) are given to the teachers privately, not published.
+Demo accounts (fictional people) are shared privately, not published.
 
 ## Scope
 - **Core MVP (Assignment 1 Priority 0):** sign in with roles (hiker / club organizer) · trail discovery · plan a hike ·
