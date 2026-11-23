@@ -9,6 +9,8 @@ workflow: architecture and spec written first, rules in CLAUDE.md, every change 
 **Report (PDF):** [docs/TrailSense_A2_MVP_report.pdf](docs/TrailSense_A2_MVP_report.pdf) ·
 Demo accounts (fictional people) are shared privately, not published.
 
+![TrailSense risk check: a verdict with its reason and the hour-by-hour forecast for the hike](public/assets/img/shot-risk.jpg)
+
 ## Scope
 - **Core MVP (Assignment 1 Priority 0):** sign in with roles (hiker / club organizer) · trail discovery · plan a hike ·
   forecast for the hike hours → rule-based risk check with rule and precaution · group hike with briefing ·
