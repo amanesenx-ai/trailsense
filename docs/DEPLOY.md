@@ -7,7 +7,7 @@
 |---|---|
 | Host | alwaysdata free plan (Paris): Apache + PHP 8.3 + PostgreSQL 17, always on, HTTPS |
 | Site | `amanesenx.alwaysdata.net`, type PHP 8.3, root directory `www/trailsense/public/`, *Force HTTPS* on |
-| Code | scheduled task every 5 min: `git clone` the first time, then `git pull --ff-only` → **every push to `main` is live within 5 minutes** |
+| Code | scheduled task every 5 min: `git clone` the first time, then `git fetch origin && git reset --hard origin/main` (the server always matches GitHub, also after a history rewrite) → **every push to `main` is live within 5 minutes** |
 | Database | `amanesenx_trailsense` on `postgresql-amanesenx.alwaysdata.net`, user `amanesenx` |
 | Config | site *environment variables*: `DATABASE_URL` (no password), `DB_PASSWORD`, `WEATHER_PROVIDER=open-meteo`, `APP_DEBUG=0`. No secrets in Git. |
 | First run | `Core\Installer` creates tables + demo data on the first request, only if the database is empty; never touches existing data |

@@ -26,3 +26,4 @@
 - GPS progress must only count after "Start" and while on the route; for loops the start and the end are the same place, so the last known progress decides which one the hiker is at.
 - A report generated from `information_schema` marked each column of a composite UNIQUE as UNIQUE on its own, which reads as a modelling error. Show composite keys as one key.
 - Feedback from users is cheapest when acted on the same day (editable briefing, "Send on WhatsApp"); record what was asked in docs/research and the acceptance criterion in SPEC.md.
+- The live site updates with a scheduled `git pull --ff-only`. After rewriting commit messages (a force push), the server's history no longer matched GitHub and the site silently stopped updating. The task now runs `git fetch` + `git reset --hard origin/main`. After any history rewrite, check that the live site really changed.
